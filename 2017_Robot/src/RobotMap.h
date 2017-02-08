@@ -2,7 +2,7 @@
  * RobotMap.h
  *
  *  Created on: Jan 24, 2017
- *      Author: Joey
+ *      Author: Programing Team, Joey D. (Sub-team leader), Sam, Eli, Colin, Joey J.
  *
  *      2017 Robot Map
  */
@@ -15,16 +15,21 @@ enum ManStickMap {
 	SHOOT = 5,
 	LIMIT_SHOOT = 1,
 	SPINUP = 2,
+
 };
 
 enum LStickMap {
 	PICKUP = 1,
+	GEAR_RELEASE,
 };
 
 enum RStickMap {
 	REVERSE_DRIVE = 1,
 	SET_SPEED_MODE = 10,
 	SET_VBUS_MODE = 11,
+	CAMERA1 = 10,
+	CAMERA2 = 11,
+	RELEASE_GEAR = 3,
 };
 
 enum DIOMap {
@@ -43,6 +48,11 @@ enum CANTalonMap {
 	LEFT_DRIVE2 = 3,
 	SHOOT1,
 	SHOOT2,
+};
+
+enum PWMMap {
+	LEFT_GEAR_SERVO,
+	RIGHT_GEAR_SERVO,
 };
 #endif /* SRC_ROBOTMAP_H_ */
 
