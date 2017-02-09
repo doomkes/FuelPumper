@@ -51,8 +51,8 @@ enum CANTalonMap {
 };
 
 enum PWMMap {
-	LEFT_GEAR_SERVO,
-	RIGHT_GEAR_SERVO,
+	LEFT_GEAR_SERVO = 2,
+	RIGHT_GEAR_SERVO = 3,
 };
 #endif /* SRC_ROBOTMAP_H_ */
 

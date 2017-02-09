@@ -12,13 +12,12 @@
 #include "Pickup.h"
 #include "BoilerVision.h"
 #include "GearManipulator.h"
-#include "Vision.h"
+
 using frc::SmartDashboard;
 using namespace std;
 using namespace frc;
 class Robot: public frc::IterativeRobot {
 	TankDrive m_tank;
-	Vision m_vision;
 	grip::BoilerVision m_boilerVision;
 	CameraServer *cameraServer = nullptr;
 	cs::CvSource m_outputStream;
@@ -39,7 +38,6 @@ public:
 		if(!Preferences::GetInstance()->ContainsKey("Exposure")) {
 			Preferences::GetInstance()->PutFloat("Exposure", 1);
 		}
-		m_vision.Init();
 	}
 
 	void TeleopInit() {
@@ -52,17 +50,7 @@ public:
 			m_pickup.Intake(true);
 		} else m_pickup.stop();
 
-		if(m_leftStick.GetRawButton(CAMERA1)) {
-			m_vision.SwitchCamera(0);
-		}
-		else if(m_leftStick.GetRawButton(CAMERA2)) {
-			m_vision.SwitchCamera(1);
-		}
-
 		m_gearManip.Release(m_leftStick.GetRawButton(LStickMap::GEAR_RELEASE));
-//		if(m_leftStick.GetRawButton(LStickMap::GEAR_RELEASE)) {
-//
-//		}
 	}
 
 	void AutonomousInit() override {
