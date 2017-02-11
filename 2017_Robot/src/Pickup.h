@@ -14,16 +14,16 @@ private:
 	frc::Talon m_intakeMotor;
 	// Hopper Motor pushs into Hopper
 	frc::Talon m_hopperMotor;
+	//PDP Variable
+ 	PowerDistributionPanel m_pdp;
 
 public:
-
-
 	Pickup();
 	virtual ~Pickup();
 
-	//Chose between 2 speeds to intake the Fuel
-	void Intake(bool Highspeed);
+	void Intake();
 	void stop();
+	void Reverse();
 };
 
 #endif /* SRC_PICKUP_H_ */

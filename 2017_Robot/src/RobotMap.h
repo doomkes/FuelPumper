@@ -19,7 +19,10 @@ enum ManStickMap {
 
 enum LStickMap {
 	PICKUP = 1,
+	REVERSEPICKUP = 4, // TODO Figure out actual button value
 };
+
+
 
 enum RStickMap {
 	REVERSE_DRIVE = 1,
@@ -33,7 +36,8 @@ enum DIOMap {
 };
 
 enum SolenoidMap {
-	GEAR_SHIFT
+	GEAR_SHIFTR,
+	GEAR_SHIFTL
 };
 
 enum CANTalonMap {

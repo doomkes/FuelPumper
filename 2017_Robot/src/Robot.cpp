@@ -39,11 +39,23 @@ public:
 	}
 
 	void TeleopPeriodic() {
+
+
+
 		m_tank.Drive(m_leftStick.GetY(), -m_rightStick.GetY());
 
 		if(m_leftStick.GetRawButton(PICKUP)) {
-			m_pickup.Intake(true);
-		} else m_pickup.stop();
+
+			if(m_leftStick.GetRawButton(REVERSEPICKUP)){
+				m_pickup.Reverse();
+			}
+			else {
+				m_pickup.Intake();
+			}
+		}
+		else {
+			m_pickup.stop();
+		}
 	}
 
 	void AutonomousInit() override {
