@@ -20,20 +20,27 @@ enum ManStickMap {
 
 enum LStickMap {
 	PICKUP = 1,
+	REVERSEPICKUP = 4, // TODO Figure out actual button value
+	GEAR_RELEASE,
 	SHIFT_LOW = 3,
 	SHIFT_HIGH = 2,
 };
+
+
 
 enum RStickMap {
 	REVERSE_DRIVE = 1,
 	SET_SPEED_MODE = 10,
 	SET_VBUS_MODE = 11,
+	RELEASE_GEAR = 3
 };
+
 enum DS_USBMap {
 	LEFTSTICK = 0,
 	RIGHTSTICK = 1,
 	MANSTICK = 2,
 };
+
 enum DIOMap {
 	AIM_LIGHT = 9,
 	RUN_GUN_LIGHT = 8
@@ -54,6 +61,12 @@ enum CANTalonMap {
 	SHOOT4 = 1,
 	INDEXER = 9,
 };
+
+enum PWMMap {
+	LEFT_GEAR_SERVO = 2,
+	RIGHT_GEAR_SERVO = 3,
+};
+
 #endif /* SRC_ROBOTMAP_H_ */
 
 

@@ -6,7 +6,7 @@
  *      Author: Joey
  */
 
-#include <TankDrive.h>
+#include "TankDrive.h"
 
 TankDrive::TankDrive(
 		frc::Joystick &m_leftStick
@@ -64,6 +64,7 @@ void TankDrive::Drive(const float leftVal, const float rightVal) {
 
 void TankDrive::LowGear() {
 	m_gearShift.Set(false);
+
 }
 
 void TankDrive::HighGear() {

@@ -10,7 +10,7 @@
 
 #include <WPILib.h>
 #include <CANTalon.h>
-#include "Robotmap.h"
+#include "RobotMap.h"
 
 class Pickup {
 	frc::Joystick& m_leftStick;
@@ -32,6 +32,8 @@ public:
 	//Chose between 2 speeds to intake the Fuel
 	void Intake(bool Highspeed);
 	void stop();
+	void Reverse();
 };
 
 #endif /* SRC_PICKUP_H_ */
+
