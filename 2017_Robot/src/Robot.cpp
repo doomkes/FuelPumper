@@ -25,7 +25,12 @@ class Robot: public frc::IterativeRobot {
 	CANTalon m_rightMotor2;
 
 	TankDrive m_tank;
+
     Shooter m_shooter;
+	CANTalon m_shootWheel1;
+	CANTalon m_shootWheel2;
+	CANTalon m_indexMotor;
+
 	grip::BoilerVision Vision;
 	CameraServer *cameraServer = nullptr;
 	cs::CvSource m_outputStream;
@@ -38,6 +43,8 @@ class Robot: public frc::IterativeRobot {
 	frc::Talon m_intakeMotor;
 	// Hopper Motor pushs into Hopper
 	frc::Talon m_hopperMotor;
+
+
 
 public:
 	Robot()
@@ -59,13 +66,23 @@ public:
 			, m_leftMotor2
 			, m_rightMotor1
 			, m_rightMotor2
-			)
-		,m_pickup(
+		)
+		, m_shootWheel1(0)
+		, m_shootWheel2(1)
+		, m_indexMotor(2)
+		, m_pickup(
 			m_leftStick
 			, PICKUP
 			, m_intakeMotor
 			, m_hopperMotor
-			)
+		)
+		, m_shooter(
+			m_rightStick
+			, m_shootWheel1 //todo:mjj chagne values to constant.
+			, m_shootWheel2
+			, m_indexMotor
+		)
+
 
 	{
 
@@ -86,11 +103,7 @@ public:
 		m_gearManip.Release(m_leftStick.GetRawButton(LStickMap::GEAR_RELEASE));
 		m_tank.TeleopPeriodic();
 		m_pickup.TeleopPeriodic();
-		if (m_rightStick.GetRawButton(SHOOT)) {
-			if (m_rightStick.GetRawButton(REVERSEINDEX)) {
-				m_shooter.ReverseIndex();
-			} else m_shooter.Shoot();
-		} else m_shooter.Stop();
+		m_shooter.TeleopPeriodic();
 	}
 
 	void AutonomousInit() override {
