@@ -84,10 +84,6 @@ public:
 			} else m_shooter.Shoot();
 		} else m_shooter.Stop();
 
-
-		if(m_leftStick.GetRawButton(PICKUP)) {
-			m_pickup.Intake(true);
-		} else m_pickup.stop();
 	}
 
 	void AutonomousInit() override {
