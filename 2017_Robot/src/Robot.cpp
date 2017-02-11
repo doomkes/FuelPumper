@@ -75,10 +75,7 @@ public:
 
 	void TeleopPeriodic() {
 		m_tank.TeleopPeriodic();
-
-		if(m_leftStick.GetRawButton(PICKUP)) {
-			m_pickup.Intake(true);
-		} else m_pickup.stop();
+		m_pickup.TeleopPeriodic();
 	}
 
 	void AutonomousInit() override {

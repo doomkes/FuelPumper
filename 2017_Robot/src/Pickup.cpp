@@ -21,7 +21,7 @@ Pickup::Pickup(
 }
 
 void Pickup::TeleopPeriodic() {
-	if(m_leftStick.GetRawButton(PICKUP)) {
+	if(m_leftStick.GetRawButton(PICKUP)) { // todo:mjj maybe should be passing in the button object instead of left stick?
 		Intake(true);
 	} else stop();
 }
