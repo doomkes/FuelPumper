@@ -41,8 +41,8 @@ enum CANTalonMap {
 	RIGHT_DRIVE2 = 1,
 	LEFT_DRIVE1 = 2,
 	LEFT_DRIVE2 = 3,
-	SHOOT1,
-	SHOOT2,
+	SHOOT1 = 4,
+	SHOOT2 = 5,
 };
 #endif /* SRC_ROBOTMAP_H_ */
 

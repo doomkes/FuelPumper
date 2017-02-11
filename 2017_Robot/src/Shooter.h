@@ -21,6 +21,7 @@ public:
 	//then get up to speed then activate index motor
 	void Shoot();
 
+
 };
 
 #endif /* SRC_SHOOTER_H_ */

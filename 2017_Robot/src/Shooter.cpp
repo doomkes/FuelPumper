@@ -6,7 +6,7 @@
  */
 
 #include <Shooter.h>
-
+#include <RobotMap.h>
 Shooter::Shooter()
 	: m_shootWheel1(0), m_shootWheel2(1), m_indexMotor(0)
 {
@@ -20,6 +20,14 @@ Shooter::~Shooter() {
 
 void Shooter::Shoot() {
 
+	m_shootWheel1.SetSetpoint(1000);
+	//TODO Find actual RPM value
+	m_shootWheel2.SetSetpoint(1000);
+	//TODO Find actual RPM value
+	if (m_shootWheel1.GetSpeed()>=1000) {
+		m_indexMotor.SetSetpoint (1000);
+		//TODO Find actual RPM values
+	}
 }
 
 // TODO Implement Shooter class functions
