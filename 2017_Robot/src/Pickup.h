@@ -14,6 +14,7 @@
 
 class Pickup {
 	frc::Joystick& m_leftStick;
+	int pickupButton;
 	// Intake Motor picks up balls
 	frc::Talon& m_intakeMotor;
 	// Hopper Motor pushs into Hopper
@@ -22,6 +23,7 @@ class Pickup {
 public:
 	Pickup(
 		frc::Joystick &
+		, int
 		,frc::Talon &
 		,frc::Talon &
 		);

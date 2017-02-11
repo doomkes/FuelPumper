@@ -57,6 +57,7 @@ public:
 			)
 		,m_pickup(
 			m_leftStick
+			, PICKUP
 			, m_intakeMotor
 			, m_hopperMotor
 			)

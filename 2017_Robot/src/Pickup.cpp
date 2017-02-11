@@ -9,11 +9,13 @@
 
 Pickup::Pickup(
 	frc::Joystick &m_leftStick
+	,int pickupButton
 	,frc::Talon &m_intakeMotor
 	,frc::Talon &m_hopperMotor
 	)
 	:
 	m_leftStick(m_leftStick)
+	, pickupButton(pickupButton)
 	, m_intakeMotor(m_intakeMotor)
 	, m_hopperMotor(m_hopperMotor)
 {
@@ -21,7 +23,7 @@ Pickup::Pickup(
 }
 
 void Pickup::TeleopPeriodic() {
-	if(m_leftStick.GetRawButton(PICKUP)) { // todo:mjj maybe should be passing in the button object instead of left stick?
+	if(m_leftStick.GetRawButton(PICKUP)) {
 		Intake(true);
 	} else stop();
 }
