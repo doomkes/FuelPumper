@@ -1,3 +1,4 @@
+
 /*
  * TankDrive.cpp
  *
@@ -5,7 +6,7 @@
  *      Author: Joey
  */
 
-#include <TankDrive.h>
+#include "TankDrive.h"
 
 TankDrive::TankDrive(
 		frc::Joystick &m_leftStick
@@ -45,13 +46,6 @@ void TankDrive::TeleopPeriodic() {
 	else {
 		TankDrive::LowGear();
 	}
-	if (m_leftStick.GetRawButton(7)){
-		TankDrive::HighGear();
-	}
-	else {
-		TankDrive::LowGear();
-	}
-
 }
 
 void TankDrive::Drive(const float leftVal, const float rightVal) {
@@ -61,6 +55,7 @@ void TankDrive::Drive(const float leftVal, const float rightVal) {
 
 void TankDrive::LowGear() {
 	m_gearShift.Set(false);
+
 }
 
 void TankDrive::HighGear() {

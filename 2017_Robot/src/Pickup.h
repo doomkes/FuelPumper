@@ -10,7 +10,7 @@
 
 #include <WPILib.h>
 #include <CANTalon.h>
-#include "Robotmap.h"
+#include "RobotMap.h"
 
 class Pickup {
 	frc::Joystick& m_leftStick;

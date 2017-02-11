@@ -1,3 +1,4 @@
+
 /*
  * Shooter.cpp
  *
@@ -5,20 +6,10 @@
  *      Author: Joey
  */
 
-#include <Shooter.h>
-#include <RobotMap.h>
-
-Shooter::Shooter(
-	frc::Joystick &m_joystick
-	, CANTalon &m_shootWheel1
-	, CANTalon &m_shootWheel2
-	, CANTalon &m_indexMotor
-	)
-	:
-	m_joystick(m_joystick)
-	, m_shootWheel1(m_shootWheel1)
-	, m_shootWheel2(m_shootWheel2)
-	, m_indexMotor(m_indexMotor)
+#include "RobotMap.h"
+#include "Shooter.h"
+Shooter::Shooter()
+	: m_shootWheel1(0), m_shootWheel2(1), m_indexMotor(0)
 {
 	// TODO Auto-generated constructor stub
 
@@ -26,14 +17,6 @@ Shooter::Shooter(
 
 Shooter::~Shooter() {
 	// TODO Auto-generated destructor stub
-}
-
-void Shooter::TeleopPeriodic() {
-	if (m_joystick.GetRawButton(SHOOT)) {
-		if (m_joystick.GetRawButton(REVERSEINDEX)) {
-			ReverseIndex();
-		} else Shoot();
-	} else Stop();
 }
 
 void Shooter::Shoot() {
