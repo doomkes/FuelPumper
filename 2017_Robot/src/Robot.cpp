@@ -11,11 +11,13 @@
 #include "TankDrive.h"
 #include "Pickup.h"
 #include "BoilerVision.h"
+#include "GearManipulator.h"
 #include "Shooter.h"
 using frc::SmartDashboard;
 using namespace std;
 using namespace frc;
 class Robot: public frc::IterativeRobot {
+	grip::BoilerVision m_boilerVision;
 	frc::Solenoid m_gearShift;
 	CANTalon m_leftMotor1;
 	CANTalon m_leftMotor2;
@@ -28,6 +30,8 @@ class Robot: public frc::IterativeRobot {
 	CameraServer *cameraServer = nullptr;
 	cs::CvSource m_outputStream;
 	cs::UsbCamera camera;
+	GearManipulator m_gearManip;
+
 	Pickup m_pickup;
 	Joystick m_leftStick, m_rightStick;
 
@@ -68,7 +72,10 @@ public:
 	}
 
 	void RobotInit() {
-
+		SmartDashboard::PutNumber("Exposure", 1);
+		if(!Preferences::GetInstance()->ContainsKey("Exposure")) {
+			Preferences::GetInstance()->PutFloat("Exposure", 1);
+		}
 	}
 
 	void TeleopInit() {
@@ -76,6 +83,7 @@ public:
 	}
 
 	void TeleopPeriodic() {
+		m_gearManip.Release(m_leftStick.GetRawButton(LStickMap::GEAR_RELEASE));
 		m_tank.TeleopPeriodic();
 		m_pickup.TeleopPeriodic();
 		if (m_rightStick.GetRawButton(SHOOT)) {
@@ -83,12 +91,11 @@ public:
 				m_shooter.ReverseIndex();
 			} else m_shooter.Shoot();
 		} else m_shooter.Stop();
-
 	}
 
 	void AutonomousInit() override {
 		cameraServer = CameraServer::GetInstance();
-		camera = cameraServer->StartAutomaticCapture();
+		camera = cameraServer->StartAutomaticCapture(0);
 		m_outputStream = CameraServer::GetInstance()->PutVideo("thresh", 640, 480);
 		camera.SetResolution(640, 480);
 		camera.SetExposureManual(1);
@@ -98,9 +105,9 @@ public:
 		cv::Mat frame;
 
 		cameraServer->GetVideo().GrabFrame(frame);
-		Vision.process(frame);
+		m_boilerVision.process(frame);
 		std::vector<std::vector<cv::Point>> foundContours;
-		foundContours = *Vision.getfindContoursOutput();
+		foundContours = *m_boilerVision.getfindContoursOutput();
 
 		vector<cv::Moments> mu(foundContours.size());
 
@@ -117,6 +124,11 @@ public:
 		for(unsigned i = 0; i < foundContours.size(); i++) {
 			printf("Found Contours!:  x: %f, y: %f\n", mc[i].x, mc[i].y);
 		}
+		for(unsigned i = 0; i < foundContours.size(); i++) {
+			cv::Rect boundingRect = cv::boundingRect(foundContours[i]);
+			printf("X: %i, Y: %i, W: %i, H: %i\n",boundingRect.x,boundingRect.y,boundingRect.width,boundingRect.height);
+		}
+
 
 //		cv::Mat contourImg;
 //		cv::Mat mymat;

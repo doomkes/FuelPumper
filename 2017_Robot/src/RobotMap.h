@@ -20,12 +20,14 @@ enum ManStickMap {
 
 enum LStickMap {
 	PICKUP = 1,
+	GEAR_RELEASE,
 };
 
 enum RStickMap {
 	REVERSE_DRIVE = 1,
 	SET_SPEED_MODE = 10,
 	SET_VBUS_MODE = 11,
+	RELEASE_GEAR = 3
 };
 
 enum DIOMap {
@@ -48,6 +50,11 @@ enum CANTalonMap {
 	SHOOT4 = 1,
 	INDEXER = 9,
 };
-#endif /* SRC_ROBOTMAP_H_ */
 
+enum PWMMap {
+	LEFT_GEAR_SERVO = 2,
+	RIGHT_GEAR_SERVO = 3,
+};
+
+#endif /* SRC_ROBOTMAP_H_ */
 
