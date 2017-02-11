@@ -46,6 +46,13 @@ void TankDrive::TeleopPeriodic() {
 	else {
 		TankDrive::LowGear();
 	}
+	if (m_leftStick.GetRawButton(7)){
+		TankDrive::HighGear();
+	}
+	else {
+		TankDrive::LowGear();
+	}
+
 }
 
 void TankDrive::Drive(const float leftVal, const float rightVal) {
