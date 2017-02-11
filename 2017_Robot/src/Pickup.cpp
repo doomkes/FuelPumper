@@ -46,7 +46,7 @@ Pickup::~Pickup() {
 // TODO Implement Pickup class methods
 
 
-void Pickup::Intake(bool Highspeed) {
+void Pickup::Intake() {
 
 	double IntakeVoltageFactor = 1;
 	double HopperVoltageFactor = 1;

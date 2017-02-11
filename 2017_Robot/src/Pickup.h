@@ -19,6 +19,7 @@ class Pickup {
 	frc::Talon& m_intakeMotor;
 	// Hopper Motor pushs into Hopper
 	frc::Talon& m_hopperMotor;
+	PowerDistributionPanel m_pdp;
 
 public:
 	Pickup(
@@ -30,7 +31,7 @@ public:
 	void TeleopPeriodic();
 	virtual ~Pickup();
 	//Chose between 2 speeds to intake the Fuel
-	void Intake(bool Highspeed);
+	void Intake();
 	void stop();
 	void Reverse();
 };
