@@ -20,8 +20,11 @@ enum ManStickMap {
 
 enum LStickMap {
 	PICKUP = 1,
+	REVERSEPICKUP = 4, // TODO Figure out actual button value
 	GEAR_RELEASE,
 };
+
+
 
 enum RStickMap {
 	REVERSE_DRIVE = 1,
