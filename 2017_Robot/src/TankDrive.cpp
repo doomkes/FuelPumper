@@ -54,11 +54,9 @@ void TankDrive::Drive(const float leftVal, const float rightVal) {
 }
 
 void TankDrive::LowGear() {
-	m_gearShiftL.Set(false);
-	m_gearShiftR.Set(false);
+	m_gearShift.Set(false);
 }
 
 void TankDrive::HighGear() {
-	m_gearShiftL.Set(true);
-	m_gearShiftR.Set(true);
+	m_gearShift.Set(true);
 }

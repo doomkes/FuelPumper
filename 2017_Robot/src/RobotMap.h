@@ -34,26 +34,20 @@ enum DIOMap {
 };
 
 enum SolenoidMap {
-	GEAR_SHIFTR,
-	GEAR_SHIFTL
+	GEAR_SHIFT=0
 };
 
 enum CANTalonMap {
-
-	RIGHT_DRIVE1 = 5,   //DT1
-	RIGHT_DRIVE2 = 6,   //DT2
-	LEFT_DRIVE1  = 7,   //DT3
-	LEFT_DRIVE2  = 8,   //DT4
-
-	SHOOT1 = 4,         //S1
-	SHOOT2 = 3,         //S2
-	SHOOT3 = 2,         //S3
-	SHOOT4 = 1,         //S4
-
-	INDEXER = 9,        // IN
-
+	RIGHT_DRIVE1 = 5,
+	RIGHT_DRIVE2 = 6,
+	LEFT_DRIVE1 = 7,
+	LEFT_DRIVE2 = 8,
+	SHOOT1 = 4,
+	SHOOT2 = 3,
+	SHOOT3 = 2,
+	SHOOT4 = 1,
+	INDEXER = 9,
 };
 #endif /* SRC_ROBOTMAP_H_ */
-
 
 
