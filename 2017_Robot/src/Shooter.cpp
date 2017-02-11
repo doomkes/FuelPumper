@@ -5,8 +5,10 @@
  *      Author: Joey
  */
 
-#include <Shooter.h>
-#include <RobotMap.h>
+
+#include "Shooter.h"
+#include "RobotMap.h"
+
 
 Shooter::Shooter(
 	frc::Joystick &m_joystick
@@ -66,6 +68,3 @@ void Shooter::Init() {
 	m_shootWheel1.SetControlMode(frc::CANSpeedController::kSpeed);
 	m_shootWheel2.SetControlMode(frc::CANSpeedController::kSpeed);
 }
-
-
-

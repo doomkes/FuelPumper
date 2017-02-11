@@ -9,9 +9,9 @@
 #ifndef SRC_TANKDRIVE_H_
 #define SRC_TANKDRIVE_H_
 
-#include <WPIlib.h>
+#include <WPILib.h>
 #include <CANTalon.h>
-#include "Robotmap.h"
+#include "RobotMap.h"
 
 class TankDrive {
 	frc::Joystick& m_leftStick;
