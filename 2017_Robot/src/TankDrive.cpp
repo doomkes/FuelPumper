@@ -6,11 +6,24 @@
  */
 
 #include <TankDrive.h>
-#include "Robotmap.h"
-TankDrive::TankDrive()
-	: m_leftMotor1(LEFT_DRIVE1),		m_leftMotor2(LEFT_DRIVE2),
-	  m_rightMotor1(RIGHT_DRIVE1),	m_rightMotor2(RIGHT_DRIVE2),
-	  m_gearShift(GEAR_SHIFT)
+
+TankDrive::TankDrive(
+		frc::Joystick &m_leftStick
+		,frc::Joystick &m_rightStick
+		,frc::Solenoid &m_gearShift
+		,CANTalon &m_leftMotor1
+		,CANTalon &m_leftMotor2
+		,CANTalon &m_rightMotor1
+		,CANTalon &m_rightMotor2
+	)
+	:
+	m_leftStick(m_leftStick)
+	, m_rightStick(m_rightStick)
+	, m_gearShift(m_gearShift)
+	, m_leftMotor1(m_leftMotor1)
+	, m_leftMotor2(m_leftMotor2)
+	, m_rightMotor1(m_rightMotor1)
+	, m_rightMotor2(m_rightMotor2)
 {
 	m_leftMotor1.SetControlMode(CANTalon::ControlMode::kPercentVbus);
 	m_leftMotor2.SetControlMode(CANTalon::ControlMode::kFollower);
@@ -20,6 +33,10 @@ TankDrive::TankDrive()
 }
 
 TankDrive::~TankDrive() {
+ 	 }
+
+void TankDrive::TeleopPeriodic() {
+	this->Drive(this->m_leftStick.GetY(), -this->m_rightStick.GetY());
 }
 
 void TankDrive::Drive(const float leftVal, const float rightVal) {

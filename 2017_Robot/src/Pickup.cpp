@@ -7,10 +7,23 @@
 
 #include <Pickup.h>
 
-Pickup::Pickup()
-	: m_intakeMotor(0), m_hopperMotor(1)
+Pickup::Pickup(
+	frc::Joystick &m_leftStick
+	,frc::Talon &m_intakeMotor
+	,frc::Talon &m_hopperMotor
+	)
+	:
+	m_leftStick(m_leftStick)
+	, m_intakeMotor(m_intakeMotor)
+	, m_hopperMotor(m_hopperMotor)
 {
 	// TODO Auto-generated constructor stub
+}
+
+void Pickup::TeleopPeriodic() {
+	if(m_leftStick.GetRawButton(PICKUP)) {
+		Intake(true);
+	} else stop();
 }
 
 Pickup::~Pickup() {
