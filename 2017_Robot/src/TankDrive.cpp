@@ -47,10 +47,10 @@ void TankDrive::TeleopPeriodic() {
 		TankDrive::LowGear();
 	}
 	if (m_leftStick.GetRawButton(7)){
-	TankDrive::HighGear();
+		TankDrive::HighGear();
 	}
 	else {
-	TankDrive::LowGear();
+		TankDrive::LowGear();
 	}
 
 }
