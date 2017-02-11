@@ -15,6 +15,7 @@ enum ManStickMap {
 	SHOOT = 5,
 	LIMIT_SHOOT = 1,
 	SPINUP = 2,
+	REVERSEINDEX = 6, //TODO find real number for this.
 };
 
 enum LStickMap {

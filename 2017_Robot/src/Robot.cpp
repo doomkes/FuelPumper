@@ -11,6 +11,7 @@
 #include "TankDrive.h"
 #include "Pickup.h"
 #include "BoilerVision.h"
+#include "Shooter.h"
 using frc::SmartDashboard;
 using namespace std;
 using namespace frc;
@@ -22,7 +23,7 @@ class Robot: public frc::IterativeRobot {
 	CANTalon m_rightMotor2;
 
 	TankDrive m_tank;
-
+    Shooter m_shooter;
 	grip::BoilerVision Vision;
 	CameraServer *cameraServer = nullptr;
 	cs::CvSource m_outputStream;
@@ -76,6 +77,16 @@ public:
 	void TeleopPeriodic() {
 		m_tank.TeleopPeriodic();
 		m_pickup.TeleopPeriodic();
+		if (m_rightStick.GetRawButton(SHOOT)) {
+			if (m_rightStick.GetRawButton(REVERSEINDEX)) {
+				m_shooter.ReverseIndex();
+			} else m_shooter.Shoot();
+		} else m_shooter.Stop();
+
+
+		if(m_leftStick.GetRawButton(PICKUP)) {
+			m_pickup.Intake(true);
+		} else m_pickup.stop();
 	}
 
 	void AutonomousInit() override {

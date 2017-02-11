@@ -28,6 +28,26 @@ void Shooter::Shoot() {
 		m_indexMotor.SetSetpoint (1000);
 		//TODO Find actual RPM values
 	}
+
+
 }
 
-// TODO Implement Shooter class functions
+void Shooter::ReverseIndex() {
+
+	m_indexMotor.SetSetpoint (-1000);
+}
+
+
+void Shooter::Stop() {
+m_shootWheel1.SetSetpoint(0);
+m_shootWheel2.SetSetpoint(0);
+
+}
+
+void Shooter::Init() {
+	m_shootWheel1.SetControlMode(frc::CANSpeedController::kSpeed);
+	m_shootWheel2.SetControlMode(frc::CANSpeedController::kSpeed);
+}
+
+
+

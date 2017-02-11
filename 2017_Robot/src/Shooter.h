@@ -20,6 +20,9 @@ public:
 	//Want to allow it to activate shooter motors let
 	//then get up to speed then activate index motor
 	void Shoot();
+    void Stop();
+    void ReverseIndex();
+    void Init();
 
 
 };
