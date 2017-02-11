@@ -16,8 +16,7 @@
 class TankDrive {
 	frc::Joystick& m_leftStick;
 	frc::Joystick& m_rightStick;
-	frc::Solenoid m_gearShiftR;
-	frc::Solenoid m_gearShiftL;
+	frc::Solenoid m_gearShift;
 	CANTalon& m_leftMotor1;
 	CANTalon& m_leftMotor2;
 	CANTalon& m_rightMotor1;
