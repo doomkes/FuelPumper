@@ -5,7 +5,7 @@
  *      Author: Joey
  */
 
-#include <Pickup.h>
+#include "Pickup.h"
 
 Pickup::Pickup(
 	frc::Joystick &m_leftStick
