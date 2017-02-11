@@ -5,8 +5,10 @@
  *      Author: Joey
  */
 
+
 #include "Shooter.h"
 #include "RobotMap.h"
+
 
 Shooter::Shooter(
 	frc::Joystick &m_joystick

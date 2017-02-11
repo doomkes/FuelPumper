@@ -12,6 +12,7 @@
 #include <CANTalon.h>
 #include "RobotMap.h"
 
+
 class Shooter {
 	Joystick& m_joystick;
 	CANTalon& m_shootWheel1;
