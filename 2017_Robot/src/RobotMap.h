@@ -15,6 +15,7 @@ enum ManStickMap {
 	SHOOT = 5,
 	LIMIT_SHOOT = 1,
 	SPINUP = 2,
+	REVERSEINDEX = 6, //TODO find real number for this.
 };
 
 enum LStickMap {
@@ -33,10 +34,12 @@ enum DIOMap {
 };
 
 enum SolenoidMap {
-	GEAR_SHIFT
+	GEAR_SHIFTR,
+	GEAR_SHIFTL
 };
 
 enum CANTalonMap {
+
 	RIGHT_DRIVE1 = 5,   //DT1
 	RIGHT_DRIVE2 = 6,   //DT2
 	LEFT_DRIVE1  = 7,   //DT3
@@ -48,6 +51,7 @@ enum CANTalonMap {
 	SHOOT4 = 1,         //S4
 
 	INDEXER = 9,        // IN
+
 };
 #endif /* SRC_ROBOTMAP_H_ */
 
