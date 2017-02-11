@@ -33,7 +33,8 @@ enum DIOMap {
 };
 
 enum SolenoidMap {
-	GEAR_SHIFT
+	GEAR_SHIFTR,
+	GEAR_SHIFTL
 };
 
 enum CANTalonMap {

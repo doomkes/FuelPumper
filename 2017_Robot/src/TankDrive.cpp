@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 /*
  * TankDrive.cpp
  *
@@ -36,7 +37,15 @@ TankDrive::~TankDrive() {
  	 }
 
 void TankDrive::TeleopPeriodic() {
-	this->Drive(this->m_leftStick.GetY(), -this->m_rightStick.GetY());
+	this->Drive(-this->m_leftStick.GetY(), this->m_rightStick.GetY());
+	float WheelSpeed = ((m_rightMotor1.GetSpeed()*3)+(m_leftMotor1.GetSpeed()*3))/2;
+	float DriveSpeed = (WheelSpeed*(4*3.1415))/12;
+	if (DriveSpeed >= 6.4){
+		TankDrive::HighGear();
+	}
+	else {
+		TankDrive::LowGear();
+	}
 }
 
 void TankDrive::Drive(const float leftVal, const float rightVal) {
@@ -45,9 +54,11 @@ void TankDrive::Drive(const float leftVal, const float rightVal) {
 }
 
 void TankDrive::LowGear() {
-	m_gearShift.Set(false);
+	m_gearShiftL.Set(false);
+	m_gearShiftR.Set(false);
 }
 
 void TankDrive::HighGear() {
-	m_gearShift.Set(true);
+	m_gearShiftL.Set(true);
+	m_gearShiftR.Set(true);
 }
