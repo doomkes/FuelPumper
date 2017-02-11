@@ -40,16 +40,18 @@ void TankDrive::TeleopPeriodic() {
 	this->Drive(-this->m_leftStick.GetY(), this->m_rightStick.GetY());
 	float WheelSpeed = ((m_rightMotor1.GetSpeed()*3)+(m_leftMotor1.GetSpeed()*3))/2;
 	float DriveSpeed = (WheelSpeed*(4*3.1415))/12;
+
 	if (DriveSpeed >= 6.4){
 		TankDrive::HighGear();
 	}
 	else {
 		TankDrive::LowGear();
 	}
-	if (m_leftStick.GetRawButton(7)){
+
+	if (m_leftStick.GetRawButton(SHIFT_HIGH)) {
 		TankDrive::HighGear();
 	}
-	else {
+	else if (m_leftStick.GetRawButton(SHIFT_LOW)) {
 		TankDrive::LowGear();
 	}
 

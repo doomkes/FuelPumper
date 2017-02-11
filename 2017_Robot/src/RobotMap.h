@@ -22,6 +22,8 @@ enum LStickMap {
 	PICKUP = 1,
 	REVERSEPICKUP = 4, // TODO Figure out actual button value
 	GEAR_RELEASE,
+	SHIFT_LOW = 3,
+	SHIFT_HIGH = 2,
 };
 
 
@@ -31,6 +33,12 @@ enum RStickMap {
 	SET_SPEED_MODE = 10,
 	SET_VBUS_MODE = 11,
 	RELEASE_GEAR = 3
+};
+
+enum DS_USBMap {
+	LEFTSTICK = 0,
+	RIGHTSTICK = 1,
+	MANSTICK = 2,
 };
 
 enum DIOMap {
@@ -60,4 +68,5 @@ enum PWMMap {
 };
 
 #endif /* SRC_ROBOTMAP_H_ */
+
 
