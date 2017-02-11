@@ -10,19 +10,32 @@
 
 #include <WPIlib.h>
 #include <CANTalon.h>
+#include "Robotmap.h"
 
 class TankDrive {
-	CANTalon m_leftMotor1, m_leftMotor2;
-	CANTalon m_rightMotor1, m_rightMotor2;
-	frc::Solenoid m_gearShift;
+	frc::Joystick& m_leftStick;
+	frc::Joystick& m_rightStick;
+	frc::Solenoid& m_gearShift;
+	CANTalon& m_leftMotor1;
+	CANTalon& m_leftMotor2;
+	CANTalon& m_rightMotor1;
+	CANTalon& m_rightMotor2;
 public:
-	TankDrive();
+	TankDrive(
+		frc::Joystick &
+		,frc::Joystick &
+		,frc::Solenoid &
+		,CANTalon &
+		,CANTalon &
+		,CANTalon &
+		,CANTalon &
+	);
 	virtual ~TankDrive();
-
+	void TeleopPeriodic();
 	void Drive(const float leftVal, const float rightVal);
-
 	void LowGear();
 	void HighGear();
 };
 
 #endif /* SRC_TANKDRIVE_H_ */
+

@@ -15,6 +15,12 @@ using frc::SmartDashboard;
 using namespace std;
 using namespace frc;
 class Robot: public frc::IterativeRobot {
+	frc::Solenoid m_gearShift;
+	CANTalon m_leftMotor1;
+	CANTalon m_leftMotor2;
+	CANTalon m_rightMotor1;
+	CANTalon m_rightMotor2;
+
 	TankDrive m_tank;
 
 	grip::BoilerVision Vision;
@@ -23,9 +29,38 @@ class Robot: public frc::IterativeRobot {
 	cs::UsbCamera camera;
 	Pickup m_pickup;
 	Joystick m_leftStick, m_rightStick;
+
+	frc::Talon m_intakeMotor;
+	// Hopper Motor pushs into Hopper
+	frc::Talon m_hopperMotor;
+
 public:
 	Robot()
-		: m_leftStick(1), m_rightStick(2)
+		:
+		m_leftStick(1) //todo:mjj use config constant instead of literal number
+		,m_rightStick(2) //todo:mjj use config constant instead of literal number
+		,m_gearShift(GEAR_SHIFT)
+		,m_leftMotor1(LEFT_DRIVE1)
+		,m_leftMotor2(LEFT_DRIVE2)
+		,m_rightMotor1(RIGHT_DRIVE1)
+		,m_rightMotor2(RIGHT_DRIVE2)
+		, m_intakeMotor(0)
+		, m_hopperMotor(1)
+		,m_tank(
+			m_leftStick
+			, m_rightStick
+			, m_gearShift
+			, m_leftMotor1
+			, m_leftMotor2
+			, m_rightMotor1
+			, m_rightMotor2
+			)
+		,m_pickup(
+			m_leftStick
+			, m_intakeMotor
+			, m_hopperMotor
+			)
+
 	{
 
 	}
@@ -39,7 +74,7 @@ public:
 	}
 
 	void TeleopPeriodic() {
-		m_tank.Drive(m_leftStick.GetY(), -m_rightStick.GetY());
+		m_tank.TeleopPeriodic();
 
 		if(m_leftStick.GetRawButton(PICKUP)) {
 			m_pickup.Intake(true);
