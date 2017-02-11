@@ -20,6 +20,8 @@ enum ManStickMap {
 
 enum LStickMap {
 	PICKUP = 1,
+	SHIFT_LOW = 3,
+	SHIFT_HIGH = 2,
 };
 
 enum RStickMap {
@@ -27,7 +29,11 @@ enum RStickMap {
 	SET_SPEED_MODE = 10,
 	SET_VBUS_MODE = 11,
 };
-
+enum DS_USBMap {
+	LEFTSTICK = 0,
+	RIGHTSTICK = 1,
+	MANSTICK = 2,
+};
 enum DIOMap {
 	AIM_LIGHT = 9,
 	RUN_GUN_LIGHT = 8
