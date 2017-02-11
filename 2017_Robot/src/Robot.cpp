@@ -49,8 +49,8 @@ class Robot: public frc::IterativeRobot {
 public:
 	Robot()
 		:
-		m_leftStick(USBMap::LEFTSTICK) //todo:mjj use config constant instead of literal number
-		,m_rightStick(USBMap::RIGHTSTICK) //todo:mjj use config constant instead of literal number
+		m_leftStick(LEFTSTICK) //todo:mjj use config constant instead of literal number
+		,m_rightStick(RIGHTSTICK) //todo:mjj use config constant instead of literal number
 		,m_gearShift(GEAR_SHIFT)
 		,m_leftMotor1(LEFT_DRIVE1)
 		,m_leftMotor2(LEFT_DRIVE2)
