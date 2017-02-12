@@ -23,8 +23,8 @@ Shooter::Shooter(
 	, m_shootWheel1(m_shootWheel1)
 	, m_shootWheel2(m_shootWheel2)
 	, m_indexMotor(m_indexMotor)
-    , m_joystick2(m_joystick2)
-    , m_aimLight(m_aimLight)
+	, m_joystick2(m_joystick2)
+	, m_aimLight(m_aimLight)
 {
 	// TODO Auto-generated constructor stub
 

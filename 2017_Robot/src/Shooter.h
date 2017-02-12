@@ -19,7 +19,7 @@ class Shooter {
 	CANTalon& m_shootWheel2;
 	CANTalon& m_indexMotor;
 	Joystick& m_joystick2;
-    DigitalOutput& m_aimLight;
+	DigitalOutput& m_aimLight;
 public:
 	Shooter(
 		frc::Joystick &

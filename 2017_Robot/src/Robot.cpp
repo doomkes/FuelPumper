@@ -30,7 +30,7 @@ class Robot: public frc::IterativeRobot {
 	CANTalon m_shootWheel1;
 	CANTalon m_shootWheel2;
 	CANTalon m_indexMotor;
-    DigitalOutput m_aimLight;
+	DigitalOutput m_aimLight;
 	grip::BoilerVision Vision;
 	CameraServer *cameraServer = nullptr;
 	cs::CvSource m_outputStream;
@@ -67,7 +67,7 @@ public:
 			, m_rightMotor1
 			, m_rightMotor2
 		)
-        , m_aimLight(AIM_LIGHT)
+		, m_aimLight(AIM_LIGHT)
 		, m_shootWheel1(0)
 		, m_shootWheel2(1)
 		, m_indexMotor(2)
@@ -82,7 +82,7 @@ public:
 			, m_shootWheel1 //todo:mjj change values to constant.
 			, m_shootWheel2
 			, m_indexMotor
-		   , m_leftStick
+			, m_leftStick
 			, m_aimLight
 		)
 
