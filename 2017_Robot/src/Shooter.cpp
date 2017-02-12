@@ -15,12 +15,16 @@ Shooter::Shooter(
 	, CANTalon &m_shootWheel1
 	, CANTalon &m_shootWheel2
 	, CANTalon &m_indexMotor
+	, frc::Joystick &m_joystick2
+	, DigitalOutput &m_aimLight
 	)
 	:
 	m_joystick(m_joystick)
 	, m_shootWheel1(m_shootWheel1)
 	, m_shootWheel2(m_shootWheel2)
 	, m_indexMotor(m_indexMotor)
+    , m_joystick2(m_joystick2)
+    , m_aimLight(m_aimLight)
 {
 	// TODO Auto-generated constructor stub
 
@@ -36,6 +40,13 @@ void Shooter::TeleopPeriodic() {
 			ReverseIndex();
 		} else Shoot();
 	} else Stop();
+
+    if (m_joystick2.GetRawButton(AIM_LIGHT)) {
+    	AimLight(true);
+    }  else {
+    	AimLight(false);
+    }
+
 }
 
 void Shooter::Shoot() {
@@ -67,4 +78,13 @@ m_shootWheel2.SetSetpoint(0);
 void Shooter::Init() {
 	m_shootWheel1.SetControlMode(frc::CANSpeedController::kSpeed);
 	m_shootWheel2.SetControlMode(frc::CANSpeedController::kSpeed);
+}
+
+void Shooter::AimLight(bool state) {
+
+	if(state)
+		m_aimLight.UpdateDutyCycle(0.7);
+	else
+		m_aimLight.UpdateDutyCycle(0);
+
 }

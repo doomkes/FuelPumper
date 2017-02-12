@@ -18,12 +18,16 @@ class Shooter {
 	CANTalon& m_shootWheel1;
 	CANTalon& m_shootWheel2;
 	CANTalon& m_indexMotor;
+	Joystick& m_joystick2;
+    DigitalOutput& m_aimLight;
 public:
 	Shooter(
 		frc::Joystick &
 		, CANTalon &
 		, CANTalon &
 		, CANTalon &
+		, frc::Joystick &
+		, DigitalOutput &
 	);
 	virtual ~Shooter();
 	void TeleopPeriodic();
@@ -34,7 +38,7 @@ public:
     void Stop();
     void ReverseIndex();
     void Init();
-
+    void AimLight(bool state);
 
 };
 
