@@ -10,13 +10,23 @@
 #include <WPILib.h>
 
 class GearManipulator {
-private:
-	frc::Servo m_leftServo, m_rightServo;
+	frc::Joystick& m_joystick;
+	int m_button;
+	frc::Servo& m_leftServo;
+	frc::Servo& m_rightServo;
 public:
 	void Release(bool release);
 
-	GearManipulator();
+	GearManipulator(
+		frc::Joystick &
+		, int
+		, frc::Servo &
+		, frc::Servo &
+	);
 	virtual ~GearManipulator();
+
+	void TeleopPeriodic();
+
 };
 
 #endif /* GEARMANIPULATOR_H_ */

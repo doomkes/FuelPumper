@@ -35,7 +35,7 @@ class Robot: public frc::IterativeRobot {
 	CameraServer *cameraServer = nullptr;
 	cs::CvSource m_outputStream;
 	cs::UsbCamera camera;
-	GearManipulator m_gearManip;
+	GearManipulator m_gearManipulator;
 
 	Pickup m_pickup;
 	Joystick m_leftStick, m_rightStick;
@@ -44,6 +44,8 @@ class Robot: public frc::IterativeRobot {
 	// Hopper Motor pushs into Hopper
 	frc::Talon m_hopperMotor;
 
+	frc::Servo m_leftGearServo;
+	frc::Servo m_rightGearServo;
 
 
 public:
@@ -82,6 +84,14 @@ public:
 			, m_shootWheel2
 			, m_indexMotor
 		)
+		, m_leftGearServo(LEFT_GEAR_SERVO)
+		, m_rightGearServo(RIGHT_GEAR_SERVO)
+		, m_gearManipulator(
+			m_rightStick
+			, GEAR_RELEASE
+			, m_leftGearServo
+			, m_rightGearServo
+		)
 
 
 	{
@@ -100,7 +110,8 @@ public:
 	}
 
 	void TeleopPeriodic() {
-		m_gearManip.Release(m_leftStick.GetRawButton(LStickMap::GEAR_RELEASE));
+		//m_gearManipulator.Release(m_leftStick.GetRawButton(LStickMap::GEAR_RELEASE));
+		m_gearManipulator.TeleopPeriodic();
 		m_tank.TeleopPeriodic();
 		m_pickup.TeleopPeriodic();
 		m_shooter.TeleopPeriodic();
