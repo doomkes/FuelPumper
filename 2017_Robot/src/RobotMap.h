@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 /*
  * RobotMap.h
  *
@@ -68,5 +69,4 @@ enum PWMMap {
 };
 
 #endif /* SRC_ROBOTMAP_H_ */
-
 
