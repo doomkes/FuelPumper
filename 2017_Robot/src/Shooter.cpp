@@ -51,11 +51,10 @@ void Shooter::TeleopPeriodic() {
 
 void Shooter::Shoot() {
 
-	m_shootWheel1.SetSetpoint(1000);
-	//TODO Find actual RPM value
-	m_shootWheel2.SetSetpoint(1000);
-	//TODO Find actual RPM value
-	if (m_shootWheel1.GetSpeed()>=1000) {
+	float speed = Preferences::GetInstance()->GetFloat("ShooterSpeed",0);
+	m_shootWheel1.SetSetpoint(speed);
+	m_shootWheel2.SetSetpoint(speed);
+	if (abs(m_shootWheel1.GetSpeed()-speed)<=50) {
 		m_indexMotor.SetSetpoint (1000);
 		//TODO Find actual RPM values
 	}
@@ -88,3 +87,4 @@ void Shooter::AimLight(bool state) {
 		m_aimLight.UpdateDutyCycle(0);
 
 }
+
