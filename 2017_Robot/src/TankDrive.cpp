@@ -27,10 +27,15 @@ TankDrive::TankDrive(
 	, m_rightMotor2(m_rightMotor2)
 {
 	m_leftMotor1.SetControlMode(CANTalon::ControlMode::kPercentVbus);
+	m_leftMotor1.ConfigEncoderCodesPerRev(120);
 	m_leftMotor2.SetControlMode(CANTalon::ControlMode::kFollower);
+	m_leftMotor2.ConfigEncoderCodesPerRev(120);
 	m_rightMotor1.SetControlMode(CANTalon::ControlMode::kPercentVbus);
+	m_rightMotor1.ConfigEncoderCodesPerRev(120);
 	m_rightMotor2.SetControlMode(CANTalon::ControlMode::kFollower);
-
+	m_rightMotor2.ConfigEncoderCodesPerRev(120);
+	m_leftMotor2.Set(LEFT_DRIVE1);
+	m_rightMotor2.Set(RIGHT_DRIVE1);
 }
 
 TankDrive::~TankDrive() {
@@ -38,28 +43,28 @@ TankDrive::~TankDrive() {
 
 void TankDrive::TeleopPeriodic() {
 	this->Drive(-this->m_leftStick.GetY(), this->m_rightStick.GetY());
-	float WheelSpeed = ((m_rightMotor1.GetSpeed()*3)+(m_leftMotor1.GetSpeed()*3))/2;
+	float WheelSpeed = ((m_rightMotor1.GetSpeed()+m_leftMotor1.GetSpeed())*60)/2;
+	//^^above^^Gives us the average rotations per second of the two encoders
 	float DriveSpeed = (WheelSpeed*(4*3.1415))/12;
-
+	//^^above^^Gives us speed in feet per second
 	if (DriveSpeed >= 6.4){
 		TankDrive::HighGear();
 	}
-	else {
+
+	if (m_leftStick.GetRawButton(SHIFT_LOW)){
 		TankDrive::LowGear();
 	}
-
-	if (m_leftStick.GetRawButton(SHIFT_HIGH)) {
+	else if (m_leftStick.GetRawButton(SHIFT_HIGH)){
 		TankDrive::HighGear();
 	}
-	else if (m_leftStick.GetRawButton(SHIFT_LOW)) {
-		TankDrive::LowGear();
-	}
+
 
 }
 
 void TankDrive::Drive(const float leftVal, const float rightVal) {
 	m_leftMotor1.SetSetpoint(leftVal);
 	m_rightMotor1.SetSetpoint(rightVal);
+
 }
 
 void TankDrive::LowGear() {
