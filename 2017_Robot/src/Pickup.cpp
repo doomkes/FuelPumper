@@ -72,7 +72,7 @@ void Pickup::Intake() {
 
 
 	m_intakeMotor.Set(-1*IntakeVoltageFactor);
-	m_hopperMotor.Set(1*HopperVoltageFactor);
+	m_hopperMotor.Set(-1*HopperVoltageFactor);
 }
 
 void Pickup::stop() {
