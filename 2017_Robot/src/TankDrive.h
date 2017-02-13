@@ -20,6 +20,8 @@ class TankDrive {
 	CANTalon& m_leftMotor2;
 	CANTalon& m_rightMotor1;
 	CANTalon& m_rightMotor2;
+private:
+	int direction;
 public:
 	TankDrive(
 		frc::Joystick &
