@@ -60,9 +60,12 @@ enum CANTalonMap {
 	SHOOT3 = 2,
 	SHOOT4 = 1,
 	INDEXER = 9,
+	CLIMB = 10,
 };
 
 enum PWMMap {
+	PICKUP_INTAKE = 0,
+	PICKUP_HOPPER = 1,
 	LEFT_GEAR_SERVO = 2,
 	RIGHT_GEAR_SERVO = 3,
 };

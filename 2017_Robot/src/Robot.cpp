@@ -58,8 +58,8 @@ public:
 		,m_leftMotor2(LEFT_DRIVE2)
 		,m_rightMotor1(RIGHT_DRIVE1)
 		,m_rightMotor2(RIGHT_DRIVE2)
-		, m_intakeMotor(0)
-		, m_hopperMotor(1)
+		, m_intakeMotor(PICKUP_INTAKE)
+		, m_hopperMotor(PICKUP_HOPPER)
 		,m_tank(
 			m_leftStick
 			, m_rightStick
