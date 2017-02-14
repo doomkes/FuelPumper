@@ -13,6 +13,7 @@
 #include "BoilerVision.h"
 #include "GearManipulator.h"
 #include "Shooter.h"
+#include "Climber.h"
 using frc::SmartDashboard;
 using namespace std;
 using namespace frc;
@@ -23,9 +24,9 @@ class Robot: public frc::IterativeRobot {
 	CANTalon m_leftMotor2;
 	CANTalon m_rightMotor1;
 	CANTalon m_rightMotor2;
-
+	CANTalon m_climbMotor;
 	TankDrive m_tank;
-
+	Climber m_climber;
     Shooter m_shooter;
 	CANTalon m_shootWheel1;
 	CANTalon m_shootWheel2;
@@ -38,7 +39,7 @@ class Robot: public frc::IterativeRobot {
 	GearManipulator m_gearManipulator;
 
 	Pickup m_pickup;
-	Joystick m_leftStick, m_rightStick;
+	Joystick m_leftStick, m_rightStick, m_manStick;
 
 	frc::Talon m_intakeMotor;
 	// Hopper Motor pushs into Hopper
@@ -52,14 +53,16 @@ public:
 	Robot()
 		:
 		m_leftStick(LEFTSTICK) //todo:mjj use config constant instead of literal number
-		,m_rightStick(RIGHTSTICK) //todo:mjj use config constant instead of literal number
+		,m_rightStick(RIGHTSTICK)//todo:mjj use config constant instead of literal number
+		,m_manStick(MANSTICK)
 		,m_gearShift(GEAR_SHIFT)
 		,m_leftMotor1(LEFT_DRIVE1)
 		,m_leftMotor2(LEFT_DRIVE2)
 		,m_rightMotor1(RIGHT_DRIVE1)
 		,m_rightMotor2(RIGHT_DRIVE2)
-		, m_intakeMotor(PICKUP_INTAKE)
-		, m_hopperMotor(PICKUP_HOPPER)
+		,m_intakeMotor(PICKUP_INTAKE)
+		,m_climbMotor(CLIMB)
+		,m_hopperMotor(PICKUP_HOPPER)
 		,m_tank(
 			m_leftStick
 			, m_rightStick
@@ -86,6 +89,10 @@ public:
 			, m_indexMotor
 			, m_leftStick
 			, m_aimLight
+		)
+		, m_climber(
+			m_manStick
+			, m_climbMotor
 		)
 		, m_leftGearServo(LEFT_GEAR_SERVO)
 		, m_rightGearServo(RIGHT_GEAR_SERVO)
@@ -118,6 +125,7 @@ public:
 		m_tank.TeleopPeriodic();
 		m_pickup.TeleopPeriodic();
 		m_shooter.TeleopPeriodic();
+		m_climber.TeleopPeriodic();
 	}
 
 	void AutonomousInit() override {
