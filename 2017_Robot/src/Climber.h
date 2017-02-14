@@ -18,6 +18,7 @@ public:
 			, CANTalon &
 			);
 	virtual ~Climber();
+	void TeleopInit();
 	void TeleopPeriodic();
 	void Climb(bool);
 	void Stop();

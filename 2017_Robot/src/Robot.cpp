@@ -29,9 +29,9 @@ class Robot: public frc::IterativeRobot {
 	CANTalon m_rightMotor2;
 	CANTalon m_climbMotor;
 	TankDrive m_tank;
-	Autonomous *m_autonomous;
+	Autonomous *m_autonomous = nullptr;
 	Climber m_climber;
-  Shooter m_shooter;
+	Shooter m_shooter;
 	CANTalon m_shootWheel1;
 	CANTalon m_shootWheel2;
 	CANTalon m_indexMotor;
@@ -128,6 +128,7 @@ public:
 		m_pickup.TeleopInit();
 		m_shooter.TeleopInit();
 		m_tank.TeleopInit();
+		m_climber.TeleopInit();
 		m_vision.TeleopInit();
 	}
 
@@ -138,7 +139,8 @@ public:
 		m_pickup.TeleopPeriodic();
 		m_shooter.TeleopPeriodic();
 		m_climber.TeleopPeriodic();
-	}
+		m_vision.TeleopPeriodic();
+}
 
 	void AutonomousInit() override {
 	    m_autonomous->AutonomousInit();
