@@ -33,6 +33,7 @@ public:
 		,CANTalon &
 	);
 	virtual ~TankDrive();
+	void TeleopInit();
 	void TeleopPeriodic();
 	void Drive(const float leftVal, const float rightVal);
 	void LowGear();

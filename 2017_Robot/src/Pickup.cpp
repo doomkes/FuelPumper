@@ -23,10 +23,13 @@ Pickup::Pickup(
 	// TODO Auto-generated constructor stub
 }
 
-void Pickup::TeleopPeriodic() {
-	if(m_leftStick.GetRawButton(PICKUP)) {
+void Pickup::TeleopInit() {
 
-			if(m_leftStick.GetRawButton(REVERSEPICKUP)){
+}
+void Pickup::TeleopPeriodic() {
+	if(m_leftStick.GetRawButton(BUTTON_L_PICKUP)) {
+
+			if(m_leftStick.GetRawButton(BUTTON_L_REVERSEPICKUP)){
 				Reverse();
 			}
 			else {

@@ -12,35 +12,37 @@
 #include "Pickup.h"
 #include "BoilerVision.h"
 #include "GearManipulator.h"
+#include "Vision.h"
 #include "Shooter.h"
 #include "Autonomous.h"
+#include "Climber.h"
 using frc::SmartDashboard;
 using namespace std;
 using namespace frc;
 class Robot: public frc::IterativeRobot {
+	Vision m_vision;
 	grip::BoilerVision m_boilerVision;
 	frc::Solenoid m_gearShift;
 	CANTalon m_leftMotor1;
 	CANTalon m_leftMotor2;
 	CANTalon m_rightMotor1;
 	CANTalon m_rightMotor2;
-
+	CANTalon m_climbMotor;
 	TankDrive m_tank;
-
 	Autonomous *m_autonomous;
-
-    Shooter m_shooter;
+	Climber m_climber;
+  Shooter m_shooter;
 	CANTalon m_shootWheel1;
 	CANTalon m_shootWheel2;
 	CANTalon m_indexMotor;
 	DigitalOutput m_aimLight;
-	grip::BoilerVision Vision;
+	//grip::BoilerVision Vision;
 	CameraServer *cameraServer = nullptr;
 	cs::CvSource m_outputStream;
 	cs::UsbCamera camera;
 	GearManipulator m_gearManipulator;
 	Pickup m_pickup;
-	Joystick m_leftStick, m_rightStick;
+	Joystick m_leftStick, m_rightStick, m_manStick;
 
 	frc::Talon m_intakeMotor;
 	// Hopper Motor pushs into Hopper
@@ -53,15 +55,17 @@ class Robot: public frc::IterativeRobot {
 public:
 	Robot()
 		:
-		m_leftStick(LEFTSTICK) //todo:mjj use config constant instead of literal number
-		,m_rightStick(RIGHTSTICK) //todo:mjj use config constant instead of literal number
-		,m_gearShift(GEAR_SHIFT)
-		,m_leftMotor1(LEFT_DRIVE1)
-		,m_leftMotor2(LEFT_DRIVE2)
-		,m_rightMotor1(RIGHT_DRIVE1)
-		,m_rightMotor2(RIGHT_DRIVE2)
-		, m_intakeMotor(PICKUP_INTAKE)
-		, m_hopperMotor(PICKUP_HOPPER)
+		m_leftStick(STICK_LEFT) //todo:mjj use config constant instead of literal number
+		,m_rightStick(STICK_RIGHT)//todo:mjj use config constant instead of literal number
+		,m_manStick(STICK_MAN)
+		,m_gearShift(SOLENOID_GEAR_SHIFT)
+		,m_leftMotor1(MOTOR_LEFT_DRIVE1)
+		,m_leftMotor2(MOTOR_LEFT_DRIVE2)
+		,m_rightMotor1(MOTOR_RIGHT_DRIVE1)
+		,m_rightMotor2(MOTOR_RIGHT_DRIVE2)
+		,m_intakeMotor(MOTOR_PICKUP_INTAKE)
+		,m_climbMotor(MOTOR_CLIMB)
+		,m_hopperMotor(MOTOR_PICKUP_HOPPER)
 		,m_tank(
 			m_leftStick
 			, m_rightStick
@@ -71,13 +75,13 @@ public:
 			, m_rightMotor1
 			, m_rightMotor2
 		)
-		, m_aimLight(AIM_LIGHT)
+		, m_aimLight(LIGHT_AIM)
 		, m_shootWheel1(0)
 		, m_shootWheel2(1)
 		, m_indexMotor(2)
 		, m_pickup(
 			m_leftStick
-			, PICKUP
+			, BUTTON_L_PICKUP
 			, m_intakeMotor
 			, m_hopperMotor
 		)
@@ -89,53 +93,63 @@ public:
 			, m_leftStick
 			, m_aimLight
 		)
-
-		, m_leftGearServo(LEFT_GEAR_SERVO)
-		, m_rightGearServo(RIGHT_GEAR_SERVO)
+		, m_climber(
+			m_manStick
+			, m_climbMotor
+		)
+		, m_leftGearServo(MOTOR_LEFT_GEAR_SERVO)
+		, m_rightGearServo(MOTOR_RIGHT_GEAR_SERVO)
 		, m_gearManipulator(
 			m_rightStick
-			, GEAR_RELEASE
+			, BUTTON_L_GEAR_RELEASE
 			, m_leftGearServo
 			, m_rightGearServo
 		)
+		, m_vision(
 
+		)
 
 	{
 
 	}
 
-	void RobotInit() {
+	void RobotInit() override {
 		SmartDashboard::PutNumber("Exposure", 1);
 		if(!Preferences::GetInstance()->ContainsKey("Exposure")) {
 			Preferences::GetInstance()->PutFloat("Exposure", 1);
 		}
-
 		cameraServer = CameraServer::GetInstance();
 		m_autonomous = new Autonomous(cameraServer, m_outputStream, camera);
+		m_shooter.Init();
 	}
 
-	void TeleopInit() {
-
+	void TeleopInit() override {
+		m_gearManipulator.TeleopInit();
+		m_pickup.TeleopInit();
+		m_shooter.TeleopInit();
+		m_tank.TeleopInit();
+		m_vision.TeleopInit();
 	}
 
-	void TeleopPeriodic() {
+	void TeleopPeriodic() override {
 		//m_gearManipulator.Release(m_leftStick.GetRawButton(LStickMap::GEAR_RELEASE));
 		m_gearManipulator.TeleopPeriodic();
 		m_tank.TeleopPeriodic();
 		m_pickup.TeleopPeriodic();
 		m_shooter.TeleopPeriodic();
+		m_climber.TeleopPeriodic();
 	}
 
 	void AutonomousInit() override {
 	    m_autonomous->AutonomousInit();
 	}
 
-	void AutonomousPeriodic() {
+	void AutonomousPeriodic() override {
 		m_autonomous->AutonomousPeriodic();
 
 	}
 
-	void TestPeriodic() {
+	void TestPeriodic() override {
 
 	}
 };

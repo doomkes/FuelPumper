@@ -28,6 +28,7 @@ public:
 		,frc::Talon &
 		,frc::Talon &
 		);
+	void TeleopInit();
 	void TeleopPeriodic();
 	virtual ~Pickup();
 	//Chose between 2 speeds to intake the Fuel

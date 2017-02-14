@@ -34,18 +34,22 @@ TankDrive::TankDrive(
 	m_rightMotor1.ConfigEncoderCodesPerRev(120);
 	m_rightMotor2.SetControlMode(CANTalon::ControlMode::kFollower);
 	m_rightMotor2.ConfigEncoderCodesPerRev(120);
-	m_leftMotor2.Set(LEFT_DRIVE1);
-	m_rightMotor2.Set(RIGHT_DRIVE1);
+	m_leftMotor2.Set(MOTOR_LEFT_DRIVE1);
+	m_rightMotor2.Set(MOTOR_RIGHT_DRIVE1);
 	direction = 1;
 }
 
 TankDrive::~TankDrive() {
  	 }
 
+void TankDrive::TeleopInit() {
+
+}
+
 void TankDrive::TeleopPeriodic() {
-	if (m_rightStick.GetRawButton(REVERSE_DRIVE) && direction == 1) {
+	if (m_rightStick.GetRawButton(BUTTON_R_REVERSE_DRIVE) && direction == 1) {
 		direction = -1;
-	} else if (!m_rightStick.GetRawButton(REVERSE_DRIVE) && direction == -1) {
+	} else if (!m_rightStick.GetRawButton(BUTTON_R_REVERSE_DRIVE) && direction == -1) {
 		direction = 1;
 	}
 
@@ -59,10 +63,10 @@ void TankDrive::TeleopPeriodic() {
 		TankDrive::HighGear();
 	}
 
-	if (m_leftStick.GetRawButton(SHIFT_LOW)){
+	if (m_leftStick.GetRawButton(BUTTON_L_SHIFT_LOW)){
 		TankDrive::LowGear();
 	}
-	else if (m_leftStick.GetRawButton(SHIFT_HIGH)){
+	else if (m_leftStick.GetRawButton(BUTTON_L_SHIFT_HIGH)){
 		TankDrive::HighGear();
 	}
 }
