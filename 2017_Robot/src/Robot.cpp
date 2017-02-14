@@ -52,17 +52,17 @@ class Robot: public frc::IterativeRobot {
 public:
 	Robot()
 		:
-		m_leftStick(LEFTSTICK) //todo:mjj use config constant instead of literal number
-		,m_rightStick(RIGHTSTICK)//todo:mjj use config constant instead of literal number
-		,m_manStick(MANSTICK)
-		,m_gearShift(GEAR_SHIFT)
-		,m_leftMotor1(LEFT_DRIVE1)
-		,m_leftMotor2(LEFT_DRIVE2)
-		,m_rightMotor1(RIGHT_DRIVE1)
-		,m_rightMotor2(RIGHT_DRIVE2)
-		,m_intakeMotor(PICKUP_INTAKE)
-		,m_climbMotor(CLIMB)
-		,m_hopperMotor(PICKUP_HOPPER)
+		m_leftStick(STICK_LEFT) //todo:mjj use config constant instead of literal number
+		,m_rightStick(STICK_RIGHT)//todo:mjj use config constant instead of literal number
+		,m_manStick(STICK_MAN)
+		,m_gearShift(SOLENOID_GEAR_SHIFT)
+		,m_leftMotor1(MOTOR_LEFT_DRIVE1)
+		,m_leftMotor2(MOTOR_LEFT_DRIVE2)
+		,m_rightMotor1(MOTOR_RIGHT_DRIVE1)
+		,m_rightMotor2(MOTOR_RIGHT_DRIVE2)
+		,m_intakeMotor(MOTOR_PICKUP_INTAKE)
+		,m_climbMotor(MOTOR_CLIMB)
+		,m_hopperMotor(MOTOR_PICKUP_HOPPER)
 		,m_tank(
 			m_leftStick
 			, m_rightStick
@@ -72,13 +72,13 @@ public:
 			, m_rightMotor1
 			, m_rightMotor2
 		)
-		, m_aimLight(AIM_LIGHT)
+		, m_aimLight(LIGHT_AIM)
 		, m_shootWheel1(0)
 		, m_shootWheel2(1)
 		, m_indexMotor(2)
 		, m_pickup(
 			m_leftStick
-			, PICKUP
+			, BUTTON_L_PICKUP
 			, m_intakeMotor
 			, m_hopperMotor
 		)
@@ -94,11 +94,11 @@ public:
 			m_manStick
 			, m_climbMotor
 		)
-		, m_leftGearServo(LEFT_GEAR_SERVO)
-		, m_rightGearServo(RIGHT_GEAR_SERVO)
+		, m_leftGearServo(MOTOR_LEFT_GEAR_SERVO)
+		, m_rightGearServo(MOTOR_RIGHT_GEAR_SERVO)
 		, m_gearManipulator(
 			m_rightStick
-			, GEAR_RELEASE
+			, BUTTON_L_GEAR_RELEASE
 			, m_leftGearServo
 			, m_rightGearServo
 		)
