@@ -24,6 +24,10 @@ Climber::~Climber() {
 	// TODO Auto-generated destructor stub
 }
 
+void Climber::TeleopInit() {
+
+}
+
 void Climber::TeleopPeriodic() {
 	if ( !this -> climbing && m_manStick.GetRawButton(BUTTON_M_CLIMB)) {
 		this -> Climb(true);
