@@ -14,20 +14,30 @@
 
 
 class Shooter {
-	Joystick& m_joystick;
 	CANTalon& m_shootWheel1;
 	CANTalon& m_shootWheel2;
 	CANTalon& m_indexMotor;
-	Joystick& m_joystick2;
-	DigitalOutput& m_aimLight;
+	frc::DigitalOutput& m_aimLight;
+
+	int m_shootButton;
+	frc::Joystick& m_joystickForShootButton;
+	int m_reverseIndexButton;
+	frc::Joystick& m_joystickForReverseIndexButton;
+	int m_aimingLightButton;
+	frc::Joystick& m_joystickForAimingLightButton;
+
 public:
 	Shooter(
-		frc::Joystick &
+		CANTalon &
 		, CANTalon &
 		, CANTalon &
-		, CANTalon &
-		, frc::Joystick &
 		, DigitalOutput &
+		, int
+		, Joystick&
+		, int
+		, Joystick&
+		, int
+		, Joystick&
 	);
 	virtual ~Shooter();
 	void TeleopInit();

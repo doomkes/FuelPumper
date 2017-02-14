@@ -86,12 +86,16 @@ public:
 			, m_hopperMotor
 		)
 		, m_shooter(
-			m_rightStick
-			, m_shootWheel1 //todo:mjj change values to constant.
+			m_shootWheel1
 			, m_shootWheel2
 			, m_indexMotor
-			, m_leftStick
 			, m_aimLight
+			, BUTTON_M_SHOOT
+			, m_manStick
+			, BUTTON_M_REVERSEINDEX
+			, m_manStick
+			, BUTTON_L_AIM_LIGHT
+			, m_leftStick
 		)
 		, m_climber(
 			m_manStick
