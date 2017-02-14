@@ -11,20 +11,28 @@
 
 
 Shooter::Shooter(
-	frc::Joystick &m_joystick
-	, CANTalon &m_shootWheel1
+	CANTalon &m_shootWheel1
 	, CANTalon &m_shootWheel2
 	, CANTalon &m_indexMotor
-	, frc::Joystick &m_joystick2
-	, DigitalOutput &m_aimLight
+	, frc::DigitalOutput &m_aimLight
+	, int m_shootButton
+	, frc::Joystick &m_joystickForShootButton
+	, int m_reverseIndexButton
+	, frc::Joystick &m_joystickForReverseIndexButton
+	, int m_aimingLightButton
+	, frc::Joystick &m_joystickForAimingLightButton
 	)
 	:
-	m_joystick(m_joystick)
-	, m_shootWheel1(m_shootWheel1)
+	m_shootWheel1(m_shootWheel1)
 	, m_shootWheel2(m_shootWheel2)
 	, m_indexMotor(m_indexMotor)
-	, m_joystick2(m_joystick2)
 	, m_aimLight(m_aimLight)
+	, m_shootButton(m_shootButton)
+	, m_joystickForShootButton(m_joystickForShootButton)
+	, m_reverseIndexButton(m_reverseIndexButton)
+	, m_joystickForReverseIndexButton(m_joystickForReverseIndexButton)
+	, m_aimingLightButton(m_aimingLightButton)
+	, m_joystickForAimingLightButton(m_joystickForAimingLightButton)
 {
 	// TODO Auto-generated constructor stub
 
@@ -39,13 +47,13 @@ void Shooter::TeleopInit() {
 }
 
 void Shooter::TeleopPeriodic() {
-	if (m_joystick.GetRawButton(BUTTON_M_SHOOT)) {
-		if (m_joystick.GetRawButton(BUTTON_M_REVERSEINDEX)) {
+	if (m_joystickForShootButton.GetRawButton(m_shootButton)) {
+		if (m_joystickForReverseIndexButton.GetRawButton(m_reverseIndexButton)) {
 			ReverseIndex();
 		} else Shoot();
 	} else Stop();
 
-    if (m_joystick2.GetRawButton(LIGHT_AIM)) {
+    if (m_joystickForAimingLightButton.GetRawButton(m_aimingLightButton)) {
     	AimLight(true);
     }  else {
     	AimLight(false);
@@ -54,8 +62,8 @@ void Shooter::TeleopPeriodic() {
 }
 
 void Shooter::Shoot() {
-
-	float speed = Preferences::GetInstance()->GetFloat("ShooterSpeed",0);
+	//todo:mjj should an instance of Preferences be instantiated at Robot level and passed in for use?
+	float speed = frc::Preferences::GetInstance()->GetFloat("ShooterSpeed",0);
 	m_shootWheel1.SetSetpoint(speed);
 	m_shootWheel2.SetSetpoint(speed);
 	if (abs(m_shootWheel1.GetSpeed()-speed)<=50) {
