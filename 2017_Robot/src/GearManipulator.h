@@ -25,6 +25,7 @@ public:
 	);
 	virtual ~GearManipulator();
 
+	void TeleopInit();
 	void TeleopPeriodic();
 
 };

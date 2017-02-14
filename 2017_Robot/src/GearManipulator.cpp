@@ -25,6 +25,10 @@ GearManipulator::GearManipulator(
 GearManipulator::~GearManipulator() {
 }
 
+void GearManipulator::TeleopInit() {
+
+}
+
 void GearManipulator::TeleopPeriodic() {
 	Release(m_joystick.GetRawButton(m_button));
 }

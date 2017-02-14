@@ -23,6 +23,9 @@ Pickup::Pickup(
 	// TODO Auto-generated constructor stub
 }
 
+void Pickup::TeleopInit() {
+
+}
 void Pickup::TeleopPeriodic() {
 	if(m_leftStick.GetRawButton(BUTTON_L_PICKUP)) {
 

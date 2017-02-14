@@ -30,6 +30,7 @@ public:
 		, DigitalOutput &
 	);
 	virtual ~Shooter();
+	void TeleopInit();
 	void TeleopPeriodic();
 
 	//Want to allow it to activate shooter motors let

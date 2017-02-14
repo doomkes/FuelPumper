@@ -34,6 +34,10 @@ Shooter::~Shooter() {
 	// TODO Auto-generated destructor stub
 }
 
+void Shooter::TeleopInit() {
+
+}
+
 void Shooter::TeleopPeriodic() {
 	if (m_joystick.GetRawButton(BUTTON_M_SHOOT)) {
 		if (m_joystick.GetRawButton(BUTTON_M_REVERSEINDEX)) {

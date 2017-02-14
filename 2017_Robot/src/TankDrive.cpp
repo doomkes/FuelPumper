@@ -42,6 +42,10 @@ TankDrive::TankDrive(
 TankDrive::~TankDrive() {
  	 }
 
+void TankDrive::TeleopInit() {
+
+}
+
 void TankDrive::TeleopPeriodic() {
 	if (m_rightStick.GetRawButton(BUTTON_R_REVERSE_DRIVE) && direction == 1) {
 		direction = -1;

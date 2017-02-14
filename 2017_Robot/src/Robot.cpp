@@ -12,12 +12,14 @@
 #include "Pickup.h"
 #include "BoilerVision.h"
 #include "GearManipulator.h"
+#include "Vision.h"
 #include "Shooter.h"
 #include "Climber.h"
 using frc::SmartDashboard;
 using namespace std;
 using namespace frc;
 class Robot: public frc::IterativeRobot {
+	Vision m_vision;
 	grip::BoilerVision m_boilerVision;
 	frc::Solenoid m_gearShift;
 	CANTalon m_leftMotor1;
@@ -32,7 +34,7 @@ class Robot: public frc::IterativeRobot {
 	CANTalon m_shootWheel2;
 	CANTalon m_indexMotor;
 	DigitalOutput m_aimLight;
-	grip::BoilerVision Vision;
+	//grip::BoilerVision Vision;
 	CameraServer *cameraServer = nullptr;
 	cs::CvSource m_outputStream;
 	cs::UsbCamera camera;
@@ -102,24 +104,31 @@ public:
 			, m_leftGearServo
 			, m_rightGearServo
 		)
+		, m_vision(
 
+		)
 
 	{
 
 	}
 
-	void RobotInit() {
+	void RobotInit() override {
 		SmartDashboard::PutNumber("Exposure", 1);
 		if(!Preferences::GetInstance()->ContainsKey("Exposure")) {
 			Preferences::GetInstance()->PutFloat("Exposure", 1);
 		}
+		m_shooter.Init();
 	}
 
-	void TeleopInit() {
-
+	void TeleopInit() override {
+		m_gearManipulator.TeleopInit();
+		m_pickup.TeleopInit();
+		m_shooter.TeleopInit();
+		m_tank.TeleopInit();
+		m_vision.TeleopInit();
 	}
 
-	void TeleopPeriodic() {
+	void TeleopPeriodic() override {
 		//m_gearManipulator.Release(m_leftStick.GetRawButton(LStickMap::GEAR_RELEASE));
 		m_gearManipulator.TeleopPeriodic();
 		m_tank.TeleopPeriodic();
@@ -136,7 +145,7 @@ public:
 		camera.SetExposureManual(1);
 	}
 
-	void AutonomousPeriodic() {
+	void AutonomousPeriodic() override {
 		cv::Mat frame;
 
 		cameraServer->GetVideo().GrabFrame(frame);
@@ -174,7 +183,7 @@ public:
 //		m_outputStream.PutFrame(mymat);
 	}
 
-	void TestPeriodic() {
+	void TestPeriodic() override {
 
 	}
 };
