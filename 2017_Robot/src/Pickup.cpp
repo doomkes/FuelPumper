@@ -24,9 +24,9 @@ Pickup::Pickup(
 }
 
 void Pickup::TeleopPeriodic() {
-	if(m_leftStick.GetRawButton(PICKUP)) {
+	if(m_leftStick.GetRawButton(BUTTON_L_PICKUP)) {
 
-			if(m_leftStick.GetRawButton(REVERSEPICKUP)){
+			if(m_leftStick.GetRawButton(BUTTON_L_REVERSEPICKUP)){
 				Reverse();
 			}
 			else {

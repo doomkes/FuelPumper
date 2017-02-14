@@ -25,10 +25,10 @@ Climber::~Climber() {
 }
 
 void Climber::TeleopPeriodic() {
-	if ( !this -> climbing && m_manStick.GetRawButton(BUTTON_CLIMB)) {
+	if ( !this -> climbing && m_manStick.GetRawButton(BUTTON_M_CLIMB)) {
 		this -> Climb(true);
 	}
-	else if(this -> climbing && !m_manStick.GetRawButton(BUTTON_CLIMB)) {
+	else if(this -> climbing && !m_manStick.GetRawButton(BUTTON_M_CLIMB)) {
 		this -> Climb(false);
 	}
 }
