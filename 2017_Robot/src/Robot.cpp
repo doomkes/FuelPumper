@@ -14,6 +14,7 @@
 #include "GearManipulator.h"
 #include "Vision.h"
 #include "Shooter.h"
+#include "Autonomous.h"
 #include "Climber.h"
 using frc::SmartDashboard;
 using namespace std;
@@ -28,8 +29,9 @@ class Robot: public frc::IterativeRobot {
 	CANTalon m_rightMotor2;
 	CANTalon m_climbMotor;
 	TankDrive m_tank;
+	Autonomous *m_autonomous;
 	Climber m_climber;
-    Shooter m_shooter;
+  Shooter m_shooter;
 	CANTalon m_shootWheel1;
 	CANTalon m_shootWheel2;
 	CANTalon m_indexMotor;
@@ -39,7 +41,6 @@ class Robot: public frc::IterativeRobot {
 	cs::CvSource m_outputStream;
 	cs::UsbCamera camera;
 	GearManipulator m_gearManipulator;
-
 	Pickup m_pickup;
 	Joystick m_leftStick, m_rightStick, m_manStick;
 
@@ -117,6 +118,8 @@ public:
 		if(!Preferences::GetInstance()->ContainsKey("Exposure")) {
 			Preferences::GetInstance()->PutFloat("Exposure", 1);
 		}
+		cameraServer = CameraServer::GetInstance();
+		m_autonomous = new Autonomous(cameraServer, m_outputStream, camera);
 		m_shooter.Init();
 	}
 
@@ -138,49 +141,12 @@ public:
 	}
 
 	void AutonomousInit() override {
-		cameraServer = CameraServer::GetInstance();
-		camera = cameraServer->StartAutomaticCapture(0);
-		m_outputStream = CameraServer::GetInstance()->PutVideo("thresh", 640, 480);
-		camera.SetResolution(640, 480);
-		camera.SetExposureManual(1);
+	    m_autonomous->AutonomousInit();
 	}
 
 	void AutonomousPeriodic() override {
-		cv::Mat frame;
+		m_autonomous->AutonomousPeriodic();
 
-		cameraServer->GetVideo().GrabFrame(frame);
-		m_boilerVision.process(frame);
-		std::vector<std::vector<cv::Point>> foundContours;
-		foundContours = *m_boilerVision.getfindContoursOutput();
-
-		vector<cv::Moments> mu(foundContours.size());
-
-		vector<cv::Point2f> mc(foundContours.size());
-
-		for( unsigned i = 0; i < foundContours.size(); i++ ) {
-			mu[i] = moments( foundContours[i], false );
-		}
-
-		for(unsigned i = 0; i < foundContours.size(); i++) {
-			mc[i] = cv::Point2f(mu[i].m10 / mu[i].m00, mu[i].m01 / mu[i].m00);
-		}
-
-		for(unsigned i = 0; i < foundContours.size(); i++) {
-			printf("Found Contours!:  x: %f, y: %f\n", mc[i].x, mc[i].y);
-		}
-		for(unsigned i = 0; i < foundContours.size(); i++) {
-			cv::Rect boundingRect = cv::boundingRect(foundContours[i]);
-			printf("X: %i, Y: %i, W: %i, H: %i\n",boundingRect.x,boundingRect.y,boundingRect.width,boundingRect.height);
-		}
-
-
-//		cv::Mat contourImg;
-//		cv::Mat mymat;
-//		for(auto contour : foundContours) {
-//			cv::drawContours(contourImg, contour, {255, 0, 0});
-//			cv::Mat mymat = *Vision.gethsvThresholdOutput();
-//		}
-//		m_outputStream.PutFrame(mymat);
 	}
 
 	void TestPeriodic() override {
