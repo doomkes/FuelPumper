@@ -16,7 +16,8 @@ enum ManStickMap {
 	BUTTON_M_LIMIT_SHOOT = 1,
 	BUTTON_M_SPINUP = 2,
 	BUTTON_M_REVERSEINDEX = 6, //TODO find real number for this.
-	BUTTON_M_CLIMB = 7 //TODO find real number for this
+	BUTTON_M_CLIMB = 7, //TODO find real number for this
+	BUTTON_M_REVERSECLIMB = 8 //TODO find real number for this
 };
 
 enum LStickMap {

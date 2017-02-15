@@ -20,10 +20,11 @@ public:
 	virtual ~Climber();
 	void TeleopInit();
 	void TeleopPeriodic();
-	void Climb(bool);
+	void Climb(bool, int);
 	void Stop();
 private:
 	bool climbing;
+	int direction;
 };
 
 #endif /* SRC_CLIMBER_H_ */
