@@ -8,7 +8,7 @@
 
 #include "Shooter.h"
 #include "RobotMap.h"
-
+#include <SmartDashboard/SmartDashboard.h>
 
 Shooter::Shooter(
 	CANTalon &m_shootWheel1
@@ -66,7 +66,7 @@ void Shooter::TeleopPeriodic() {
 
 void Shooter::Shoot(float shooterSpeed) {
 	double IndexVoltageFactor = 1;
-	double IndexMotorAmps = m_pdp.GetCurrent(16666);
+	double IndexMotorAmps = m_pdp.GetCurrent(4);
 		SmartDashboard::PutNumber("Index Current", IndexMotorAmps);
 
 		if (abs(IndexMotorAmps) > 7.5) {
