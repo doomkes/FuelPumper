@@ -31,7 +31,7 @@ class Robot: public frc::IterativeRobot {
 	TankDrive m_tank;
 	Autonomous *m_autonomous = nullptr;
 	Climber m_climber;
-	Shooter *m_shooter;
+	Shooter *m_shooter = nullptr;
 	CANTalon m_shootWheel1;
 	CANTalon m_shootWheel2;
 	CANTalon m_indexMotor;
@@ -51,7 +51,7 @@ class Robot: public frc::IterativeRobot {
 	frc::Servo m_leftGearServo;
 	frc::Servo m_rightGearServo;
 
-	float m_shooterSpeed;
+	float m_shooterSpeed = 0;
 
 public:
 	Robot()
