@@ -26,6 +26,9 @@ class Shooter {
 	int m_aimingLightButton;
 	frc::Joystick& m_joystickForAimingLightButton;
 	PowerDistributionPanel m_pdp;
+
+  float m_shooterSpeed;
+
 public:
 	Shooter(
 		CANTalon &
@@ -38,6 +41,7 @@ public:
 		, Joystick&
 		, int
 		, Joystick&
+		, float
 	);
 	virtual ~Shooter();
 	void TeleopInit();
@@ -45,7 +49,7 @@ public:
 
 	//Want to allow it to activate shooter motors let
 	//then get up to speed then activate index motor
-	void Shoot();
+	void Shoot(float);
     void Stop();
     void ReverseIndex();
     void Init();

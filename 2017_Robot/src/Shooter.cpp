@@ -21,6 +21,7 @@ Shooter::Shooter(
 	, frc::Joystick &m_joystickForReverseIndexButton
 	, int m_aimingLightButton
 	, frc::Joystick &m_joystickForAimingLightButton
+	, float m_shooterSpeed
 	)
 	:
 	m_shootWheel1(m_shootWheel1)
@@ -33,6 +34,7 @@ Shooter::Shooter(
 	, m_joystickForReverseIndexButton(m_joystickForReverseIndexButton)
 	, m_aimingLightButton(m_aimingLightButton)
 	, m_joystickForAimingLightButton(m_joystickForAimingLightButton)
+	, m_shooterSpeed(m_shooterSpeed)
 {
 	// TODO Auto-generated constructor stub
 
@@ -50,7 +52,7 @@ void Shooter::TeleopPeriodic() {
 	if (m_joystickForShootButton.GetRawButton(m_shootButton)) {
 		if (m_joystickForReverseIndexButton.GetRawButton(m_reverseIndexButton)) {
 			ReverseIndex();
-		} else Shoot();
+		} else Shoot(m_shooterSpeed);
 	} else Stop();
 
     if (m_joystickForAimingLightButton.GetRawButton(m_aimingLightButton)) {
@@ -61,7 +63,8 @@ void Shooter::TeleopPeriodic() {
 
 }
 
-void Shooter::Shoot() {
+
+void Shooter::Shoot(float shooterSpeed) {
 	double IndexVoltageFactor = 1;
 	double IndexMotorAmps = m_pdp.GetCurrent(16666);
 		SmartDashboard::PutNumber("Index Current", IndexMotorAmps);
@@ -75,18 +78,15 @@ void Shooter::Shoot() {
 		IndexVoltageFactor += .005;
 		}
 
-	//todo:mjj should an instance of Preferences be instantiated at Robot level and passed in for use?
-	float speed = frc::Preferences::GetInstance()->GetFloat("ShooterSpeed",0);
-	m_shootWheel1.SetSetpoint(speed);
-	m_shootWheel2.SetSetpoint(speed);
-	if (abs(m_shootWheel1.GetSpeed()-speed)<=50) {
+m_shootWheel1.SetSetpoint(shooterSpeed);
+	m_shootWheel2.SetSetpoint(shooterSpeed);
+	if (abs(m_shootWheel1.GetSpeed()-shooterSpeed)<=50) {
 		m_indexMotor.SetSetpoint (1000);
 		//TODO Find actual RPM values
 	}
 
 
 }
-
 
 void Shooter::ReverseIndex() {
 	double IndexVoltageFactor = 1;
