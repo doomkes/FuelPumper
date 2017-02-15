@@ -62,6 +62,19 @@ void Shooter::TeleopPeriodic() {
 }
 
 void Shooter::Shoot() {
+	double IndexVoltageFactor = 1;
+	double IndexMotorAmps = m_pdp.GetCurrent(16666);
+		SmartDashboard::PutNumber("Index Current", IndexMotorAmps);
+
+		if (abs(IndexMotorAmps) > 7.5) {
+			IndexVoltageFactor -= .005;
+		SmartDashboard::PutBoolean ("Indexer Is Jammed.", true);
+		}
+		else {
+		SmartDashboard::PutBoolean ("Indexer Is Jammed.", false);
+		IndexVoltageFactor += .005;
+		}
+
 	//todo:mjj should an instance of Preferences be instantiated at Robot level and passed in for use?
 	float speed = frc::Preferences::GetInstance()->GetFloat("ShooterSpeed",0);
 	m_shootWheel1.SetSetpoint(speed);
@@ -74,9 +87,21 @@ void Shooter::Shoot() {
 
 }
 
-void Shooter::ReverseIndex() {
 
-	m_indexMotor.SetSetpoint (-1000);
+void Shooter::ReverseIndex() {
+	double IndexVoltageFactor = 1;
+	double IndexMotorAmps = m_pdp.GetCurrent(16666);
+		SmartDashboard::PutNumber("Index Current", IndexMotorAmps);
+
+		if (abs(IndexMotorAmps) > 7.5) {
+			IndexVoltageFactor -= .005;
+		SmartDashboard::PutBoolean ("Indexer Is Jammed.", true);
+		}
+		else {
+		SmartDashboard::PutBoolean ("Indexer Is Jammed.", false);
+		IndexVoltageFactor += .005;
+		}
+m_indexMotor.SetSetpoint (-1000);
 }
 
 
@@ -99,4 +124,3 @@ void Shooter::AimLight(bool state) {
 		m_aimLight.UpdateDutyCycle(0);
 
 }
-
