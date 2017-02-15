@@ -25,8 +25,9 @@ class Shooter {
 	frc::Joystick& m_joystickForReverseIndexButton;
 	int m_aimingLightButton;
 	frc::Joystick& m_joystickForAimingLightButton;
+	PowerDistributionPanel m_pdp;
 
-	float m_shooterSpeed;
+  float m_shooterSpeed;
 
 public:
 	Shooter(

@@ -63,8 +63,22 @@ void Shooter::TeleopPeriodic() {
 
 }
 
+
 void Shooter::Shoot(float shooterSpeed) {
-	m_shootWheel1.SetSetpoint(shooterSpeed);
+	double IndexVoltageFactor = 1;
+	double IndexMotorAmps = m_pdp.GetCurrent(16666);
+		SmartDashboard::PutNumber("Index Current", IndexMotorAmps);
+
+		if (abs(IndexMotorAmps) > 7.5) {
+			IndexVoltageFactor -= .005;
+		SmartDashboard::PutBoolean ("Indexer Is Jammed.", true);
+		}
+		else {
+		SmartDashboard::PutBoolean ("Indexer Is Jammed.", false);
+		IndexVoltageFactor += .005;
+		}
+
+m_shootWheel1.SetSetpoint(shooterSpeed);
 	m_shootWheel2.SetSetpoint(shooterSpeed);
 	if (abs(m_shootWheel1.GetSpeed()-shooterSpeed)<=50) {
 		m_indexMotor.SetSetpoint (1000);
@@ -75,7 +89,19 @@ void Shooter::Shoot(float shooterSpeed) {
 }
 
 void Shooter::ReverseIndex() {
-	m_indexMotor.SetSetpoint (-1000);
+	double IndexVoltageFactor = 1;
+	double IndexMotorAmps = m_pdp.GetCurrent(16666);
+		SmartDashboard::PutNumber("Index Current", IndexMotorAmps);
+
+		if (abs(IndexMotorAmps) > 7.5) {
+			IndexVoltageFactor -= .005;
+		SmartDashboard::PutBoolean ("Indexer Is Jammed.", true);
+		}
+		else {
+		SmartDashboard::PutBoolean ("Indexer Is Jammed.", false);
+		IndexVoltageFactor += .005;
+		}
+m_indexMotor.SetSetpoint (-1000);
 }
 
 
@@ -98,4 +124,3 @@ void Shooter::AimLight(bool state) {
 		m_aimLight.UpdateDutyCycle(0);
 
 }
-
