@@ -31,7 +31,7 @@ class Robot: public frc::IterativeRobot {
 	TankDrive m_tank;
 	Autonomous *m_autonomous = nullptr;
 	Climber m_climber;
-	Shooter m_shooter;
+	Shooter *m_shooter;
 	CANTalon m_shootWheel1;
 	CANTalon m_shootWheel2;
 	CANTalon m_indexMotor;
@@ -51,6 +51,7 @@ class Robot: public frc::IterativeRobot {
 	frc::Servo m_leftGearServo;
 	frc::Servo m_rightGearServo;
 
+	float m_shooterSpeed;
 
 public:
 	Robot()
@@ -85,18 +86,6 @@ public:
 			, m_intakeMotor
 			, m_hopperMotor
 		)
-		, m_shooter(
-			m_shootWheel1
-			, m_shootWheel2
-			, m_indexMotor
-			, m_aimLight
-			, BUTTON_M_SHOOT
-			, m_manStick
-			, BUTTON_M_REVERSEINDEX
-			, m_manStick
-			, BUTTON_L_AIM_LIGHT
-			, m_leftStick
-		)
 		, m_climber(
 			m_manStick
 			, m_climbMotor
@@ -124,13 +113,30 @@ public:
 		}
 		cameraServer = CameraServer::GetInstance();
 		m_autonomous = new Autonomous(cameraServer, m_outputStream, camera);
-		m_shooter.Init();
+
+		m_shooterSpeed = frc::Preferences::GetInstance()->GetFloat("ShooterSpeed",0);
+		m_shooter = new Shooter(
+			m_shootWheel1
+			, m_shootWheel2
+			, m_indexMotor
+			, m_aimLight
+			, BUTTON_M_SHOOT
+			, m_manStick
+			, BUTTON_M_REVERSEINDEX
+			, m_manStick
+			, BUTTON_L_AIM_LIGHT
+			, m_leftStick
+			, m_shooterSpeed
+		);
+
+
+		m_shooter->Init();
 	}
 
 	void TeleopInit() override {
 		m_gearManipulator.TeleopInit();
 		m_pickup.TeleopInit();
-		m_shooter.TeleopInit();
+		m_shooter->TeleopInit();
 		m_tank.TeleopInit();
 		m_climber.TeleopInit();
 		m_vision.TeleopInit();
@@ -141,7 +147,7 @@ public:
 		m_gearManipulator.TeleopPeriodic();
 		m_tank.TeleopPeriodic();
 		m_pickup.TeleopPeriodic();
-		m_shooter.TeleopPeriodic();
+		m_shooter->TeleopPeriodic();
 		m_climber.TeleopPeriodic();
 		m_vision.TeleopPeriodic();
 }
