@@ -23,6 +23,11 @@ class TankDrive {
 private:
 	int direction;
 	bool highGear;
+	float rightPosOld;
+	float leftPosOld;
+	float distance;
+	float angle;
+	float heading;
 public:
 	TankDrive(
 		frc::Joystick &
@@ -39,8 +44,12 @@ public:
 	void Drive(const float leftVal, const float rightVal);
 	void LowGear();
 	void HighGear();
+	void Position();
+	float m_xPosition;
+	float m_yPosition;
 };
 
 #endif /* SRC_TANKDRIVE_H_ */
+
 
 
