@@ -31,7 +31,7 @@ class Robot: public frc::IterativeRobot {
 	TankDrive m_tank;
 	Autonomous *m_autonomous = nullptr;
 	Climber m_climber;
-	Shooter *m_shooter = nullptr;
+	Shooter m_shooter;// = nullptr;
 	CANTalon m_shootWheel1;
 	CANTalon m_shootWheel2;
 	CANTalon m_indexMotor;
@@ -43,6 +43,9 @@ class Robot: public frc::IterativeRobot {
 	GearManipulator m_gearManipulator;
 	Pickup m_pickup;
 	Joystick m_leftStick, m_rightStick, m_manStick;
+	frc::JoystickButton shootJoystickButton;// = nullptr;
+	frc::JoystickButton reverseIndexJoystickButton;// = nullptr;
+	frc::JoystickButton aimLightJoystickButton;// = nullptr;
 
 	frc::Talon m_intakeMotor;
 	// Hopper Motor pushs into Hopper
@@ -55,56 +58,88 @@ class Robot: public frc::IterativeRobot {
 
 public:
 	Robot()
-		:
-		m_leftStick(STICK_LEFT) //todo:mjj use config constant instead of literal number
-		,m_rightStick(STICK_RIGHT)//todo:mjj use config constant instead of literal number
-		,m_manStick(STICK_MAN)
-		,m_gearShift(SOLENOID_GEAR_SHIFT)
-		,m_leftMotor1(MOTOR_LEFT_DRIVE1)
-		,m_leftMotor2(MOTOR_LEFT_DRIVE2)
-		,m_rightMotor1(MOTOR_RIGHT_DRIVE1)
-		,m_rightMotor2(MOTOR_RIGHT_DRIVE2)
-		,m_intakeMotor(MOTOR_PICKUP_INTAKE)
-		,m_climbMotor(MOTOR_CLIMB)
-		,m_hopperMotor(MOTOR_PICKUP_HOPPER)
-		,m_tank(
-			m_leftStick
-			, m_rightStick
-			, m_gearShift
-			, m_leftMotor1
-			, m_leftMotor2
-			, m_rightMotor1
-			, m_rightMotor2
-		)
-		, m_aimLight(LIGHT_AIM)
-		, m_shootWheel1(0)
-		, m_shootWheel2(1)
-		, m_indexMotor(2)
-		, m_pickup(
-			m_leftStick
-			, BUTTON_L_PICKUP
-			, m_intakeMotor
-			, m_hopperMotor
-		)
-		, m_climber(
-			m_manStick
-			, m_climbMotor
-		)
-		, m_leftGearServo(MOTOR_LEFT_GEAR_SERVO)
-		, m_rightGearServo(MOTOR_RIGHT_GEAR_SERVO)
-		, m_gearManipulator(
-			m_rightStick
-			, BUTTON_L_GEAR_RELEASE
-			, m_leftGearServo
-			, m_rightGearServo
-		)
-		, m_vision(
+:
+	// Joysticks
+	// Solenoids
+	// Motors
+	// Our Classes
+	m_leftStick(STICK_LEFT), //todo:mjj use config constant instead of literal number
+	m_rightStick(STICK_RIGHT),//todo:mjj use config constant instead of literal number
+	m_manStick(STICK_MAN),
 
-		)
+	m_gearShift(SOLENOID_GEAR_SHIFT),
 
-	{
+	m_leftMotor1(MOTOR_LEFT_DRIVE1),
+	m_leftMotor2(MOTOR_LEFT_DRIVE2),
+	m_rightMotor1(MOTOR_RIGHT_DRIVE1),
+	m_rightMotor2(MOTOR_RIGHT_DRIVE2),
+	m_intakeMotor(MOTOR_PICKUP_INTAKE),
+	m_climbMotor(MOTOR_CLIMB),
+	m_hopperMotor(MOTOR_PICKUP_HOPPER),
+	m_tank(
+			m_leftStick,
+			m_rightStick,
+			m_gearShift,
+			m_leftMotor1,
+			m_leftMotor2,
+			m_rightMotor1,
+			m_rightMotor2
+	),
+	m_aimLight(LIGHT_AIM),
+	m_shootWheel1(0),
+	m_shootWheel2(1),
+	m_indexMotor(2),
+	m_pickup(
+			m_leftStick,
+			BUTTON_L_PICKUP,
+			m_intakeMotor,
+			m_hopperMotor
+	),
+	m_climber(
+			m_manStick,
+			m_climbMotor
+	),
+	m_leftGearServo(MOTOR_LEFT_GEAR_SERVO),
+	m_rightGearServo(MOTOR_RIGHT_GEAR_SERVO),
+	m_gearManipulator(
+			m_rightStick,
+			BUTTON_L_GEAR_RELEASE,
+			m_leftGearServo,
+			m_rightGearServo
+	),
+	m_vision(
 
-	}
+	)
+,
+shootJoystickButton(
+		//(frc::GenericHID*) &m_manStick,
+		&m_manStick,
+		BUTTON_M_SHOOT
+),
+reverseIndexJoystickButton(
+		//(frc::GenericHID*) &m_manStick,
+		&m_manStick,
+		BUTTON_M_REVERSEINDEX
+),
+aimLightJoystickButton(
+		//(frc::GenericHID*) &m_leftStick,
+		&m_leftStick,
+		BUTTON_L_AIM_LIGHT
+),
+m_shooter(
+		m_shootWheel1
+		, m_shootWheel2
+		, m_indexMotor
+		, m_aimLight
+		, shootJoystickButton
+		, reverseIndexJoystickButton
+		, aimLightJoystickButton
+		, m_shooterSpeed
+)
+
+{
+
+}
 
 	void RobotInit() override {
 		SmartDashboard::PutNumber("Exposure", 1);
@@ -115,28 +150,29 @@ public:
 		m_autonomous = new Autonomous(cameraServer, m_outputStream, camera);
 
 		m_shooterSpeed = frc::Preferences::GetInstance()->GetFloat("ShooterSpeed",0);
-		m_shooter = new Shooter(
-			m_shootWheel1
-			, m_shootWheel2
-			, m_indexMotor
-			, m_aimLight
-			, BUTTON_M_SHOOT
-			, m_manStick
-			, BUTTON_M_REVERSEINDEX
-			, m_manStick
-			, BUTTON_L_AIM_LIGHT
-			, m_leftStick
-			, m_shooterSpeed
-		);
 
+		//frc::JoystickButton *shootJoystickButton = new frc::JoystickButton((frc::GenericHID*) &m_manStick, BUTTON_M_SHOOT);
+		//frc::JoystickButton *reverseIndexJoystickButton = new frc::JoystickButton((frc::GenericHID*) &m_manStick, BUTTON_M_REVERSEINDEX);
+		//frc::JoystickButton *aimLightJoystickButton = new frc::JoystickButton((frc::GenericHID*) &m_leftStick, BUTTON_L_AIM_LIGHT);
 
-		m_shooter->Init();
+		//		m_shooter = new Shooter(
+		//				m_shootWheel1
+		//				, m_shootWheel2
+		//				, m_indexMotor
+		//				, m_aimLight
+		//				, shootJoystickButton
+		//				, reverseIndexJoystickButton
+		//				, aimLightJoystickButton
+		//				, m_shooterSpeed
+		//		);
+
+		m_shooter.Init();
 	}
 
 	void TeleopInit() override {
 		m_gearManipulator.TeleopInit();
 		m_pickup.TeleopInit();
-		m_shooter->TeleopInit();
+		m_shooter.TeleopInit();
 		m_tank.TeleopInit();
 		m_climber.TeleopInit();
 		m_vision.TeleopInit();
@@ -147,13 +183,13 @@ public:
 		m_gearManipulator.TeleopPeriodic();
 		m_tank.TeleopPeriodic();
 		m_pickup.TeleopPeriodic();
-		m_shooter->TeleopPeriodic();
+		m_shooter.TeleopPeriodic();
 		m_climber.TeleopPeriodic();
 		m_vision.TeleopPeriodic();
-}
+	}
 
 	void AutonomousInit() override {
-	    m_autonomous->AutonomousInit();
+		m_autonomous->AutonomousInit();
 	}
 
 	void AutonomousPeriodic() override {
