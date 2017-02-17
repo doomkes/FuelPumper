@@ -37,6 +37,14 @@ TankDrive::TankDrive(
 	m_leftMotor2.Set(MOTOR_LEFT_DRIVE1);
 	m_rightMotor2.Set(MOTOR_RIGHT_DRIVE1);
 	direction = 1;
+	highGear = true;
+	leftPosOld = 0;
+	rightPosOld = 0;
+	m_xPosition = 0;
+	m_yPosition = 0;
+	distance = 0;
+	angle = 0;
+	heading = 0;
 }
 
 TankDrive::~TankDrive() {
@@ -47,13 +55,13 @@ void TankDrive::TeleopInit() {
 }
 
 void TankDrive::TeleopPeriodic() {
-	if (m_rightStick.GetRawButton(BUTTON_R_REVERSE_DRIVE) && direction == 1) {
+	if (direction == 1 && m_rightStick.GetRawButton(BUTTON_R_REVERSE_DRIVE)) {
 		direction = -1;
-	} else if (!m_rightStick.GetRawButton(BUTTON_R_REVERSE_DRIVE) && direction == -1) {
+	} else if (direction == -1 && !m_rightStick.GetRawButton(BUTTON_R_REVERSE_DRIVE)) {
 		direction = 1;
 	}
 
-	this->Drive(-this->m_leftStick.GetY() * direction, this->m_rightStick.GetY() * direction);
+	this->Drive(this->m_leftStick.GetY() * direction, this->m_rightStick.GetY() * direction);
 	float WheelSpeed = ((m_rightMotor1.GetSpeed()+m_leftMotor1.GetSpeed())/60)/2;
 	//^^above^^Gives us the average rotations per second of the two encoders
 
@@ -63,24 +71,49 @@ void TankDrive::TeleopPeriodic() {
 		TankDrive::HighGear();
 	}
 
-	if (m_leftStick.GetRawButton(BUTTON_L_SHIFT_LOW)){
+	if (this->highGear && m_leftStick.GetRawButton(BUTTON_L_SHIFT_LOW)){
 		TankDrive::LowGear();
 	}
-	else if (m_leftStick.GetRawButton(BUTTON_L_SHIFT_HIGH)){
+	else if (!this->highGear && m_leftStick.GetRawButton(BUTTON_L_SHIFT_HIGH)){
 		TankDrive::HighGear();
 	}
 }
 
+void TankDrive::Position() {
+	const float Circumference = 95.819;
+	const float Pi = 3.141592;
+	float rightPosition = m_rightMotor1.GetPosition()*(4*Pi);
+	float leftPosition = m_leftMotor1.GetPosition()*(4*Pi);
+	distance = ((rightPosition - rightPosOld)+(leftPosition - leftPosOld))/2;
+	this->angle += ((((rightPosition - rightPosOld)-(leftPosition - leftPosOld))/Circumference)*180);
+	if (0<=angle && angle<=360){
+		heading = angle;
+	}
+	else if (angle<=0){
+		heading = angle + 360;
+	}
+	else if (360<=angle){
+		heading = angle -360;
+	}
+	m_xPosition = distance * cos((heading*Pi)/180) + m_xPosition;
+	m_yPosition = distance * sin((heading*Pi)/180) + m_yPosition;
+	rightPosOld = rightPosition;
+	leftPosOld = leftPosition;
+}
+
 void TankDrive::Drive(const float leftVal, const float rightVal) {
-	m_leftMotor1.SetSetpoint(leftVal);
+	//left motor speed is inverted because the motors are physically opposite the right motors
+	m_leftMotor1.SetSetpoint(-leftVal);
 	m_rightMotor1.SetSetpoint(rightVal);
 }
 
 void TankDrive::LowGear() {
 	m_gearShift.Set(false);
+	this->highGear = false;
 
 }
 
 void TankDrive::HighGear() {
 	m_gearShift.Set(true);
+	this->highGear = true;
 }

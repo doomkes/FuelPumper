@@ -17,6 +17,7 @@ Climber::Climber(
 {
 	m_climbMotor.SetControlMode(CANTalon::ControlMode::kPercentVbus);
 	climbing = false;
+	direction = 1;
 }
 
 
@@ -29,19 +30,29 @@ void Climber::TeleopInit() {
 }
 
 void Climber::TeleopPeriodic() {
-	if ( !this -> climbing && m_manStick.GetRawButton(BUTTON_M_CLIMB)) {
-		this -> Climb(true);
+	if ( !this -> climbing && m_manStick.GetRawButton(BUTTON_M_CLIMB) && !m_manStick.GetRawButton(BUTTON_M_REVERSECLIMB)) {
+		this -> direction = 1;
+		this -> Climb(true, this -> direction);
 	}
-	else if(this -> climbing && !m_manStick.GetRawButton(BUTTON_M_CLIMB)) {
-		this -> Climb(false);
+	else if(this -> climbing && !m_manStick.GetRawButton(BUTTON_M_CLIMB) && !m_manStick.GetRawButton(BUTTON_M_REVERSECLIMB)) {
+		this -> direction = 0;
+		this -> Climb(false,this -> direction);
+	}
+	else if ( !this -> climbing && m_manStick.GetRawButton(BUTTON_M_CLIMB) && m_manStick.GetRawButton(BUTTON_M_REVERSECLIMB)) {
+		this -> direction = -1;
+		this -> Climb(true, this -> direction);
+	}
+	else if ( this -> climbing && m_manStick.GetRawButton(BUTTON_M_CLIMB) && m_manStick.GetRawButton(BUTTON_M_REVERSECLIMB)) {
+			this -> direction = -1;
+			this -> Climb(true, this -> direction);
 	}
 }
 
-void Climber::Climb(bool shouldClimb) {
+void Climber::Climb(bool shouldClimb, int direction) {
 	float speed = Preferences::GetInstance()->GetFloat("ClimberSpeed",0);
 	if(shouldClimb){
 		this -> climbing = true;
-		m_climbMotor.SetSetpoint(speed);
+		m_climbMotor.SetSetpoint(speed*direction);
 	}
 	else {
 		this -> climbing = false;
