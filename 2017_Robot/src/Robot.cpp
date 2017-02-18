@@ -96,7 +96,8 @@ public:
 			m_hopperMotor
 	),
 	m_climber(
-			oi->joystick_manipulator,
+			oi->joystickButton_climb,
+			oi->joystickButton_reverseClimb,
 			m_climbMotor
 	),
 	m_leftGearServo(MOTOR_LEFT_GEAR_SERVO),
