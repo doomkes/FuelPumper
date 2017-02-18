@@ -1,4 +1,3 @@
-
 /*
  * TankDrive.cpp
  *
@@ -66,7 +65,7 @@ void TankDrive::TeleopPeriodic() {
 	}
 
 	this->Drive(this->m_leftStick->GetY() * direction, this->m_rightStick->GetY() * direction);
-	float WheelSpeed = ((m_rightMotor1->GetSpeed()+m_leftMotor1->GetSpeed())/60)/2;
+	float WheelSpeed = ((fabs(m_rightMotor1->GetSpeed())+fabs(m_leftMotor1->GetSpeed()))/60)/2;
 	//^^above^^Gives us the average rotations per second of the two encoders
 
 	float DriveSpeed = (WheelSpeed*(4*3.1415))/12;
@@ -81,6 +80,23 @@ void TankDrive::TeleopPeriodic() {
 	else if (!this->highGear && joystickButton_shiftHigh->Get()){
 		TankDrive::HighGear();
 	}
+
+	float Scalar = 1 - (DriveSpeed / 15);
+	float AvgJoystick= (this->m_leftStick->GetY()+this->m_rightStick->GetY())/2;
+	float RightDif = (AvgJoystick - this->m_rightStick->GetY())*Scalar;
+	float LeftDif = (AvgJoystick - this->m_leftStick->GetY())*Scalar;
+
+	float leftDrive = ((AvgJoystick+LeftDif)* direction);
+	float rightDrive = ((AvgJoystick+RightDif) * direction);
+
+	this->Drive(leftDrive,rightDrive);
+
+	SmartDashboard::PutNumber ("DriveSpeed", DriveSpeed);
+	SmartDashboard::PutNumber ("RightDrive", rightDrive);
+	SmartDashboard::PutNumber ("LeftDrive", leftDrive);
+	SmartDashboard::PutNumber ("LeftDif", LeftDif);
+	SmartDashboard::PutNumber ("RightDif", RightDif);
+	SmartDashboard::PutNumber ("AvgJoystick", AvgJoystick);
 }
 
 void TankDrive::Position() {
