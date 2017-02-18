@@ -14,8 +14,8 @@
 
 
 class Shooter {
-	CANTalon* m_shootWheel1;
-	CANTalon* m_shootWheel2;
+	CANTalon* m_particleAccelerator;
+	CANTalon* m_afterBurner;
 	CANTalon* m_indexMotor;
 	CANTalon* m_shooterFeeder;
 	frc::DigitalOutput* m_aimLight;
