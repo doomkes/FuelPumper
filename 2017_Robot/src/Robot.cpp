@@ -90,8 +90,8 @@ public:
 	m_shootWheel2(1),
 	m_indexMotor(2),
 	m_pickup(
-			oi->joystick_driverLeft,
-			BUTTON_L_PICKUP,
+			oi->joystickButton_pickup,
+			oi->joystickButton_reversePickup,
 			m_intakeMotor,
 			m_hopperMotor
 	),
