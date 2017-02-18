@@ -14,9 +14,10 @@ class Climber {
 	frc::Joystick& m_manStick;
 	CANTalon& m_climbMotor;
 public:
-	Climber(frc::Joystick &
-			, CANTalon &
-			);
+	Climber(
+		frc::Joystick* m_manStick
+		, CANTalon& m_climbMotor
+	);
 	virtual ~Climber();
 	void TeleopInit();
 	void TeleopPeriodic();

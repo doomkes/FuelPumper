@@ -16,6 +16,8 @@
 #include "Shooter.h"
 #include "Autonomous.h"
 #include "Climber.h"
+#include "OI.h"
+
 using frc::SmartDashboard;
 using namespace std;
 using namespace frc;
@@ -42,10 +44,9 @@ class Robot: public frc::IterativeRobot {
 	cs::UsbCamera camera;
 	GearManipulator m_gearManipulator;
 	Pickup m_pickup;
-	Joystick m_leftStick, m_rightStick, m_manStick;
-	frc::JoystickButton shootJoystickButton;// = nullptr;
-	frc::JoystickButton reverseIndexJoystickButton;// = nullptr;
-	frc::JoystickButton aimLightJoystickButton;// = nullptr;
+//	frc::JoystickButton shootJoystickButton;// = nullptr;
+//	frc::JoystickButton reverseIndexJoystickButton;// = nullptr;
+//	frc::JoystickButton aimLightJoystickButton;// = nullptr;
 
 	frc::Talon m_intakeMotor;
 	// Hopper Motor pushs into Hopper
@@ -56,6 +57,8 @@ class Robot: public frc::IterativeRobot {
 
 	float m_shooterSpeed = 0;
 
+	OI *oi = new OI();
+
 public:
 	Robot()
 :
@@ -63,9 +66,6 @@ public:
 	// Solenoids
 	// Motors
 	// Our Classes
-	m_leftStick(STICK_LEFT), //todo:mjj use config constant instead of literal number
-	m_rightStick(STICK_RIGHT),//todo:mjj use config constant instead of literal number
-	m_manStick(STICK_MAN),
 
 	m_gearShift(SOLENOID_GEAR_SHIFT),
 
@@ -77,8 +77,8 @@ public:
 	m_climbMotor(MOTOR_CLIMB),
 	m_hopperMotor(MOTOR_PICKUP_HOPPER),
 	m_tank(
-			m_leftStick,
-			m_rightStick,
+			oi->joystick_driverLeft,
+			oi->joystick_driverRight,
 			m_gearShift,
 			m_leftMotor1,
 			m_leftMotor2,
@@ -90,19 +90,19 @@ public:
 	m_shootWheel2(1),
 	m_indexMotor(2),
 	m_pickup(
-			m_leftStick,
+			oi->joystick_driverLeft,
 			BUTTON_L_PICKUP,
 			m_intakeMotor,
 			m_hopperMotor
 	),
 	m_climber(
-			m_manStick,
+			oi->joystick_manipulator,
 			m_climbMotor
 	),
 	m_leftGearServo(MOTOR_LEFT_GEAR_SERVO),
 	m_rightGearServo(MOTOR_RIGHT_GEAR_SERVO),
 	m_gearManipulator(
-			m_rightStick,
+			oi->joystick_driverRight,
 			BUTTON_L_GEAR_RELEASE,
 			m_leftGearServo,
 			m_rightGearServo
@@ -110,30 +110,16 @@ public:
 	m_vision(
 
 	)
+
 ,
-shootJoystickButton(
-		//(frc::GenericHID*) &m_manStick,
-		&m_manStick,
-		BUTTON_M_SHOOT
-),
-reverseIndexJoystickButton(
-		//(frc::GenericHID*) &m_manStick,
-		&m_manStick,
-		BUTTON_M_REVERSEINDEX
-),
-aimLightJoystickButton(
-		//(frc::GenericHID*) &m_leftStick,
-		&m_leftStick,
-		BUTTON_L_AIM_LIGHT
-),
 m_shooter(
 		m_shootWheel1
 		, m_shootWheel2
 		, m_indexMotor
 		, m_aimLight
-		, shootJoystickButton
-		, reverseIndexJoystickButton
-		, aimLightJoystickButton
+		, oi->joystickButton_shoot //shootJoystickButton
+		, oi->joystickButton_reverseIndex //reverseIndexJoystickButton
+		, oi->joystickButton_aimLight //aimLightJoystickButton
 		, m_shooterSpeed
 )
 

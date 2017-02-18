@@ -8,10 +8,10 @@
 #include "GearManipulator.h"
 #include "RobotMap.h"
 GearManipulator::GearManipulator(
-	frc::Joystick &m_joystick
-	,int m_button
-	,frc::Servo &m_leftServo
-	,frc::Servo &m_rightServo
+		frc::Joystick* m_joystick
+		,int m_button
+		,frc::Servo& m_leftServo
+		,frc::Servo& m_rightServo
 )
 	:
 	m_joystick(m_joystick)
@@ -30,7 +30,7 @@ void GearManipulator::TeleopInit() {
 }
 
 void GearManipulator::TeleopPeriodic() {
-	Release(m_joystick.GetRawButton(m_button));
+	Release(m_joystick->GetRawButton(m_button));
 }
 
 void GearManipulator::Release(bool release) {

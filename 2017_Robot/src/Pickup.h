@@ -13,7 +13,7 @@
 #include "RobotMap.h"
 
 class Pickup {
-	frc::Joystick& m_leftStick;
+	frc::Joystick* m_leftStick;
 	int pickupButton;
 	// Intake Motor picks up balls
 	frc::Talon& m_intakeMotor;
@@ -23,10 +23,10 @@ class Pickup {
 
 public:
 	Pickup(
-		frc::Joystick &
-		, int
-		,frc::Talon &
-		,frc::Talon &
+		frc::Joystick* m_leftStick
+		,int pickupButton
+		,frc::Talon& m_intakeMotor
+		,frc::Talon& m_hopperMotor
 		);
 	void TeleopInit();
 	void TeleopPeriodic();

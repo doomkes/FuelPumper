@@ -8,11 +8,11 @@
 #include "Climber.h"
 
 Climber::Climber(
-		frc::Joystick &m_manStick
-		, CANTalon &m_climbMotor
+		frc::Joystick* m_manStick
+		, CANTalon& m_climbMotor
 		)
 		:
-		m_manStick(m_manStick)
+		m_manStick(*m_manStick)
 		, m_climbMotor(m_climbMotor)
 {
 	m_climbMotor.SetControlMode(CANTalon::ControlMode::kPercentVbus);
