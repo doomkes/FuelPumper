@@ -79,6 +79,9 @@ public:
 	m_tank(
 			oi->joystick_driverLeft,
 			oi->joystick_driverRight,
+			oi->joystickButton_reverseDrive,
+			oi->joystickButton_shiftLow,
+			oi->joystickButton_shiftHigh,
 			m_gearShift,
 			m_leftMotor1,
 			m_leftMotor2,

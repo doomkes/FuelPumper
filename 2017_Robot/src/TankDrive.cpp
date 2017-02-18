@@ -11,6 +11,9 @@
 TankDrive::TankDrive(
 		frc::Joystick* m_leftStick
 		,frc::Joystick* m_rightStick
+		, frc::JoystickButton* joystickButton_reverseDrive
+		, frc::JoystickButton* joystickButton_shiftLow
+		, frc::JoystickButton* joystickButton_shiftHigh
 		,frc::Solenoid& m_gearShift
 		,CANTalon& m_leftMotor1
 		,CANTalon& m_leftMotor2
@@ -20,6 +23,9 @@ TankDrive::TankDrive(
 	:
 	m_leftStick(m_leftStick)
 	, m_rightStick(m_rightStick)
+	, joystickButton_reverseDrive(joystickButton_reverseDrive)
+	, joystickButton_shiftLow(joystickButton_shiftLow)
+	, joystickButton_shiftHigh(joystickButton_shiftHigh)
 	, m_gearShift(m_gearShift)
 	, m_leftMotor1(m_leftMotor1)
 	, m_leftMotor2(m_leftMotor2)
@@ -55,9 +61,9 @@ void TankDrive::TeleopInit() {
 }
 
 void TankDrive::TeleopPeriodic() {
-	if (direction == 1 && m_rightStick->GetRawButton(BUTTON_R_REVERSE_DRIVE)) {
+	if (direction == 1 && joystickButton_reverseDrive->Get()) {
 		direction = -1;
-	} else if (direction == -1 && !m_rightStick->GetRawButton(BUTTON_R_REVERSE_DRIVE)) {
+	} else if (direction == -1 && !joystickButton_reverseDrive->Get()) {
 		direction = 1;
 	}
 
@@ -71,10 +77,10 @@ void TankDrive::TeleopPeriodic() {
 		TankDrive::HighGear();
 	}
 
-	if (this->highGear && m_leftStick->GetRawButton(BUTTON_L_SHIFT_LOW)){
+	if (this->highGear && joystickButton_shiftLow->Get()){
 		TankDrive::LowGear();
 	}
-	else if (!this->highGear && m_leftStick->GetRawButton(BUTTON_L_SHIFT_HIGH)){
+	else if (!this->highGear && joystickButton_shiftHigh->Get()){
 		TankDrive::HighGear();
 	}
 }

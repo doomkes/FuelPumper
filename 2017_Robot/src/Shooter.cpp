@@ -15,9 +15,9 @@ Shooter::Shooter(
 		, CANTalon &m_shootWheel2
 		, CANTalon &m_indexMotor
 		, frc::DigitalOutput& m_aimLight
-		, frc::JoystickButton* shootJoystickButton
-		, frc::JoystickButton* reverseIndexJoystickButton
-		, frc::JoystickButton* aimingLightJoystickButton
+		, frc::JoystickButton* joystickButton_shoot
+		, frc::JoystickButton* joystickButton_reverseIndex
+		, frc::JoystickButton* joystickButton_aimingLight
 		, float m_shooterSpeed
 )
 :
@@ -25,9 +25,9 @@ m_shootWheel1(m_shootWheel1)
 , m_shootWheel2(m_shootWheel2)
 , m_indexMotor(m_indexMotor)
 , m_aimLight(m_aimLight)
-, shootJoystickButton(shootJoystickButton)
-, reverseIndexJoystickButton(reverseIndexJoystickButton)
-, aimingLightJoystickButton(aimingLightJoystickButton)
+, joystickButton_shoot(joystickButton_shoot)
+, joystickButton_reverseIndex(joystickButton_reverseIndex)
+, joystickButton_aimingLight(joystickButton_aimingLight)
 , m_shooterSpeed(m_shooterSpeed)
 {
 	// TODO Auto-generated constructor stub
@@ -43,13 +43,13 @@ void Shooter::TeleopInit() {
 }
 
 void Shooter::TeleopPeriodic() {
-	if (shootJoystickButton->Get()) {
-		if (reverseIndexJoystickButton->Get()) {
+	if (joystickButton_shoot->Get()) {
+		if (joystickButton_reverseIndex->Get()) {
 			ReverseIndex();
 		} else Shoot(m_shooterSpeed);
 	} else Stop();
 
-	if (aimingLightJoystickButton->Get()) {
+	if (joystickButton_aimingLight->Get()) {
 		AimLight(true);
 	}  else {
 		AimLight(false);

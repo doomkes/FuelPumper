@@ -32,6 +32,10 @@ public:
 	frc::JoystickButton* joystickButton_pickup = new frc::JoystickButton(joystick_driverLeft, BUTTON_L_PICKUP);// = nullptr;
 	frc::JoystickButton* joystickButton_reversePickup = new frc::JoystickButton(joystick_driverLeft, BUTTON_L_REVERSEPICKUP);// = nullptr;
 
+	frc::JoystickButton* joystickButton_reverseDrive = new frc::JoystickButton(joystick_driverRight, BUTTON_R_REVERSE_DRIVE);// = nullptr;
+	frc::JoystickButton* joystickButton_shiftLow = new frc::JoystickButton(joystick_driverRight, BUTTON_L_SHIFT_LOW);// = nullptr;
+	frc::JoystickButton* joystickButton_shiftHigh = new frc::JoystickButton(joystick_driverRight, BUTTON_L_SHIFT_HIGH);// = nullptr;
+
 
 	OI();
 	virtual ~OI();

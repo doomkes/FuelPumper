@@ -26,9 +26,9 @@ class Shooter {
 	//	int m_aimingLightButton;
 	//	frc::Joystick& m_joystickForAimingLightButton;
 
-	frc::JoystickButton* shootJoystickButton;
-	frc::JoystickButton* reverseIndexJoystickButton;
-	frc::JoystickButton* aimingLightJoystickButton;
+	frc::JoystickButton* joystickButton_shoot;
+	frc::JoystickButton* joystickButton_reverseIndex;
+	frc::JoystickButton* joystickButton_aimingLight;
 
 	PowerDistributionPanel m_pdp;
 
@@ -40,9 +40,9 @@ public:
 			, CANTalon &m_shootWheel2
 			, CANTalon &m_indexMotor
 			, frc::DigitalOutput& m_aimLight
-			, frc::JoystickButton* shootJoystickButton
-			, frc::JoystickButton* reverseIndexJoystickButton
-			, frc::JoystickButton* aimingLightJoystickButton
+			, frc::JoystickButton* joystickButton_shoot
+			, frc::JoystickButton* joystickButton_reverseIndex
+			, frc::JoystickButton* joystickButton_aimingLight
 			, float m_shooterSpeed
 	);
 	virtual ~Shooter();
