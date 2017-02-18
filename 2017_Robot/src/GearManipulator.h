@@ -10,16 +10,14 @@
 #include <WPILib.h>
 
 class GearManipulator {
-	frc::Joystick* m_joystick;
-	int m_button;
+	frc::JoystickButton* joystickButton_gearRelease;
 	frc::Servo& m_leftServo;
 	frc::Servo& m_rightServo;
 public:
 	void Release(bool release);
 
 	GearManipulator(
-		frc::Joystick* m_joystick
-		,int m_button
+		frc::JoystickButton* joystickButton_gearRelease
 		,frc::Servo& m_leftServo
 		,frc::Servo& m_rightServo
 	);
