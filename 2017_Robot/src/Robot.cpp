@@ -103,8 +103,7 @@ public:
 	m_leftGearServo(MOTOR_LEFT_GEAR_SERVO),
 	m_rightGearServo(MOTOR_RIGHT_GEAR_SERVO),
 	m_gearManipulator(
-			oi->joystick_driverRight,
-			BUTTON_L_GEAR_RELEASE,
+			oi->joystickButton_gearRelease,
 			m_leftGearServo,
 			m_rightGearServo
 	),
