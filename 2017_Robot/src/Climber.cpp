@@ -10,14 +10,14 @@
 Climber::Climber(
 		frc::JoystickButton* joystickButton_climb
 		, frc::JoystickButton* joystickButton_reverseClimb
-		, CANTalon& m_climbMotor
+		, CANTalon* m_climbMotor
 		)
 		:
 		joystickButton_climb(joystickButton_climb)
 		, joystickButton_reverseClimb(joystickButton_reverseClimb)
 		, m_climbMotor(m_climbMotor)
 {
-	m_climbMotor.SetControlMode(CANTalon::ControlMode::kPercentVbus);
+	m_climbMotor->SetControlMode(CANTalon::ControlMode::kPercentVbus);
 	climbing = false;
 	direction = 1;
 }
@@ -54,11 +54,11 @@ void Climber::Climb(bool shouldClimb, int direction) {
 	float speed = Preferences::GetInstance()->GetFloat("ClimberSpeed",0);
 	if(shouldClimb){
 		this -> climbing = true;
-		m_climbMotor.SetSetpoint(speed*direction);
+		m_climbMotor->SetSetpoint(speed*direction);
 	}
 	else {
 		this -> climbing = false;
-		m_climbMotor.SetSetpoint(0);
+		m_climbMotor->SetSetpoint(0);
 	}
 
 }

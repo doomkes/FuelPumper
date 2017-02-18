@@ -14,11 +14,11 @@ TankDrive::TankDrive(
 		, frc::JoystickButton* joystickButton_reverseDrive
 		, frc::JoystickButton* joystickButton_shiftLow
 		, frc::JoystickButton* joystickButton_shiftHigh
-		,frc::Solenoid& m_gearShift
-		,CANTalon& m_leftMotor1
-		,CANTalon& m_leftMotor2
-		,CANTalon& m_rightMotor1
-		,CANTalon& m_rightMotor2
+		,frc::Solenoid* m_gearShift
+		,CANTalon* m_leftMotor1
+		,CANTalon* m_leftMotor2
+		,CANTalon* m_rightMotor1
+		,CANTalon* m_rightMotor2
 	)
 	:
 	m_leftStick(m_leftStick)
@@ -32,16 +32,16 @@ TankDrive::TankDrive(
 	, m_rightMotor1(m_rightMotor1)
 	, m_rightMotor2(m_rightMotor2)
 {
-	m_leftMotor1.SetControlMode(CANTalon::ControlMode::kPercentVbus);
-	m_leftMotor1.ConfigEncoderCodesPerRev(120);
-	m_leftMotor2.SetControlMode(CANTalon::ControlMode::kFollower);
-	m_leftMotor2.ConfigEncoderCodesPerRev(120);
-	m_rightMotor1.SetControlMode(CANTalon::ControlMode::kPercentVbus);
-	m_rightMotor1.ConfigEncoderCodesPerRev(120);
-	m_rightMotor2.SetControlMode(CANTalon::ControlMode::kFollower);
-	m_rightMotor2.ConfigEncoderCodesPerRev(120);
-	m_leftMotor2.Set(MOTOR_LEFT_DRIVE1);
-	m_rightMotor2.Set(MOTOR_RIGHT_DRIVE1);
+	m_leftMotor1->SetControlMode(CANTalon::ControlMode::kPercentVbus);
+	m_leftMotor1->ConfigEncoderCodesPerRev(120);
+	m_leftMotor2->SetControlMode(CANTalon::ControlMode::kFollower);
+	m_leftMotor2->ConfigEncoderCodesPerRev(120);
+	m_rightMotor1->SetControlMode(CANTalon::ControlMode::kPercentVbus);
+	m_rightMotor1->ConfigEncoderCodesPerRev(120);
+	m_rightMotor2->SetControlMode(CANTalon::ControlMode::kFollower);
+	m_rightMotor2->ConfigEncoderCodesPerRev(120);
+	m_leftMotor2->Set(MOTOR_LEFT_DRIVE1);
+	m_rightMotor2->Set(MOTOR_RIGHT_DRIVE1);
 	direction = 1;
 	highGear = true;
 	leftPosOld = 0;
@@ -68,7 +68,7 @@ void TankDrive::TeleopPeriodic() {
 	}
 
 	this->Drive(this->m_leftStick->GetY() * direction, this->m_rightStick->GetY() * direction);
-	float WheelSpeed = ((m_rightMotor1.GetSpeed()+m_leftMotor1.GetSpeed())/60)/2;
+	float WheelSpeed = ((m_rightMotor1->GetSpeed()+m_leftMotor1->GetSpeed())/60)/2;
 	//^^above^^Gives us the average rotations per second of the two encoders
 
 	float DriveSpeed = (WheelSpeed*(4*3.1415))/12;
@@ -88,8 +88,8 @@ void TankDrive::TeleopPeriodic() {
 void TankDrive::Position() {
 	const float Circumference = 95.819;
 	const float Pi = 3.141592;
-	float rightPosition = m_rightMotor1.GetPosition()*(4*Pi);
-	float leftPosition = m_leftMotor1.GetPosition()*(4*Pi);
+	float rightPosition = m_rightMotor1->GetPosition()*(4*Pi);
+	float leftPosition = m_leftMotor1->GetPosition()*(4*Pi);
 	distance = ((rightPosition - rightPosOld)+(leftPosition - leftPosOld))/2;
 	this->angle += ((((rightPosition - rightPosOld)-(leftPosition - leftPosOld))/Circumference)*180);
 	if (0<=angle && angle<=360){
@@ -109,17 +109,17 @@ void TankDrive::Position() {
 
 void TankDrive::Drive(const float leftVal, const float rightVal) {
 	//left motor speed is inverted because the motors are physically opposite the right motors
-	m_leftMotor1.SetSetpoint(-leftVal);
-	m_rightMotor1.SetSetpoint(rightVal);
+	m_leftMotor1->SetSetpoint(-leftVal);
+	m_rightMotor1->SetSetpoint(rightVal);
 }
 
 void TankDrive::LowGear() {
-	m_gearShift.Set(false);
+	m_gearShift->Set(false);
 	this->highGear = false;
 
 }
 
 void TankDrive::HighGear() {
-	m_gearShift.Set(true);
+	m_gearShift->Set(true);
 	this->highGear = true;
 }

@@ -11,8 +11,8 @@
 Pickup::Pickup(
 		frc::JoystickButton* joystickButton_pickup
 		,frc::JoystickButton* joystickButton_reversePickup
-		,frc::Talon& m_intakeMotor
-		,frc::Talon& m_hopperMotor
+		,frc::Talon* m_intakeMotor
+		,frc::Talon* m_hopperMotor
 	)
 	:
 	joystickButton_pickup(joystickButton_pickup)
@@ -74,16 +74,16 @@ void Pickup::Intake() {
 	};
 
 
-	m_intakeMotor.Set(-1*IntakeVoltageFactor);
-	m_hopperMotor.Set(-1*HopperVoltageFactor);
+	m_intakeMotor->Set(-1*IntakeVoltageFactor);
+	m_hopperMotor->Set(-1*HopperVoltageFactor);
 }
 
 void Pickup::stop() {
-	m_intakeMotor.Set(0);
-	m_hopperMotor.Set(0);
+	m_intakeMotor->Set(0);
+	m_hopperMotor->Set(0);
 }
 
 void Pickup::Reverse(){
-	m_intakeMotor.Set(1);
-	m_hopperMotor.Set(-1);
+	m_intakeMotor->Set(1);
+	m_hopperMotor->Set(-1);
 }
