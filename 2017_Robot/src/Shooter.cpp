@@ -14,10 +14,10 @@ Shooter::Shooter(
 		CANTalon &m_shootWheel1
 		, CANTalon &m_shootWheel2
 		, CANTalon &m_indexMotor
-		, frc::DigitalOutput &m_aimLight
-		, frc::JoystickButton &shootJoystickButton
-		, frc::JoystickButton &reverseIndexJoystickButton
-		, frc::JoystickButton &aimingLightJoystickButton
+		, frc::DigitalOutput& m_aimLight
+		, frc::JoystickButton* shootJoystickButton
+		, frc::JoystickButton* reverseIndexJoystickButton
+		, frc::JoystickButton* aimingLightJoystickButton
 		, float m_shooterSpeed
 )
 :
@@ -43,13 +43,13 @@ void Shooter::TeleopInit() {
 }
 
 void Shooter::TeleopPeriodic() {
-	if (shootJoystickButton.Get()) {
-		if (reverseIndexJoystickButton.Get()) {
+	if (shootJoystickButton->Get()) {
+		if (reverseIndexJoystickButton->Get()) {
 			ReverseIndex();
 		} else Shoot(m_shooterSpeed);
 	} else Stop();
 
-	if (aimingLightJoystickButton.Get()) {
+	if (aimingLightJoystickButton->Get()) {
 		AimLight(true);
 	}  else {
 		AimLight(false);

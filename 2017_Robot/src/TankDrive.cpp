@@ -9,13 +9,13 @@
 #include "TankDrive.h"
 
 TankDrive::TankDrive(
-		frc::Joystick &m_leftStick
-		,frc::Joystick &m_rightStick
-		,frc::Solenoid &m_gearShift
-		,CANTalon &m_leftMotor1
-		,CANTalon &m_leftMotor2
-		,CANTalon &m_rightMotor1
-		,CANTalon &m_rightMotor2
+		frc::Joystick* m_leftStick
+		,frc::Joystick* m_rightStick
+		,frc::Solenoid& m_gearShift
+		,CANTalon& m_leftMotor1
+		,CANTalon& m_leftMotor2
+		,CANTalon& m_rightMotor1
+		,CANTalon& m_rightMotor2
 	)
 	:
 	m_leftStick(m_leftStick)
@@ -55,13 +55,13 @@ void TankDrive::TeleopInit() {
 }
 
 void TankDrive::TeleopPeriodic() {
-	if (direction == 1 && m_rightStick.GetRawButton(BUTTON_R_REVERSE_DRIVE)) {
+	if (direction == 1 && m_rightStick->GetRawButton(BUTTON_R_REVERSE_DRIVE)) {
 		direction = -1;
-	} else if (direction == -1 && !m_rightStick.GetRawButton(BUTTON_R_REVERSE_DRIVE)) {
+	} else if (direction == -1 && !m_rightStick->GetRawButton(BUTTON_R_REVERSE_DRIVE)) {
 		direction = 1;
 	}
 
-	this->Drive(this->m_leftStick.GetY() * direction, this->m_rightStick.GetY() * direction);
+	this->Drive(this->m_leftStick->GetY() * direction, this->m_rightStick->GetY() * direction);
 	float WheelSpeed = ((m_rightMotor1.GetSpeed()+m_leftMotor1.GetSpeed())/60)/2;
 	//^^above^^Gives us the average rotations per second of the two encoders
 
@@ -71,10 +71,10 @@ void TankDrive::TeleopPeriodic() {
 		TankDrive::HighGear();
 	}
 
-	if (this->highGear && m_leftStick.GetRawButton(BUTTON_L_SHIFT_LOW)){
+	if (this->highGear && m_leftStick->GetRawButton(BUTTON_L_SHIFT_LOW)){
 		TankDrive::LowGear();
 	}
-	else if (!this->highGear && m_leftStick.GetRawButton(BUTTON_L_SHIFT_HIGH)){
+	else if (!this->highGear && m_leftStick->GetRawButton(BUTTON_L_SHIFT_HIGH)){
 		TankDrive::HighGear();
 	}
 }
