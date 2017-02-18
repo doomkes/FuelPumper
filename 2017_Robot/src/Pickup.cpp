@@ -9,14 +9,14 @@
 #include "Pickup.h"
 
 Pickup::Pickup(
-		frc::Joystick* m_leftStick
-		,int pickupButton
+		frc::JoystickButton* joystickButton_pickup
+		,frc::JoystickButton* joystickButton_reversePickup
 		,frc::Talon& m_intakeMotor
 		,frc::Talon& m_hopperMotor
 	)
 	:
-	m_leftStick(m_leftStick)
-	, pickupButton(pickupButton)
+	joystickButton_pickup(joystickButton_pickup)
+	, joystickButton_reversePickup(joystickButton_reversePickup)
 	, m_intakeMotor(m_intakeMotor)
 	, m_hopperMotor(m_hopperMotor)
 {
@@ -27,9 +27,9 @@ void Pickup::TeleopInit() {
 
 }
 void Pickup::TeleopPeriodic() {
-	if(m_leftStick->GetRawButton(BUTTON_L_PICKUP)) {
+	if(joystickButton_pickup->Get()) {
 
-			if(m_leftStick->GetRawButton(BUTTON_L_REVERSEPICKUP)){
+			if(joystickButton_reversePickup->Get()){
 				Reverse();
 			}
 			else {

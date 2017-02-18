@@ -13,8 +13,8 @@
 #include "RobotMap.h"
 
 class Pickup {
-	frc::Joystick* m_leftStick;
-	int pickupButton;
+	frc::JoystickButton* joystickButton_pickup;
+	frc::JoystickButton* joystickButton_reversePickup;
 	// Intake Motor picks up balls
 	frc::Talon& m_intakeMotor;
 	// Hopper Motor pushs into Hopper
@@ -23,8 +23,8 @@ class Pickup {
 
 public:
 	Pickup(
-		frc::Joystick* m_leftStick
-		,int pickupButton
+		frc::JoystickButton* joystickButton_pickup
+		,frc::JoystickButton* joystickButton_reversePickup
 		,frc::Talon& m_intakeMotor
 		,frc::Talon& m_hopperMotor
 		);
