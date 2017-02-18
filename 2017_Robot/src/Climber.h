@@ -11,12 +11,14 @@
 #define SRC_CLIMBER_H_
 
 class Climber {
-	frc::Joystick& m_manStick;
+	frc::JoystickButton* joystickButton_climb;
+	frc::JoystickButton* joystickButton_reverseClimb;
 	CANTalon& m_climbMotor;
 public:
 	Climber(
-		frc::Joystick* m_manStick
-		, CANTalon& m_climbMotor
+			frc::JoystickButton* joystickButton_climb
+			, frc::JoystickButton* joystickButton_reverseClimb
+			, CANTalon& m_climbMotor
 	);
 	virtual ~Climber();
 	void TeleopInit();

@@ -8,11 +8,13 @@
 #include "Climber.h"
 
 Climber::Climber(
-		frc::Joystick* m_manStick
+		frc::JoystickButton* joystickButton_climb
+		, frc::JoystickButton* joystickButton_reverseClimb
 		, CANTalon& m_climbMotor
 		)
 		:
-		m_manStick(*m_manStick)
+		joystickButton_climb(joystickButton_climb)
+		, joystickButton_reverseClimb(joystickButton_reverseClimb)
 		, m_climbMotor(m_climbMotor)
 {
 	m_climbMotor.SetControlMode(CANTalon::ControlMode::kPercentVbus);
@@ -30,19 +32,19 @@ void Climber::TeleopInit() {
 }
 
 void Climber::TeleopPeriodic() {
-	if ( !this -> climbing && m_manStick.GetRawButton(BUTTON_M_CLIMB) && !m_manStick.GetRawButton(BUTTON_M_REVERSECLIMB)) {
+	if ( !this -> climbing && joystickButton_climb->Get() && !joystickButton_reverseClimb->Get()) {
 		this -> direction = 1;
 		this -> Climb(true, this -> direction);
 	}
-	else if(this -> climbing && !m_manStick.GetRawButton(BUTTON_M_CLIMB) && !m_manStick.GetRawButton(BUTTON_M_REVERSECLIMB)) {
+	else if(this -> climbing && !joystickButton_climb->Get() && !joystickButton_reverseClimb->Get()) {
 		this -> direction = 0;
 		this -> Climb(false,this -> direction);
 	}
-	else if ( !this -> climbing && m_manStick.GetRawButton(BUTTON_M_CLIMB) && m_manStick.GetRawButton(BUTTON_M_REVERSECLIMB)) {
+	else if ( !this -> climbing && joystickButton_climb->Get() && joystickButton_reverseClimb->Get()) {
 		this -> direction = -1;
 		this -> Climb(true, this -> direction);
 	}
-	else if ( this -> climbing && m_manStick.GetRawButton(BUTTON_M_CLIMB) && m_manStick.GetRawButton(BUTTON_M_REVERSECLIMB)) {
+	else if ( this -> climbing && joystickButton_climb->Get() && joystickButton_reverseClimb->Get()) {
 			this -> direction = -1;
 			this -> Climb(true, this -> direction);
 	}

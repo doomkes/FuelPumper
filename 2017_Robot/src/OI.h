@@ -24,6 +24,9 @@ public:
 	frc::JoystickButton* joystickButton_reverseIndex = new frc::JoystickButton(joystick_manipulator, BUTTON_M_REVERSEINDEX);// = nullptr;
 	frc::JoystickButton* joystickButton_aimLight = new frc::JoystickButton(joystick_driverLeft, BUTTON_L_AIM_LIGHT);// = nullptr;
 
+	frc::JoystickButton* joystickButton_climb = new frc::JoystickButton(joystick_manipulator, BUTTON_M_CLIMB);// = nullptr;
+	frc::JoystickButton* joystickButton_reverseClimb = new frc::JoystickButton(joystick_manipulator, BUTTON_M_REVERSECLIMB);// = nullptr;
+
 	OI();
 	virtual ~OI();
 };
