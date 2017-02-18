@@ -11,10 +11,10 @@
 #include <SmartDashboard/SmartDashboard.h>
 
 Shooter::Shooter(
-		CANTalon &m_shootWheel1
-		, CANTalon &m_shootWheel2
-		, CANTalon &m_indexMotor
-		, frc::DigitalOutput& m_aimLight
+		CANTalon* m_shootWheel1
+		, CANTalon* m_shootWheel2
+		, CANTalon* m_indexMotor
+		, frc::DigitalOutput* m_aimLight
 		, frc::JoystickButton* joystickButton_shoot
 		, frc::JoystickButton* joystickButton_reverseIndex
 		, frc::JoystickButton* joystickButton_aimingLight
@@ -72,10 +72,10 @@ void Shooter::Shoot(float shooterSpeed) {
 		IndexVoltageFactor += .005;
 	}
 
-	m_shootWheel1.SetSetpoint(shooterSpeed);
-	m_shootWheel2.SetSetpoint(shooterSpeed);
-	if (abs(m_shootWheel1.GetSpeed()-shooterSpeed)<=50) {
-		m_indexMotor.SetSetpoint (1000);
+	m_shootWheel1->SetSetpoint(shooterSpeed);
+	m_shootWheel2->SetSetpoint(shooterSpeed);
+	if (abs(m_shootWheel1->GetSpeed()-shooterSpeed)<=50) {
+		m_indexMotor->SetSetpoint (1000);
 		//TODO Find actual RPM values
 	}
 }
@@ -93,26 +93,26 @@ void Shooter::ReverseIndex() {
 		SmartDashboard::PutBoolean ("Indexer Is Jammed.", false);
 		IndexVoltageFactor += .005;
 	}
-	m_indexMotor.SetSetpoint (-1000);
+	m_indexMotor->SetSetpoint (-1000);
 }
 
 
 void Shooter::Stop() {
-	m_shootWheel1.SetSetpoint(0);
-	m_shootWheel2.SetSetpoint(0);
+	m_shootWheel1->SetSetpoint(0);
+	m_shootWheel2->SetSetpoint(0);
 
 }
 
 void Shooter::Init() {
-	m_shootWheel1.SetControlMode(frc::CANSpeedController::kSpeed);
-	m_shootWheel2.SetControlMode(frc::CANSpeedController::kSpeed);
+	m_shootWheel1->SetControlMode(frc::CANSpeedController::kSpeed);
+	m_shootWheel2->SetControlMode(frc::CANSpeedController::kSpeed);
 }
 
 void Shooter::AimLight(bool state) {
 
 	if(state)
-		m_aimLight.UpdateDutyCycle(0.7);
+		m_aimLight->UpdateDutyCycle(0.7);
 	else
-		m_aimLight.UpdateDutyCycle(0);
+		m_aimLight->UpdateDutyCycle(0);
 
 }

@@ -11,15 +11,15 @@
 
 class GearManipulator {
 	frc::JoystickButton* joystickButton_gearRelease;
-	frc::Servo& m_leftServo;
-	frc::Servo& m_rightServo;
+	frc::Servo* m_leftServo;
+	frc::Servo* m_rightServo;
 public:
 	void Release(bool release);
 
 	GearManipulator(
 		frc::JoystickButton* joystickButton_gearRelease
-		,frc::Servo& m_leftServo
-		,frc::Servo& m_rightServo
+		,frc::Servo* m_leftServo
+		,frc::Servo* m_rightServo
 	);
 	virtual ~GearManipulator();
 

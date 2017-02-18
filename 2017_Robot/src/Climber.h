@@ -13,12 +13,12 @@
 class Climber {
 	frc::JoystickButton* joystickButton_climb;
 	frc::JoystickButton* joystickButton_reverseClimb;
-	CANTalon& m_climbMotor;
+	CANTalon* m_climbMotor;
 public:
 	Climber(
 			frc::JoystickButton* joystickButton_climb
 			, frc::JoystickButton* joystickButton_reverseClimb
-			, CANTalon& m_climbMotor
+			, CANTalon* m_climbMotor
 	);
 	virtual ~Climber();
 	void TeleopInit();

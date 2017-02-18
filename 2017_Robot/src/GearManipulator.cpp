@@ -9,8 +9,8 @@
 #include "RobotMap.h"
 GearManipulator::GearManipulator(
 		frc::JoystickButton* joystickButton_gearRelease
-		,frc::Servo& m_leftServo
-		,frc::Servo& m_rightServo
+		,frc::Servo* m_leftServo
+		,frc::Servo* m_rightServo
 )
 :
 joystickButton_gearRelease(joystickButton_gearRelease)
@@ -34,11 +34,11 @@ void GearManipulator::TeleopPeriodic() {
 void GearManipulator::Release(bool release) {
 	// TODO find out if values passes to servos need to be flipped.
 	if(release == true) {
-		m_leftServo.SetAngle(180);
-		m_rightServo.SetAngle(0);
+		m_leftServo->SetAngle(180);
+		m_rightServo->SetAngle(0);
 	}
 	else {
-		m_leftServo.SetAngle(0);
-		m_rightServo.SetAngle(180);
+		m_leftServo->SetAngle(0);
+		m_rightServo->SetAngle(180);
 	}
 }

@@ -14,10 +14,10 @@
 
 
 class Shooter {
-	CANTalon& m_shootWheel1;
-	CANTalon& m_shootWheel2;
-	CANTalon& m_indexMotor;
-	frc::DigitalOutput& m_aimLight;
+	CANTalon* m_shootWheel1;
+	CANTalon* m_shootWheel2;
+	CANTalon* m_indexMotor;
+	frc::DigitalOutput* m_aimLight;
 
 	//	int m_shootButton;
 	//	frc::Joystick& m_joystickForShootButton;
@@ -36,10 +36,10 @@ class Shooter {
 
 public:
 	Shooter(
-			CANTalon &m_shootWheel1
-			, CANTalon &m_shootWheel2
-			, CANTalon &m_indexMotor
-			, frc::DigitalOutput& m_aimLight
+			CANTalon* m_shootWheel1
+			, CANTalon* m_shootWheel2
+			, CANTalon* m_indexMotor
+			, frc::DigitalOutput* m_aimLight
 			, frc::JoystickButton* joystickButton_shoot
 			, frc::JoystickButton* joystickButton_reverseIndex
 			, frc::JoystickButton* joystickButton_aimingLight
