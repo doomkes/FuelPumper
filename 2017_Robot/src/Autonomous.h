@@ -5,10 +5,11 @@
  *      Author: Joey
  */
 #include <WPILib.h>
+#include "GCode.h"
 
 #ifndef SRC_AUTONOMOUS_H_
 #define SRC_AUTONOMOUS_H_
-
+#include "TankDrive.h"
 #include "BoilerVision.h"
 using namespace cs;
 using namespace grip;
@@ -17,12 +18,14 @@ class Autonomous {
 	cs::CvSource m_outputStream;
 	cs::UsbCamera camera;
 	grip::BoilerVision m_boilerVision;
-
+	TankDrive &m_tank;
+	GCode m_gcode;
 public:
 	Autonomous(
 		CameraServer *,
 		CvSource &m_outputStream,
-		UsbCamera &camera
+		UsbCamera &camera,
+		TankDrive &m_tank
 //		,
 //		BoilerVision &m_boilerVision
 	);

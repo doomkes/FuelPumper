@@ -36,6 +36,8 @@ TankDrive::TankDrive(
 	m_rightMotor2.ConfigEncoderCodesPerRev(120);
 	m_leftMotor2.Set(MOTOR_LEFT_DRIVE1);
 	m_rightMotor2.Set(MOTOR_RIGHT_DRIVE1);
+	m_leftMotor1.SetPID(1,0,0);
+	m_rightMotor1.SetPID(1,0,0);
 	direction = 1;
 	highGear = true;
 	leftPosOld = 0;
@@ -98,9 +100,8 @@ void TankDrive::Position() {
 	//this->angle += ((((rightPosition - rightPosOld)-(leftPosition - leftPosOld))/Circumference)*180);
 	angle = m_gyro.GetAngle();
 	m_yPosition = distance * cos((angle*Pi)/180) + m_yPosition;
-	m_xPosition = distance * sin((angle*Pi)/180) + m_xPosition;
-	m_xPosition *= -1;
-	SmartDashboard::PutNumber("robot x", m_xPosition);
+	m_xPosition = (distance * sin((angle*Pi)/180) + m_xPosition);
+	SmartDashboard::PutNumber("robot x", -m_xPosition);
 	SmartDashboard::PutNumber("robot y", m_yPosition);
 	SmartDashboard::PutNumber("robot angle", angle);
 	rightPosOld = rightPosition;
@@ -127,4 +128,65 @@ void TankDrive::HighGear() {
 	m_gearShift.Set(true);
 	this->highGear = true;
 }
->>>>>>> Added position tracking and fixed tank drive
+
+void TankDrive::PositionDrive(const float leftPos, const float rightPos) {
+
+	m_leftMotor1.SetSetpoint(rightPos * m_countsPerInch);
+	m_rightMotor1.SetSetpoint(-leftPos * m_countsPerInch);
+
+	SmartDashboard::PutNumber("Tank_leftPos", leftPos * m_countsPerInch);
+	SmartDashboard::PutNumber("Tank_rightPos", rightPos * m_countsPerInch);
+}
+
+void TankDrive::SpeedDrive(const float leftSpeed, const float rightSpeed) {
+//	static Timer timer;
+//	float dt = timer.Get();
+//
+//	if(dt > 0.025) {
+//		dt = 0.025;
+//	}
+//
+//	m_leftDistance += leftSpeed*dt;
+//	m_rightDistance += rightSpeed*dt;
+//
+//	m_leftMotor1.Set(-m_leftDistance*m_countPerInch);
+//	m_rightMotor1.Set(m_rightDistance*m_countPerInch);
+//
+//	timer.Reset();
+//	timer.Start();
+}
+
+void TankDrive::SetMode(DriveMode mode){
+	Zero();
+	switch(mode){
+
+	case DriveMode::SPEED:
+
+		m_leftMotor1.SetControlMode(frc::CANSpeedController::kSpeed);
+		m_rightMotor1.SetControlMode(frc::CANSpeedController::kSpeed);
+		break;
+	case DriveMode::POSITION:
+
+		m_leftMotor1.SetControlMode(frc::CANSpeedController::kPosition);
+		m_rightMotor1.SetControlMode(frc::CANSpeedController::kPosition);
+		break;
+
+	case DriveMode::VBUS:
+
+		m_leftMotor1.SetControlMode(frc::CANSpeedController::kPercentVbus);
+		m_rightMotor1.SetControlMode(frc::CANSpeedController::kPercentVbus);
+		break;
+	}
+	m_leftMotor1.Set(0);
+	m_rightMotor1.Set(0);
+}
+
+void TankDrive::Zero()
+{
+	m_leftMotor1.SetPosition(0.0);
+	m_rightMotor1.SetPosition(0.0);
+	m_leftMotor1.Set(0);
+	m_rightMotor1.Set(0);
+	m_leftDistance = 0;
+	m_rightDistance = 0;
+}
