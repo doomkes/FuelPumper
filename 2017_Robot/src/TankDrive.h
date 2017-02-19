@@ -13,13 +13,16 @@
 #include "RobotMap.h"
 
 class TankDrive {
-	frc::Joystick& m_leftStick;
-	frc::Joystick& m_rightStick;
-	frc::Solenoid& m_gearShift;
-	CANTalon& m_leftMotor1;
-	CANTalon& m_leftMotor2;
-	CANTalon& m_rightMotor1;
-	CANTalon& m_rightMotor2;
+	frc::Joystick* m_leftStick;
+	frc::Joystick* m_rightStick;
+	frc::JoystickButton* joystickButton_reverseDrive;
+	frc::JoystickButton* joystickButton_shiftLow;
+	frc::JoystickButton* joystickButton_shiftHigh;
+	frc::Solenoid* m_gearShift;
+	CANTalon* m_leftMotor1;
+	CANTalon* m_leftMotor2;
+	CANTalon* m_rightMotor1;
+	CANTalon* m_rightMotor2;
 private:
 	int direction;
 	bool highGear;
@@ -30,13 +33,16 @@ private:
 	float heading;
 public:
 	TankDrive(
-		frc::Joystick &m_leftStick
-		,frc::Joystick &m_rightStick
-		,frc::Solenoid &m_gearShift
-		,CANTalon &m_leftMotor1
-		,CANTalon &m_leftMotor2
-		,CANTalon &m_rightMotor1
-		,CANTalon &m_rightMotor2
+			frc::Joystick* m_leftStick
+			,frc::Joystick* m_rightStick
+			, frc::JoystickButton* joystickButton_reverseDrive
+			, frc::JoystickButton* joystickButton_shiftLow
+			, frc::JoystickButton* joystickButton_shiftHigh
+			,frc::Solenoid* m_gearShift
+			,CANTalon* m_leftMotor1
+			,CANTalon* m_leftMotor2
+			,CANTalon* m_rightMotor1
+			,CANTalon* m_rightMotor2
 	);
 	virtual ~TankDrive();
 	void TeleopInit();

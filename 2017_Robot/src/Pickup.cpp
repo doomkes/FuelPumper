@@ -9,14 +9,14 @@
 #include "Pickup.h"
 
 Pickup::Pickup(
-	frc::Joystick &m_leftStick
-	,int pickupButton
-	,frc::Talon &m_intakeMotor
-	,frc::Talon &m_hopperMotor
+		frc::JoystickButton* joystickButton_pickup
+		,frc::JoystickButton* joystickButton_reversePickup
+		,frc::Talon* m_intakeMotor
+		,frc::Talon* m_hopperMotor
 	)
 	:
-	m_leftStick(m_leftStick)
-	, pickupButton(pickupButton)
+	joystickButton_pickup(joystickButton_pickup)
+	, joystickButton_reversePickup(joystickButton_reversePickup)
 	, m_intakeMotor(m_intakeMotor)
 	, m_hopperMotor(m_hopperMotor)
 {
@@ -27,9 +27,9 @@ void Pickup::TeleopInit() {
 
 }
 void Pickup::TeleopPeriodic() {
-	if(m_leftStick.GetRawButton(BUTTON_L_PICKUP)) {
+	if(joystickButton_pickup->Get()) {
 
-			if(m_leftStick.GetRawButton(BUTTON_L_REVERSEPICKUP)){
+			if(joystickButton_reversePickup->Get()){
 				Reverse();
 			}
 			else {
@@ -74,16 +74,16 @@ void Pickup::Intake() {
 	};
 
 
-	m_intakeMotor.Set(-1*IntakeVoltageFactor);
-	m_hopperMotor.Set(-1*HopperVoltageFactor);
+	m_intakeMotor->Set(-1*IntakeVoltageFactor);
+	m_hopperMotor->Set(-1*HopperVoltageFactor);
 }
 
 void Pickup::stop() {
-	m_intakeMotor.Set(0);
-	m_hopperMotor.Set(0);
+	m_intakeMotor->Set(0);
+	m_hopperMotor->Set(0);
 }
 
 void Pickup::Reverse(){
-	m_intakeMotor.Set(1);
-	m_hopperMotor.Set(-1);
+	m_intakeMotor->Set(1);
+	m_hopperMotor->Set(-1);
 }
