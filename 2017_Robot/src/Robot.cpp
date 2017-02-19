@@ -23,6 +23,8 @@ using frc::SmartDashboard;
 using namespace std;
 using namespace frc;
 class Robot: public frc::IterativeRobot {
+	OI* oi = new OI();
+	CI* ci = new CI();
 	Vision m_vision;
 	grip::BoilerVision m_boilerVision;
 
@@ -40,9 +42,6 @@ class Robot: public frc::IterativeRobot {
 
 
 	float m_shooterSpeed = 0;
-
-	OI* oi = new OI();
-	CI* ci = new CI();
 
 public:
 	Robot()
