@@ -11,11 +11,13 @@
 #include <WPILib.h>
 #include <CANTalon.h>
 #include "RobotMap.h"
+#include <Map>
 enum DriveMode{
 	POSITION,
 	SPEED,
 	VBUS
 };
+using namespace std;
 class TankDrive {
 	frc::Joystick* m_leftStick;
 	frc::Joystick* m_rightStick;

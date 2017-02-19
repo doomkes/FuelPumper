@@ -4,13 +4,14 @@
  *  Created on: Feb 13, 2017
  *      Author: Joey
  */
+#include <RelativeMovement.h>
 #include <WPILib.h>
-#include "GCode.h"
 
 #ifndef SRC_AUTONOMOUS_H_
 #define SRC_AUTONOMOUS_H_
 #include "TankDrive.h"
 #include "BoilerVision.h"
+#include "TrapezoidalMove.h"
 using namespace cs;
 using namespace grip;
 class Autonomous {
@@ -19,7 +20,9 @@ class Autonomous {
 	cs::UsbCamera camera;
 	grip::BoilerVision m_boilerVision;
 	TankDrive &m_tank;
-	GCode m_gcode;
+	RelativeMovement m_relMove;
+	TrapezoidalMove m_move;
+	Timer m_timer;
 public:
 	Autonomous(
 		CameraServer *,

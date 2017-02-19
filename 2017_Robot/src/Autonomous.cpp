@@ -35,16 +35,16 @@ Autonomous::~Autonomous() {
 
 void Autonomous::AutonomousInit() {
 //		cameraServer = CameraServer::GetInstance();
-		camera = m_cameraServer->StartAutomaticCapture(0);
-		m_outputStream = CameraServer::GetInstance()->PutVideo("thresh", 640, 480);
-		camera.SetResolution(640, 480);
-		camera.SetExposureManual(1);
-		m_tank.SetMode(DriveMode::POSITION);
-		m_gcode.SetTank(&m_tank);
-	}
+	camera = m_cameraServer->StartAutomaticCapture(0);
+	m_outputStream = CameraServer::GetInstance()->PutVideo("thresh", 640, 480);
+	camera.SetResolution(640, 480);
+	camera.SetExposureManual(1);
+}
 
 void Autonomous::AutonomousPeriodic() {
-	m_gcode.G1(24, 24, 24);
+	m_relMove.Linear(60, 0, 24);
+//	float t = m_timer.Get();
+//	m_tank.PositionDrive(m_move.Position(t), m_move.Position(t));
 //		cv::Mat frame;
 //
 //		m_cameraServer->GetVideo().GrabFrame(frame);
