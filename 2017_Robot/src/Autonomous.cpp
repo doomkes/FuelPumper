@@ -21,8 +21,8 @@ Autonomous::Autonomous(
 
 		m_cameraServer(m_cameraServer),
 		m_outputStream(m_outputStream),
-		camera(camera),
-		m_boilerVision(m_boilerVision)
+		camera(camera)//,
+		//m_boilerVision(m_boilerVision)
 {
 
 }
