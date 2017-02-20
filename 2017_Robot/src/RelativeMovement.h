@@ -20,8 +20,8 @@ class RelativeMovement {
 public:
 	RelativeMovement(TankDrive&, ChainCommands&);
 	virtual ~RelativeMovement();
-
-	void Linear(float xDist, float yDist, float speed);
+	void Arc(bool,float,float,float,float,float);
+	void Linear(float, float, float);
 };
 
 #endif /* SRC_RELATIVEMOVEMENT_H_ */

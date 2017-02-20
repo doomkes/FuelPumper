@@ -32,6 +32,7 @@ class ChainCommands {
 	bool CheckStatus(map<int, float, float>&);
 	void DoCommand(map<int, float, float>&);
 	queue<map<int, float, float>> commandArray;
+	void ContinueCommand(map<int,float,float>&);
 public:
 	ChainCommands(TankDrive&, ChainCommands&, TrapezoidalMove, Timer);
 	virtual ~ChainCommands();

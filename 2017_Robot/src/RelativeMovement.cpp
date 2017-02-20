@@ -25,7 +25,10 @@ void RelativeMovement::Linear(float xDist, float yDist, float speed) {
 	//calc turn
 
 	angle=atan2(yDist,xDist);
-	float angleChangeInches = angle/6.283*95.819;
+	if (angle > 3.14159) {
+		angle-=6.28318;
+	}
+	float angleChangeInches = angle/6.28318*95.819;
 	float turn = angleChangeInches/2;
 
 	SmartDashboard::PutNumber("G0_TargetAngle", angle);
@@ -41,6 +44,40 @@ void RelativeMovement::Linear(float xDist, float yDist, float speed) {
 
 	//add drive command to array
 	m_chain.AddCommand(DRIVE_STRAIGHT, distance, speed);
-
-
 }
+void RelativeMovement::Arc(bool Clockwise,float xEndPoint,float yEndPoint,float xCircle,float yCircle, float speed) {
+	//sanity saving constants
+	const float radius = sqrt((xCircle*xCircle)+(yCircle*yCircle));
+	const float diameter = 2*radius;
+	const float circumference = 3.14159*diameter;
+	const float distBtwnWhl = 30.5; /*Distance Between Wheels*/
+
+	//calc starting angle
+	float centerAngle = atan2(xCircle,yCircle);
+	float angleChange = centerAngle;
+	if(xCircle>0 && Clockwise) {
+		angleChange+=1.57079;
+	}
+	else if(xCircle>0 && !Clockwise) {
+		angleChange-=1.57079;
+	}
+	else if(xCircle<0 && Clockwise) {
+		angleChange-=1.57079;
+	}
+	else if(xCircle<0 && !Clockwise) {
+		angleChange+=1.57079;
+	}
+	//remove redundant paths
+	if (angleChange > 3.14159) {
+			angleChange-=6.28318;
+	}
+	//calc turn in inches and add to command array
+	float angleChangeInches = angleChange/6.28318*95.819;
+	float turn = angleChangeInches/2;
+	m_chain.AddCommand(DRIVE_TURN,turn,0);
+
+	//calc length of arc
+	float
+	-1h/c
+}
+

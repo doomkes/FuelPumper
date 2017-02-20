@@ -18,9 +18,13 @@ void ChainCommands::AutoPeriodic() {
 			commandArray.pop();
 			doingCommand = false;
 		}
+		else {
+			ContinueCommand(commandArray.front());
+		}
 	}
 	else {
 		if (!commandArray.empty()) {
+			doingCommand = true;
 			DoCommand(commandArray.front());
 		}
 	}
@@ -35,6 +39,63 @@ void ChainCommands::DoCommand(map<int, float, float>& Command){
 	case DRIVE_TURN:
 		float turn=Command[1];
 		m_move.SetAll(turn,turn,turn,turn);
+		m_move.CalcParams();
+		m_timer.Reset();
+		m_timer.Start();
+		break;
+	case DRIVE_STRAIGHT:
+		float speed = Command[2];
+		float distance = Command[1];
+		m_move.SetAll(speed,speed,speed,distance);
+		m_move.CalcParams();
+		m_timer.Reset();
+		m_timer.Start();
+		break;
+	}
+}
+void ChainCommands::AddCommand(int command, float variable1, float variable2) {
+	commandArray.push(map<int command,float variable1,float variable2>);
+}
+void ChainCommands::ContinueCommand(map<int, float, float>& Command){
+	switch(Command[0]) {
+	case DRIVE_TURN:
+		float turn=Command[1];
+		float t = m_timer.Get();
+		float pos=m_move.Position(t);
+		m_tank.PositionDrive(-pos,pos);
+		break;
+	case DRIVE_STRAIGHT:
+			float distance = Command[1];
+			float t = m_timer.Get();
+			float pos=m_move.Position(t);
+			m_tank.PositionDrive(pos,pos);
+			break;
+	}
+}
+bool ChainCommands::CheckStatus(map<int, float, float>& Command){
+	switch(Command[0]) {
+	case DRIVE_TURN:
+		//float turn = Command[1];
+		//float angle = m_tank.m_gyro.GetAngle()*(3.14159/180);
+		//float targetAngle = turn/95.819;
+		if (m_timer.Get()>=2)/*(fabs(fabs(targetAngle)-fabs(angle))<=1)*/ {
+			m_timer.Stop();
+			return(true);
+		}
+		else {
+			return(false);
+		}
+		break;
+	case DRIVE_STRAIGHT:
+		float speed = Command[2];
+		float distance = Command[1];
+		if (m_timer.Get()>=(distance/speed+1)) {
+			m_timer.Stop();
+			return(true);
+		}
+		else {
+			return(false);
+		}
 
 	}
 }
