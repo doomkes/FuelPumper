@@ -7,7 +7,7 @@
 
 #include "ChainCommands.h"
 
-ChainCommands::ChainCommands(TankDrive& Tank, ChainCommands& Chain, TrapezoidalMove Move, Timer Time):m_tank(Tank),m_chain(Chain),m_move(Move),m_timer(Time) {
+ChainCommands::ChainCommands(TankDrive& Tank, ChainCommands& Chain, TrapezoidalMove Move, Timer Time):m_tank(Tank),m_chain(Chain),m_move(Move) {
 	// TODO Auto-generated constructor stub
 	doingCommand=false;
 
@@ -34,46 +34,111 @@ void ChainCommands::AutoPeriodic() {
 
 	//check various commands if done yes= doingcommand=false, remove command no=continue
 }
-void ChainCommands::DoCommand(map<int, float, float>& Command){
-	switch(Command[0]) {
+
+void ChainCommands::AddCommand(int commandNum, float variable1, float variable2,float variable3) {
+	command Command;
+	Command.number = commandNum;
+	Command.param1 = variable1;
+	Command.param2 = variable2;
+	Command.param3 = variable3;
+	commandArray.push(Command);
+}
+
+void ChainCommands::DoCommand(command Command){
+	//Variable Declaration
+	float speed;
+	float distance;
+	float turn;
+	float arcLength;
+
+	switch(Command.number) {
 	case DRIVE_TURN:
-		float turn=Command[1];
+		turn=Command.param1;
 		m_move.SetAll(turn,turn,turn,turn);
 		m_move.CalcParams();
 		m_timer.Reset();
 		m_timer.Start();
 		break;
+
 	case DRIVE_STRAIGHT:
-		float speed = Command[2];
-		float distance = Command[1];
+		speed = Command.param2;
+		distance = Command.param1;
 		m_move.SetAll(speed,speed,speed,distance);
 		m_move.CalcParams();
 		m_timer.Reset();
 		m_timer.Start();
 		break;
+
+	case DRIVE_ARC_CLOCKWISE:
+		arcLength = Command.param1;
+		speed = Command.param2;
+		m_move.SetAll(speed,speed,speed,arcLength);
+		m_move.CalcParams();
+		m_timer.Reset();
+		m_timer.Start();
+		break;
+
+	case DRIVE_ARC_COUNTERCLOCKWISE:
+		arcLength = Command.param1;
+		speed = Command.param2;
+		m_move.SetAll(speed,speed,speed,arcLength);
+		m_move.CalcParams();
+		m_timer.Reset();
+		m_timer.Start();
+		break;
+
 	}
 }
-void ChainCommands::AddCommand(int command, float variable1, float variable2) {
-	commandArray.push(map<int command,float variable1,float variable2>);
-}
-void ChainCommands::ContinueCommand(map<int, float, float>& Command){
-	switch(Command[0]) {
+
+void ChainCommands::ContinueCommand(command Command){
+	//Variable declaration
+	const float distBtwnWhl = 30.5/2; /*Distance from center of bot to Wheels*/
+	float turn;
+	float t;
+	float pos;
+	float radius;
+	float rightPos;
+	float leftPos;
+	switch(Command.number) {
+
 	case DRIVE_TURN:
-		float turn=Command[1];
-		float t = m_timer.Get();
-		float pos=m_move.Position(t);
+		turn = Command.param1;
+		t = m_timer.Get();
+		pos=m_move.Position(t);
 		m_tank.PositionDrive(-pos,pos);
 		break;
+
 	case DRIVE_STRAIGHT:
-			float distance = Command[1];
-			float t = m_timer.Get();
-			float pos=m_move.Position(t);
-			m_tank.PositionDrive(pos,pos);
-			break;
+		t = m_timer.Get();
+		pos=m_move.Position(t);
+		m_tank.PositionDrive(pos,pos);
+		break;
+
+	case DRIVE_ARC_CLOCKWISE:
+		t = m_timer.Get();
+		pos=m_move.Position(t);
+		radius = Command.param3;
+		rightPos = ((radius-distBtwnWhl)/radius)*pos;
+		leftPos = ((radius+distBtwnWhl)/radius)*pos;
+		m_tank.PositionDrive(leftPos,rightPos);
+		break;
+
+	case DRIVE_ARC_COUNTERCLOCKWISE:
+		t = m_timer.Get();
+		pos=m_move.Position(t);
+		radius = Command.param3;
+		rightPos = ((radius+distBtwnWhl)/radius)*pos;
+		leftPos = ((radius-distBtwnWhl)/radius)*pos;
+		m_tank.PositionDrive(leftPos,rightPos);
+		break;
+
 	}
 }
-bool ChainCommands::CheckStatus(map<int, float, float>& Command){
-	switch(Command[0]) {
+bool ChainCommands::CheckStatus(command Command){
+	//Variable declaration
+	float distance;
+	float speed
+	switch(Command.number) {
 	case DRIVE_TURN:
 		//float turn = Command[1];
 		//float angle = m_tank.m_gyro.GetAngle()*(3.14159/180);
@@ -86,9 +151,10 @@ bool ChainCommands::CheckStatus(map<int, float, float>& Command){
 			return(false);
 		}
 		break;
+
 	case DRIVE_STRAIGHT:
-		float speed = Command[2];
-		float distance = Command[1];
+		speed = Command.param2;
+		distance = Command.param1;
 		if (m_timer.Get()>=(distance/speed+1)) {
 			m_timer.Stop();
 			return(true);
@@ -96,6 +162,8 @@ bool ChainCommands::CheckStatus(map<int, float, float>& Command){
 		else {
 			return(false);
 		}
+		break;
+
 
 	}
 }

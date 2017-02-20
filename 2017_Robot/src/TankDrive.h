@@ -11,7 +11,6 @@
 #include <WPILib.h>
 #include <CANTalon.h>
 #include "RobotMap.h"
-#include <Map>
 enum DriveMode{
 	POSITION,
 	SPEED,

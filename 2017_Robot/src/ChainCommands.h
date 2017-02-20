@@ -14,7 +14,6 @@
 #include "Shooter.h"
 #include "TankDrive.h"
 #include "TrapezoidalMove.h"
-
 using namespace std;
 enum Commands {
 	DRIVE_TURN = 0,
@@ -22,22 +21,25 @@ enum Commands {
 	DRIVE_ARC_CLOCKWISE=2,
 	DRIVE_ARC_COUNTERCLOCKWISE=3,
 };
-
+struct command {
+	int number;
+	float param1, param2, param3;
+};
 class ChainCommands {
 	TankDrive &m_tank;
 	ChainCommands &m_chain;
 	TrapezoidalMove m_move;
 	Timer m_timer;
 	bool doingCommand;
-	bool CheckStatus(map<int, float, float>&);
-	void DoCommand(map<int, float, float>&);
-	queue<map<int, float, float>> commandArray;
-	void ContinueCommand(map<int,float,float>&);
+	bool CheckStatus(command);
+	void DoCommand(command);
+	queue<command> commandArray;
+	void ContinueCommand(command);
 public:
 	ChainCommands(TankDrive&, ChainCommands&, TrapezoidalMove, Timer);
 	virtual ~ChainCommands();
 	void AutoPeriodic();
-	void AddCommand(int,float,float);
+	void AddCommand(int,float,float,float);
 };
 
 #endif /* SRC_CHAINCOMMANDS_H_ */
