@@ -97,6 +97,7 @@ public:
 			ci->canTalon_shootWheel1
 			, ci->canTalon_shootWheel2
 			, ci->canTalon_indexMotor
+			, ci->canTalon_shooterFeeder
 			, ci->digitalOutput_aimLight
 			, oi->joystickButton_shoot
 			, oi->joystickButton_reverseIndex
