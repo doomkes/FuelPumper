@@ -13,7 +13,7 @@ Shooter::Shooter(
 		CANTalon* m_shootWheel1
 		, CANTalon* m_shootWheel2
 		, CANTalon* m_indexMotor
-		, CANTalon* m_shooterFeeder
+		, frc::Talon* m_shooterFeeder
 		, frc::DigitalOutput* m_aimLight
 		, frc::JoystickButton* joystickButton_shoot
 		, frc::JoystickButton* joystickButton_reverseIndex
@@ -31,7 +31,9 @@ m_particleAccelerator(m_shootWheel1)
 , m_shooterSpeed(m_shooterSpeed)
 , m_shooterFeeder(m_shooterFeeder)
 {
-
+	m_shootWheel1->SetControlMode(frc::CANSpeedController::kSpeed);
+	m_shootWheel2->SetControlMode(frc::CANSpeedController::kSpeed);
+	m_indexMotor->SetControlMode(frc::CANSpeedController::kSpeed);
 }
 
 Shooter::~Shooter() {
@@ -74,17 +76,21 @@ void Shooter::Shoot(float shooterSpeed) {
 //		IndexVoltageFactor += .005;
 //	}
 
-	const float acceleratorSpeed = 3500;
-	const float afterBurnerSpeed = 3250;
+	const float acceleratorSpeed = -3500;
+	const float afterBurnerSpeed = -3250;
 
-	SmartDashboard::PutNumber("PASpeed", m_particleAccelerator->GetSpeed());
-	SmartDashboard::PutNumber("ABSpeed", m_afterBurner->GetSpeed());
+	float paSpeed = m_particleAccelerator->GetSpeed();
+	float abSpeed = m_afterBurner->GetSpeed();
+
+	if (fabs(paSpeed - acceleratorSpeed) < 300) {
+		SmartDashboard::PutNumber("PASpeed", paSpeed - acceleratorSpeed);
+		SmartDashboard::PutNumber("ABSpeed", abSpeed - afterBurnerSpeed);
+	}
 	m_particleAccelerator->SetSetpoint(acceleratorSpeed);
 	m_afterBurner->SetSetpoint(afterBurnerSpeed);
-	if (fabs(m_particleAccelerator->GetSpeed()-acceleratorSpeed)<=50
-			&& fabs(m_afterBurner->GetSpeed()-afterBurnerSpeed) <= 50 )
-	{
-		m_indexMotor->SetSetpoint (60);
+	if (fabs(paSpeed-acceleratorSpeed)<=300 && fabs(abSpeed-afterBurnerSpeed) <= 300) {
+		m_indexMotor->SetSetpoint(30);
+		m_shooterFeeder->Set(.3333);
 	}
 }
 
@@ -109,6 +115,7 @@ void Shooter::Stop() {
 	m_particleAccelerator->SetSetpoint(0);
 	m_afterBurner->SetSetpoint(0);
 	m_indexMotor->SetSetpoint(0);
+	m_shooterFeeder->Set(0);
 }
 
 void Shooter::Init() {

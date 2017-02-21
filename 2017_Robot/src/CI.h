@@ -24,7 +24,7 @@ public:
 	CANTalon* canTalon_shootWheel1 = new CANTalon(MOTOR_SHOOT1);
 	CANTalon* canTalon_shootWheel2 = new CANTalon(MOTOR_SHOOT2);
 	CANTalon* canTalon_indexMotor = new CANTalon(MOTOR_INDEXER);
-	CANTalon* canTalon_shooterFeeder = new CANTalon(MOTOR_SHOOTER_FEEDER);
+	frc::Talon* canTalon_shooterFeeder = new frc::Talon(MOTOR_SHOOTER_FEEDER);
 	CANTalon* canTalonclimbMotor = new CANTalon(MOTOR_CLIMB);
 	frc::Talon* canTalon_intake = new frc::Talon(MOTOR_PICKUP_INTAKE);
 	frc::Talon* canTalon_hopper = new frc::Talon(MOTOR_PICKUP_HOPPER);
