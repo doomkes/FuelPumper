@@ -67,6 +67,7 @@ public:
 	m_climber(
 			oi->joystickButton_climb,
 			oi->joystickButton_reverseClimb,
+			oi->joystickButton_climbHold,
 			ci->canTalonclimbMotor
 	),
 	m_gearManipulator(

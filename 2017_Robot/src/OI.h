@@ -28,7 +28,7 @@ public:
 
 	frc::JoystickButton* joystickButton_climb = new frc::JoystickButton(joystick_manipulator, BUTTON_M_CLIMB);
 	frc::JoystickButton* joystickButton_reverseClimb = new frc::JoystickButton(joystick_manipulator, BUTTON_M_REVERSECLIMB);
-
+	frc::JoystickButton* joystickButton_climbHold = new frc::JoystickButton(joystick_manipulator, BUTTON_M_CLIMB);
 	frc::JoystickButton* joystickButton_gearRelease = new frc::JoystickButton(joystick_driverLeft, BUTTON_L_GEAR_RELEASE);
 
 	frc::JoystickButton* joystickButton_pickup = new frc::JoystickButton(joystick_driverLeft, BUTTON_L_PICKUP);
