@@ -14,6 +14,7 @@ Shooter::Shooter(
 		CANTalon* m_shootWheel1
 		, CANTalon* m_shootWheel2
 		, CANTalon* m_indexMotor
+		, CANTalon* m_shooterFeeder
 		, frc::DigitalOutput* m_aimLight
 		, frc::JoystickButton* joystickButton_shoot
 		, frc::JoystickButton* joystickButton_reverseIndex
@@ -24,6 +25,7 @@ Shooter::Shooter(
 m_shootWheel1(m_shootWheel1)
 , m_shootWheel2(m_shootWheel2)
 , m_indexMotor(m_indexMotor)
+, m_shooterFeeder(m_shooterFeeder)
 , m_aimLight(m_aimLight)
 , joystickButton_shoot(joystickButton_shoot)
 , joystickButton_reverseIndex(joystickButton_reverseIndex)
@@ -76,6 +78,7 @@ void Shooter::Shoot(float shooterSpeed) {
 	m_shootWheel2->SetSetpoint(shooterSpeed);
 	if (abs(m_shootWheel1->GetSpeed()-shooterSpeed)<=50) {
 		m_indexMotor->SetSetpoint (1000);
+		m_shooterFeeder->SetSetpoint(-4);
 		//TODO Find actual RPM values
 	}
 }
@@ -106,6 +109,7 @@ void Shooter::Stop() {
 void Shooter::Init() {
 	m_shootWheel1->SetControlMode(frc::CANSpeedController::kSpeed);
 	m_shootWheel2->SetControlMode(frc::CANSpeedController::kSpeed);
+	m_shooterFeeder->SetControlMode(frc::CANSpeedController::kVoltage);
 }
 
 void Shooter::AimLight(bool state) {
