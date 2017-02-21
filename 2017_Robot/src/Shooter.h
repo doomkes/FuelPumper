@@ -17,7 +17,7 @@ class Shooter {
 	CANTalon* m_particleAccelerator;
 	CANTalon* m_afterBurner;
 	CANTalon* m_indexMotor;
-	CANTalon* m_shooterFeeder;
+	frc::Talon* m_shooterFeeder;
 	frc::DigitalOutput* m_aimLight;
 
 	//	int m_shootButton;
@@ -40,7 +40,7 @@ public:
 			CANTalon* m_shootWheel1
 			, CANTalon* m_shootWheel2
 			, CANTalon* m_indexMotor
-			, CANTalon* m_shooterFeeder
+			, frc::Talon* m_shooterFeeder
 			, frc::DigitalOutput* m_aimLight
 			, frc::JoystickButton* joystickButton_shoot
 			, frc::JoystickButton* joystickButton_reverseIndex
