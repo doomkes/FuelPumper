@@ -13,7 +13,9 @@ using namespace grip;
 Autonomous::Autonomous(
 	CameraServer *m_cameraServer,
 		cs::CvSource &m_outputStream,
-		cs::UsbCamera &camera
+		cs::UsbCamera &camera,
+		TankDrive &Tank,
+		RelativeMovement &Rel
 //		,
 //		grip::BoilerVision &m_boilerVision
 		)
@@ -21,8 +23,10 @@ Autonomous::Autonomous(
 
 		m_cameraServer(m_cameraServer),
 		m_outputStream(m_outputStream),
-		camera(camera)//,
-		//m_boilerVision(m_boilerVision)
+		camera(camera),
+		m_boilerVision(m_boilerVision),
+		m_tank(Tank),
+		m_relMove(Rel)
 {
 
 }
@@ -33,13 +37,16 @@ Autonomous::~Autonomous() {
 
 void Autonomous::AutonomousInit() {
 //		cameraServer = CameraServer::GetInstance();
-		camera = m_cameraServer->StartAutomaticCapture(0);
-		m_outputStream = CameraServer::GetInstance()->PutVideo("thresh", 640, 480);
-		camera.SetResolution(640, 480);
-		camera.SetExposureManual(1);
-	}
+	camera = m_cameraServer->StartAutomaticCapture(0);
+	m_outputStream = CameraServer::GetInstance()->PutVideo("thresh", 640, 480);
+	camera.SetResolution(640, 480);
+	camera.SetExposureManual(1);
+}
 
 void Autonomous::AutonomousPeriodic() {
+	m_relMove.Linear(60, 0, 24);
+//	float t = m_timer.Get();
+//	m_tank.PositionDrive(m_move.Position(t), m_move.Position(t));
 //		cv::Mat frame;
 //
 //		m_cameraServer->GetVideo().GrabFrame(frame);

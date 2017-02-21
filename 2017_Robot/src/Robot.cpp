@@ -9,6 +9,9 @@
 #include <WPILib.h>
 #include "RobotMap.h"
 #include "TankDrive.h"
+#include "TrapezoidalMove.h"
+#include "RelativeMovement.h"
+#include "ChainCommands.h"
 #include "Pickup.h"
 #include "BoilerVision.h"
 #include "GearManipulator.h"
@@ -29,6 +32,9 @@ class Robot: public frc::IterativeRobot {
 	grip::BoilerVision m_boilerVision;
 
 	TankDrive m_tank;
+	TrapezoidalMove m_move;
+	ChainCommands m_chain;
+	RelativeMovement m_relMove;
 	Autonomous *m_autonomous = nullptr;
 	Climber m_climber;
 	Shooter m_shooter;// = nullptr;
@@ -58,6 +64,20 @@ public:
 			ci->canTalon_rightMotor1,
 			ci->canTalon_rightMotor2
 	),
+	m_move(),
+	m_chain(
+				m_tank,
+				m_move
+
+
+		),
+	m_relMove(
+			m_chain
+	),
+	m_aimLight(LIGHT_AIM),
+	m_shootWheel1(0),
+	m_shootWheel2(1),
+	m_indexMotor(2),
 	m_pickup(
 			oi->joystickButton_pickup,
 			oi->joystickButton_reversePickup,
@@ -97,7 +117,7 @@ public:
 			Preferences::GetInstance()->PutFloat("Exposure", 1);
 		}
 		cameraServer = CameraServer::GetInstance();
-		m_autonomous = new Autonomous(cameraServer, m_outputStream, camera);
+		m_autonomous = new Autonomous(cameraServer, m_outputStream, camera, m_tank,m_relMove);
 
 		m_shooterSpeed = frc::Preferences::GetInstance()->GetFloat("ShooterSpeed",0);
 
@@ -111,10 +131,12 @@ public:
 		m_tank.TeleopInit();
 		m_climber.TeleopInit();
 		m_vision.TeleopInit();
+		m_tank.SetMode(DriveMode::VBUS);
 	}
 
 	void TeleopPeriodic() override {
 		//m_gearManipulator.Release(m_leftStick.GetRawButton(LStickMap::GEAR_RELEASE));
+
 		m_gearManipulator.TeleopPeriodic();
 		m_tank.TeleopPeriodic();
 		m_pickup.TeleopPeriodic();
