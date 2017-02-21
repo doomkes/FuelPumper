@@ -28,7 +28,8 @@ public:
 		CameraServer *,
 		CvSource &m_outputStream,
 		UsbCamera &camera,
-		TankDrive &m_tank
+		TankDrive &m_tank,
+		RelativeMovement &relMove
 //		,
 //		BoilerVision &m_boilerVision
 	);

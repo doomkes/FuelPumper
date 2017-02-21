@@ -27,7 +27,6 @@ struct command {
 };
 class ChainCommands {
 	TankDrive &m_tank;
-	ChainCommands &m_chain;
 	TrapezoidalMove m_move;
 	Timer m_timer;
 	bool doingCommand;
@@ -36,7 +35,7 @@ class ChainCommands {
 	queue<command> commandArray;
 	void ContinueCommand(command);
 public:
-	ChainCommands(TankDrive&, ChainCommands&, TrapezoidalMove, Timer);
+	ChainCommands(TankDrive&, TrapezoidalMove);
 	virtual ~ChainCommands();
 	void AutoPeriodic();
 	void AddCommand(int,float,float,float);

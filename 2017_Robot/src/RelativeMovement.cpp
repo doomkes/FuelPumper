@@ -9,7 +9,7 @@
 
 using namespace std;
 
-RelativeMovement::RelativeMovement(TankDrive& Tank, ChainCommands& Chain):m_tank(Tank),m_chain(Chain) {
+RelativeMovement::RelativeMovement(ChainCommands& Chain):m_chain(Chain) {
 	// TODO Auto-generated constructor stub
 
 }

@@ -14,7 +14,8 @@ Autonomous::Autonomous(
 	CameraServer *m_cameraServer,
 		cs::CvSource &m_outputStream,
 		cs::UsbCamera &camera,
-		TankDrive &Tank
+		TankDrive &Tank,
+		RelativeMovement &Rel
 //		,
 //		grip::BoilerVision &m_boilerVision
 		)
@@ -22,9 +23,10 @@ Autonomous::Autonomous(
 
 		m_cameraServer(m_cameraServer),
 		m_outputStream(m_outputStream),
-		camera(camera)//,
-		//m_boilerVision(m_boilerVision)
-
+		camera(camera),
+		m_boilerVision(m_boilerVision),
+		m_tank(Tank),
+		m_relMove(Rel)
 {
 
 }

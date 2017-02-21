@@ -7,7 +7,7 @@
 
 #include "ChainCommands.h"
 
-ChainCommands::ChainCommands(TankDrive& Tank, ChainCommands& Chain, TrapezoidalMove Move, Timer Time):m_tank(Tank),m_chain(Chain),m_move(Move) {
+ChainCommands::ChainCommands(TankDrive& Tank, TrapezoidalMove Move):m_tank(Tank),m_move(Move) {
 	// TODO Auto-generated constructor stub
 	doingCommand=false;
 
@@ -99,6 +99,7 @@ void ChainCommands::ContinueCommand(command Command){
 	float radius;
 	float rightPos;
 	float leftPos;
+
 	switch(Command.number) {
 
 	case DRIVE_TURN:
@@ -137,7 +138,9 @@ void ChainCommands::ContinueCommand(command Command){
 bool ChainCommands::CheckStatus(command Command){
 	//Variable declaration
 	float distance;
-	float speed
+	float speed;
+	float arcLength;
+
 	switch(Command.number) {
 	case DRIVE_TURN:
 		//float turn = Command[1];
@@ -155,6 +158,17 @@ bool ChainCommands::CheckStatus(command Command){
 	case DRIVE_STRAIGHT:
 		speed = Command.param2;
 		distance = Command.param1;
+		if (m_timer.Get()>=(arcLength/speed+1)) {
+			m_timer.Stop();
+			return(true);
+		}
+		else {
+			return(false);
+		}
+		break;
+	case DRIVE_ARC_CLOCKWISE:
+		speed = Command.param2;
+		arcLength = Command.param1;
 		if (m_timer.Get()>=(distance/speed+1)) {
 			m_timer.Stop();
 			return(true);
@@ -163,7 +177,17 @@ bool ChainCommands::CheckStatus(command Command){
 			return(false);
 		}
 		break;
-
+	case DRIVE_ARC_COUNTERCLOCKWISE:
+		speed = Command.param2;
+		arcLength = Command.param1;
+		if (m_timer.Get()>=(distance/speed+1)) {
+			m_timer.Stop();
+			return(true);
+		}
+		else {
+			return(false);
+		}
+		break;
 
 	}
 }
