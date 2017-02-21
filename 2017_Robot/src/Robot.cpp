@@ -74,10 +74,6 @@ public:
 	m_relMove(
 			m_chain
 	),
-	m_aimLight(LIGHT_AIM),
-	m_shootWheel1(0),
-	m_shootWheel2(1),
-	m_indexMotor(2),
 	m_pickup(
 			oi->joystickButton_pickup,
 			oi->joystickButton_reversePickup,
