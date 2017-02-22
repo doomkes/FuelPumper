@@ -47,7 +47,10 @@ enum DS_USBMap {
 
 enum DIOMap {
 	LIGHT_AIM = 9,
-	LIGHT_RUN_GUN = 8
+	LIGHT_RUN_GUN = 8,
+	LIGHT_1 = 100, //TODO:MJJ need real number
+	LIGHT_2 = 101, //TODO:MJJ need real number
+	LIGHT_3 = 102 //TODO:MJJ need real number
 };
 
 enum SolenoidMap {
@@ -73,6 +76,12 @@ enum PWMMap {
 	MOTOR_PICKUP_HOPPER = 2,
 	MOTOR_LEFT_GEAR_SERVO = 3,
 	MOTOR_RIGHT_GEAR_SERVO = 4,
+};
+
+enum Camera {
+	CAMERA_1 = 10001, //TODO:MJJ need real number
+	CAMERA_2 = 20002, //TODO:MJJ need real number
+	CAMERA_3 = 30003 //TODO:MJJ need real number
 };
 
 #endif /* SRC_ROBOTMAP_H_ */
