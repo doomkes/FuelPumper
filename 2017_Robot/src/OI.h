@@ -38,6 +38,13 @@ public:
 	frc::JoystickButton* joystickButton_shiftLow = new frc::JoystickButton(joystick_driverLeft, BUTTON_L_SHIFT_LOW);
 	frc::JoystickButton* joystickButton_shiftHigh = new frc::JoystickButton(joystick_driverLeft, BUTTON_L_SHIFT_HIGH);
 
+	frc::JoystickButton* joystickButton_camera1 = new frc::JoystickButton(joystick_driverRight, CAMERA_1);
+	frc::JoystickButton* joystickButton_camera2 = new frc::JoystickButton(joystick_driverRight, CAMERA_2);
+	frc::JoystickButton* joystickButton_camera3 = new frc::JoystickButton(joystick_driverRight, CAMERA_3);
+
+	frc::JoystickButton* joystickButton_cameraLight1 = new frc::JoystickButton(joystick_driverRight, LIGHT_1);
+	frc::JoystickButton* joystickButton_cameraLight2 = new frc::JoystickButton(joystick_driverRight, LIGHT_2);
+	frc::JoystickButton* joystickButton_cameraLight3 = new frc::JoystickButton(joystick_driverRight, LIGHT_3);
 
 	OI();
 	virtual ~OI();

@@ -28,7 +28,7 @@ using namespace frc;
 class Robot: public frc::IterativeRobot {
 	OI* oi = new OI();
 	CI* ci = new CI();
-	Vision m_vision;
+	Vision* m_vision = nullptr;
 	grip::BoilerVision m_boilerVision;
 
 	TankDrive m_tank;
@@ -90,9 +90,6 @@ public:
 			ci->servo_leftGear,
 			ci->servo_rightGear
 	),
-	m_vision(
-
-	),
 	m_shooter(
 			ci->canTalon_shootWheel1
 			, ci->canTalon_shootWheel2
@@ -113,6 +110,23 @@ public:
 			Preferences::GetInstance()->PutFloat("Exposure", 1);
 		}
 		cameraServer = CameraServer::GetInstance();
+
+		m_vision = new Vision(
+				cameraServer,
+				ci->usbCamera_1,
+				ci->usbCamera_2,
+				ci->usbCamera_3,
+				ci->digitalOutput_light1,
+				ci->digitalOutput_light2,
+				ci->digitalOutput_light3,
+				oi->joystickButton_camera1,
+				oi->joystickButton_camera2,
+				oi->joystickButton_camera3,
+				oi->joystickButton_cameraLight1,
+				oi->joystickButton_cameraLight2,
+				oi->joystickButton_cameraLight3
+		);
+
 		m_autonomous = new Autonomous(cameraServer, m_outputStream, camera, m_tank,m_relMove);
 
 		m_shooterSpeed = frc::Preferences::GetInstance()->GetFloat("ShooterSpeed",0);
@@ -126,7 +140,7 @@ public:
 		m_shooter.TeleopInit();
 		m_tank.TeleopInit();
 		m_climber.TeleopInit();
-		m_vision.TeleopInit();
+		m_vision->TeleopInit();
 		m_tank.SetMode(DriveMode::VBUS);
 	}
 
@@ -138,7 +152,7 @@ public:
 		m_pickup.TeleopPeriodic();
 		m_shooter.TeleopPeriodic();
 		m_climber.TeleopPeriodic();
-		m_vision.TeleopPeriodic();
+		m_vision->TeleopPeriodic();
 	}
 
 	void AutonomousInit() override {

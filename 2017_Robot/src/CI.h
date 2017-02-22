@@ -37,6 +37,14 @@ public:
 
 	// DigitalOutput
 	DigitalOutput* digitalOutput_aimLight = new DigitalOutput(LIGHT_AIM);
+	DigitalOutput* digitalOutput_light1 = new DigitalOutput(LIGHT_1);
+	DigitalOutput* digitalOutput_light2 = new DigitalOutput(LIGHT_2);
+	DigitalOutput* digitalOutput_light3 = new DigitalOutput(LIGHT_3);
+
+	// Cameras
+	cs::UsbCamera* usbCamera_1 = new cs::UsbCamera();
+	cs::UsbCamera* usbCamera_2 = new cs::UsbCamera();
+	cs::UsbCamera* usbCamera_3 = new cs::UsbCamera();
 
 	CI();
 	virtual ~CI();
