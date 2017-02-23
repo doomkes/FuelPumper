@@ -1,4 +1,3 @@
-
 /*
  * TankDrive.cpp
  *
@@ -57,9 +56,7 @@ TankDrive::~TankDrive() {
  	 }
 
 void TankDrive::TeleopInit() {
-
 }
-
 void TankDrive::TeleopPeriodic() {
 	if (direction == 1 && joystickButton_reverseDrive->Get()) {
 		direction = -1;
@@ -68,7 +65,7 @@ void TankDrive::TeleopPeriodic() {
 	}
 
 	this->Drive(this->m_leftStick->GetY() * direction, this->m_rightStick->GetY() * direction);
-	float WheelSpeed = ((m_rightMotor1->GetSpeed()+m_leftMotor1->GetSpeed())/60)/2;
+	float WheelSpeed = ((fabs(m_rightMotor1->GetSpeed())+fabs(m_leftMotor1->GetSpeed()))/60)/2;
 	//^^above^^Gives us the average rotations per second of the two encoders
 
 	float DriveSpeed = (WheelSpeed*(4*3.1415))/12;
@@ -86,31 +83,28 @@ void TankDrive::TeleopPeriodic() {
 }
 
 void TankDrive::Position() {
-	const float Circumference = 95.819;
 	const float Pi = 3.141592;
 	float rightPosition = m_rightMotor1->GetPosition()*(4*Pi);
-	float leftPosition = m_leftMotor1->GetPosition()*(4*Pi);
+	float leftPosition = -m_leftMotor1->GetPosition()*(4*Pi);
 	distance = ((rightPosition - rightPosOld)+(leftPosition - leftPosOld))/2;
-	this->angle += ((((rightPosition - rightPosOld)-(leftPosition - leftPosOld))/Circumference)*180);
-	if (0<=angle && angle<=360){
-		heading = angle;
-	}
-	else if (angle<=0){
-		heading = angle + 360;
-	}
-	else if (360<=angle){
-		heading = angle -360;
-	}
-	m_xPosition = distance * cos((heading*Pi)/180) + m_xPosition;
-	m_yPosition = distance * sin((heading*Pi)/180) + m_yPosition;
+	angle = m_gyro.GetAngle();
+	m_yPosition = distance * cos((angle*Pi)/180) + m_yPosition;
+	m_xPosition = (distance * sin((angle*Pi)/180) + m_xPosition);
+	SmartDashboard::PutNumber("robot x", -m_xPosition);
+	SmartDashboard::PutNumber("robot y", m_yPosition);
+	SmartDashboard::PutNumber("robot angle", angle);
 	rightPosOld = rightPosition;
 	leftPosOld = leftPosition;
 }
 
 void TankDrive::Drive(const float leftVal, const float rightVal) {
 	//left motor speed is inverted because the motors are physically opposite the right motors
-	m_leftMotor1->SetSetpoint(-leftVal);
-	m_rightMotor1->SetSetpoint(rightVal);
+	float left = leftVal, right = rightVal;
+	if(direction == -1) {
+		std::swap(left, right);
+	}
+	m_leftMotor1->SetSetpoint(right);
+	m_rightMotor1->SetSetpoint(-left);
 }
 
 void TankDrive::LowGear() {
@@ -122,4 +116,62 @@ void TankDrive::LowGear() {
 void TankDrive::HighGear() {
 	m_gearShift->Set(true);
 	this->highGear = true;
+}
+
+void TankDrive::PositionDrive(const float leftPos, const float rightPos) {
+	m_leftMotor1->SetSetpoint(rightPos * m_countsPerInch);
+	m_rightMotor1->SetSetpoint(-leftPos * m_countsPerInch);
+}
+
+void TankDrive::SpeedDrive(const float leftSpeed, const float rightSpeed) {
+//	static Timer timer;
+//	float dt = timer.Get();
+//
+//	if(dt > 0.025) {
+//		dt = 0.025;
+//	}
+//
+//	m_leftDistance += leftSpeed*dt;
+//	m_rightDistance += rightSpeed*dt;
+//
+//	m_leftMotor1.Set(-m_leftDistance*m_countPerInch);
+//	m_rightMotor1.Set(m_rightDistance*m_countPerInch);
+//
+//	timer.Reset();
+//	timer.Start();
+}
+
+void TankDrive::SetMode(DriveMode mode){
+	Zero();
+	switch(mode){
+
+	case DriveMode::SPEED:
+
+		m_leftMotor1->SetControlMode(frc::CANSpeedController::kSpeed);
+		m_rightMotor1->SetControlMode(frc::CANSpeedController::kSpeed);
+		break;
+	case DriveMode::POSITION:
+
+		m_leftMotor1->SetControlMode(frc::CANSpeedController::kPosition);
+		m_rightMotor1->SetControlMode(frc::CANSpeedController::kPosition);
+		break;
+
+	case DriveMode::VBUS:
+
+		m_leftMotor1->SetControlMode(frc::CANSpeedController::kPercentVbus);
+		m_rightMotor1->SetControlMode(frc::CANSpeedController::kPercentVbus);
+		break;
+	}
+	m_leftMotor1->Set(0);
+	m_rightMotor1->Set(0);
+}
+
+void TankDrive::Zero()
+{
+	m_leftMotor1->SetPosition(0);
+	m_rightMotor1->SetPosition(0);
+	m_leftMotor1->Set(0);
+	m_rightMotor1->Set(0);
+	m_leftDistance = 0;
+	m_rightDistance = 0;
 }

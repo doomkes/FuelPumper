@@ -17,16 +17,17 @@ enum ManStickMap {
 	BUTTON_M_SPINUP = 2,
 	BUTTON_M_REVERSEINDEX = 6, //TODO find real number for this.
 	BUTTON_M_CLIMB = 7, //TODO find real number for this
-	BUTTON_M_REVERSECLIMB = 8 //TODO find real number for this
+	BUTTON_M_REVERSECLIMB = 8, //TODO find real number for this
+	BUTTOM_M_HOLD = 9,
 };
 
 enum LStickMap {
 	BUTTON_L_PICKUP = 1,
 	BUTTON_L_REVERSEPICKUP = 4, // TODO Figure out actual button value
-	BUTTON_L_GEAR_RELEASE,
+	BUTTON_L_GEAR_RELEASE = 5,
 	BUTTON_L_SHIFT_LOW = 3,
 	BUTTON_L_SHIFT_HIGH = 2,
-	BUTTON_L_AIM_LIGHT = 5
+	BUTTON_L_AIM_LIGHT = 6
 };
 
 
@@ -46,7 +47,10 @@ enum DS_USBMap {
 
 enum DIOMap {
 	LIGHT_AIM = 9,
-	LIGHT_RUN_GUN = 8
+	LIGHT_RUN_GUN = 8,
+	LIGHT_1 = 100, //TODO:MJJ need real number
+	LIGHT_2 = 101, //TODO:MJJ need real number
+	LIGHT_3 = 102 //TODO:MJJ need real number
 };
 
 enum SolenoidMap {
@@ -67,10 +71,17 @@ enum CANTalonMap {
 };
 
 enum PWMMap {
-	MOTOR_PICKUP_INTAKE = 0,
-	MOTOR_PICKUP_HOPPER = 1,
-	MOTOR_LEFT_GEAR_SERVO = 2,
-	MOTOR_RIGHT_GEAR_SERVO = 3,
+	MOTOR_SHOOTER_FEEDER = 0,
+	MOTOR_PICKUP_INTAKE = 1,
+	MOTOR_PICKUP_HOPPER = 2,
+	MOTOR_LEFT_GEAR_SERVO = 3,
+	MOTOR_RIGHT_GEAR_SERVO = 4,
+};
+
+enum Camera {
+	CAMERA_1 = 10001, //TODO:MJJ need real number
+	CAMERA_2 = 20002, //TODO:MJJ need real number
+	CAMERA_3 = 30003 //TODO:MJJ need real number
 };
 
 #endif /* SRC_ROBOTMAP_H_ */
