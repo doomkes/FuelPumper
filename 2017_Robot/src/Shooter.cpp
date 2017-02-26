@@ -76,21 +76,23 @@ void Shooter::Shoot(float shooterSpeed) {
 //		IndexVoltageFactor += .005;
 //	}
 
-	const float acceleratorSpeed = -3500;
-	const float afterBurnerSpeed = -3250;
+	//NOTE: These are reversed from the first bot. Team still needs to swap wiring.
+	//Also: these are REALLY good RPMs. Please do not change unless Mr. Ambrose and Mr. Oomkes are involved
+	const float acceleratorSpeed = -3150;
+	const float afterBurnerSpeed = -3550;
 
 	float paSpeed = m_particleAccelerator->GetSpeed();
 	float abSpeed = m_afterBurner->GetSpeed();
 
-	if (fabs(paSpeed - acceleratorSpeed) < 300) {
+	/*if (fabs(paSpeed - acceleratorSpeed) < 300) {
 		SmartDashboard::PutNumber("PASpeed", paSpeed - acceleratorSpeed);
 		SmartDashboard::PutNumber("ABSpeed", abSpeed - afterBurnerSpeed);
-	}
+	}*/
 	m_particleAccelerator->SetSetpoint(acceleratorSpeed);
 	m_afterBurner->SetSetpoint(afterBurnerSpeed);
 	if (fabs(paSpeed-acceleratorSpeed)<=300 && fabs(abSpeed-afterBurnerSpeed) <= 300) {
-		m_indexMotor->SetSetpoint(30);
-		m_shooterFeeder->Set(.3333);
+		m_indexMotor->SetSetpoint(45);
+		m_shooterFeeder->Set(.5);
 	}
 }
 
@@ -121,6 +123,7 @@ void Shooter::Stop() {
 void Shooter::Init() {
 	m_particleAccelerator->SetFeedbackDevice(CANTalon::FeedbackDevice::QuadEncoder);
 	m_afterBurner->SetFeedbackDevice(CANTalon::FeedbackDevice::QuadEncoder);
+	m_indexMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Relative);
 
 	m_particleAccelerator->ConfigEncoderCodesPerRev(20);
 	m_afterBurner->ConfigEncoderCodesPerRev(20);
@@ -135,6 +138,11 @@ void Shooter::Init() {
 	m_afterBurner->SetIzone(200);
 
 	m_indexMotor->SetPID(1,0,0, 1);
+	m_indexMotor->ConfigPeakOutputVoltage(+12,-12);
+	m_indexMotor->SetVoltageRampRate(50);
+	//the encoder is on backwards
+	m_indexMotor->SetSensorDirection(true);
+	m_indexMotor->ConfigEncoderCodesPerRev(4096);
 
 	m_indexMotor->SetSetpoint(0);
 	m_particleAccelerator->SetSetpoint(0);
