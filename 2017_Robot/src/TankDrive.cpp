@@ -61,13 +61,7 @@ void TankDrive::Init() {
 	angle = 0;
 	heading = 0;
 
-	//const float P = SmartDashboard::GetNumber("drive_P", 0);
-	const float P = 15;
-	const float I = SmartDashboard::GetNumber("drive_I", 0);
-	const float D = SmartDashboard::GetNumber("drive_D", 0);
 
-	m_leftMotor1->SetPID(P, I, D, 0);
-	m_rightMotor1->SetPID(P, I, D, 0);
 }
 void TankDrive::TeleopPeriodic() {
 	if (direction == 1 && joystickButton_reverseDrive->Get()) {
@@ -176,12 +170,19 @@ void TankDrive::SetMode(DriveMode mode){
 		m_leftMotor1->SetControlMode(frc::CANSpeedController::kSpeed);
 		m_rightMotor1->SetControlMode(frc::CANSpeedController::kSpeed);
 		break;
-	case DriveMode::POSITION:
+	case DriveMode::POSITION: {
 
 		m_leftMotor1->SetControlMode(frc::CANSpeedController::kPosition);
 		m_rightMotor1->SetControlMode(frc::CANSpeedController::kPosition);
-		break;
+		//const float P = SmartDashboard::GetNumber("drive_P", 0);
+		const float P = 15;
+		const float I = SmartDashboard::GetNumber("drive_I", 0);
+		const float D = SmartDashboard::GetNumber("drive_D", 0);
 
+		m_leftMotor1->SetPID(P, I, D, 0);
+		m_rightMotor1->SetPID(P, I, D, 0);
+		break;
+	}
 	case DriveMode::VBUS:
 
 		m_leftMotor1->SetControlMode(frc::CANSpeedController::kPercentVbus);
