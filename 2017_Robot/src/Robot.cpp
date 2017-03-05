@@ -126,7 +126,7 @@ public:
 
 
 
-		m_autonomous = new Autonomous(cameraServer, m_outputStream, camera, m_tank, m_shooter);
+		m_autonomous = new Autonomous(cameraServer, m_outputStream, camera, m_tank, m_shooter, m_gearManipulator);
 		m_shooter.Init();
 
 

@@ -15,7 +15,8 @@ Autonomous::Autonomous(
 		cs::CvSource &m_outputStream,
 		cs::UsbCamera &camera,
 		TankDrive &Tank,
-		Shooter &shooter
+		Shooter &shooter,
+		GearManipulator &gear
 		)
 :
 
@@ -25,7 +26,8 @@ Autonomous::Autonomous(
 		m_tank(Tank),
 		m_shooter(shooter),
 		m_chain(m_tank, m_shooter),
-		m_relMove(m_chain)
+		m_relMove(m_chain),
+		m_gear(gear)
 {
 
 }
@@ -48,61 +50,100 @@ void Autonomous::AutonomousInit() {
 }
 
 void Autonomous::AutonomousPeriodic() {
-	static TrapezoidalMove move;
 	m_tank.Position();
-	static Timer timer;
+
+//	ShootFromHopper();
+	StraightGear();
+
+//	switch(m_state) {
+//	case 0:
+////		m_relMove.Linear(0, 71, 30);
+////		m_chain.AddCommand(DRIVE_TURN,-24,0,0);
+//
+//		m_relMove.Linear(0, 88, 30);
+//				m_chain.AddCommand(SHOOT_START,38,50,0);
+//		//m_relMove.Arc(false,48,48,48,0,48);
+//		m_state++;
+//
+//		break;
+//	case 1:
+//		m_chain.AutoPeriodic();
+//		m_tank.Position();
+//		break;
+//	}
+
+}
+
+void Autonomous::StraightGear() {
 	switch(m_state) {
-	case 0:
-//		m_relMove.Linear(0, 71, 30);
-//		m_chain.AddCommand(DRIVE_TURN,-24,0,0);
+		case 0: {// initiallize.
+			m_move.SetAll(12, 6, 12, 52.5);
+			m_shooter.Stop();
+			m_timer.Reset();
+			m_timer.Start();
+			m_gear.Release(false);
+			m_state++;
+			break;
+		}
+		case 1: {
+			float leftPos, rightPos;
+			float t = m_timer.Get();
+			leftPos = m_move.Position(t);
+			rightPos = leftPos;
 
-		m_relMove.Linear(0, 88, 30);
-				m_chain.AddCommand(SHOOT_START,38,50,0);
-		//m_relMove.Arc(false,48,48,48,0,48);
-		m_state++;
+			if(leftPos >= 52.5) {
+				m_gear.Release(true);
+				leftPos += 2;
+			}
 
-		break;
-	case 1:
-		m_chain.AutoPeriodic();
-		m_tank.Position();
-		break;
+			m_tank.PositionDrive(-leftPos, -rightPos, false);
+			printf("t: %f\nleftPos: %f \nrightPos %f\n", t, leftPos, rightPos);
+
+			if(t >= m_move.GetTotalTime() + 1) {
+				m_move.SetAll(3,6, 12, 20);
+				m_timer.Reset();
+				m_timer.Start();
+				m_tank.Zero();
+				m_state++;
+			}
+			break;
+		}
+		case 2: {
+			float leftPos, rightPos;
+			float t = m_timer.Get();
+			leftPos = m_move.Position(t);
+			rightPos = leftPos;
+			m_tank.PositionDrive(leftPos, rightPos, false);
+
+			break;
+		}
 	}
+}
 
-//	float t = m_timer.Get();
-//	m_tank.PositionDrive(m_move.Position(t), m_move.Position(t));
-//		cv::Mat frame;
-//
-//		m_cameraServer->GetVideo().GrabFrame(frame);
-//		m_boilerVision.process(frame);
-//		std::vector<std::vector<cv::Point>> foundContours;
-//		foundContours = *m_boilerVision.getfindContoursOutput();
-//
-//		vector<cv::Moments> mu(foundContours.size());
-//
-//		vector<cv::Point2f> mc(foundContours.size());
-//
-//		for( unsigned i = 0; i < foundContours.size(); i++ ) {
-//			mu[i] = moments( foundContours[i], false );
-//		}
-//
-//		for(unsigned i = 0; i < foundContours.size(); i++) {
-//			mc[i] = cv::Point2f(mu[i].m10 / mu[i].m00, mu[i].m01 / mu[i].m00);
-//		}
-//
-//		for(unsigned i = 0; i < foundContours.size(); i++) {
-//			printf("Found Contours!:  x: %f, y: %f\n", mc[i].x, mc[i].y);
-//		}
-//		for(unsigned i = 0; i < foundContours.size(); i++) {
-//			cv::Rect boundingRect = cv::boundingRect(foundContours[i]);
-//			printf("X: %i, Y: %i, W: %i, H: %i\n",boundingRect.x,boundingRect.y,boundingRect.width,boundingRect.height);
-//		}
-//
-//
-//		cv::Mat contourImg;
-//		cv::Mat mymat;
-//		for(auto contour : foundContours) {
-//			cv::drawContours(contourImg, contour, {255, 0, 0});
-//			cv::Mat mymat = *Vision.gethsvThresholdOutput();
-//		}
-//		m_outputStream.PutFrame(mymat);
+void Autonomous::ShootFromHopper() {
+	switch(m_state) {
+		case 0: {// initiallize.
+			m_move.SetAll(45,50, 60, 116);
+			m_shooter.Stop();
+			m_timer.Reset();
+			m_timer.Start();
+			m_state++;
+			break;
+		}
+		case 1: {
+			float leftPos, rightPos;
+			float t = m_timer.Get();
+			leftPos = m_move.Position(t);
+			rightPos = leftPos;
+			if(leftPos > 90) { // freeze right side after 68 in.
+				rightPos = 90;
+			}
+			if(leftPos >= 115) {
+				m_shooter.Shoot(0);
+			}
+			m_tank.PositionDrive(leftPos, rightPos, false);
+			printf("t: %f\nleftPos: %f \nrightPos %f\n", t, leftPos, rightPos);
+			break;
+		}
 	}
+}

@@ -12,6 +12,7 @@
 #include "TankDrive.h"
 #include "BoilerVision.h"
 #include "TrapezoidalMove.h"
+#include "GearManipulator.h"
 using namespace cs;
 using namespace grip;
 class Autonomous {
@@ -21,7 +22,7 @@ class Autonomous {
 	grip::BoilerVision m_boilerVision;
 	TankDrive &m_tank;
 	Shooter &m_shooter;
-
+	GearManipulator& m_gear;
 	ChainCommands m_chain;
 	RelativeMovement m_relMove;
 	int m_state = 0;
@@ -33,12 +34,16 @@ public:
 		CvSource &m_outputStream,
 		UsbCamera &camera,
 		TankDrive &m_tank,
-		Shooter &shooter
+		Shooter &shooter,
+		GearManipulator&
 	);
 	virtual ~Autonomous();
 
 	void AutonomousPeriodic();
 	void AutonomousInit();
+
+	void StraightGear();
+	void ShootFromHopper();
 };
 
 #endif /* SRC_AUTONOMOUS_H_ */

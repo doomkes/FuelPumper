@@ -63,16 +63,16 @@ void Shooter::TeleopPeriodic() {
 		Shoot(m_shooterSpeed);
 
 
-		if(pickupTimer.Get() >= 1) {
-			m_CI->canTalon_hopper->Set(-1);
-			m_CI->canTalon_intake->Set(-1);
-			pickingUp = true;
-			pickupTimer.Reset();
-		}
-		if (pickingUp == true && pickupTimer.Get() >= 0.5) {
-			m_CI->canTalon_hopper->Set(0);
-			m_CI->canTalon_intake->Set(0);
-		}
+//		if(pickupTimer.Get() >= 1) {
+//			m_CI->canTalon_hopper->Set(-1);
+//			m_CI->canTalon_intake->Set(-1);
+//			pickingUp = true;
+//			pickupTimer.Reset();
+//		}
+//		if (pickingUp == true && pickupTimer.Get() >= 0.5) {
+//			m_CI->canTalon_hopper->Set(0);
+//			m_CI->canTalon_intake->Set(0);
+//		}
 
 	} else Stop();
 	SmartDashboard::PutBoolean("Shooter_ShootBtn", joystickButton_shoot->Get());
@@ -119,9 +119,28 @@ void Shooter::Shoot(float shooterSpeed) {
 	//}
 	m_particleAccelerator->SetSetpoint(acceleratorSpeed);
 	m_afterBurner->SetSetpoint(afterBurnerSpeed);
+	static bool firstTime = true;
+	static Timer pickupTimer;
+
+	static bool pickingUp = false;
 	if (fabs(paSpeed-acceleratorSpeed)<=300 && fabs(abSpeed-afterBurnerSpeed) <= 300) {
 		m_indexMotor->SetSetpoint(60);
 		m_shooterFeeder->Set(.5);
+
+		//Pulse pickup.
+		if(firstTime) {
+			pickupTimer.Start();
+		}
+		if(pickupTimer.Get() >= 1) {
+			m_CI->canTalon_hopper->Set(-1);
+			m_CI->canTalon_intake->Set(-1);
+			pickingUp = true;
+			pickupTimer.Reset();
+		}
+		if (pickingUp == true && pickupTimer.Get() >= 0.5) {
+			m_CI->canTalon_hopper->Set(0);
+			m_CI->canTalon_intake->Set(0);
+		}
 	}
 }
 
