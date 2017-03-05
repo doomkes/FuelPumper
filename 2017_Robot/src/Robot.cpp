@@ -70,9 +70,8 @@ public:
 			ci->canTalon_hopper
 	),
 	m_climber(
+			oi->joystick_manipulator,
 			oi->joystickButton_climb,
-			oi->joystickButton_reverseClimb,
-			oi->joystickButton_climbHold,
 			ci->canTalonclimbMotor
 	),
 	m_gearManipulator(

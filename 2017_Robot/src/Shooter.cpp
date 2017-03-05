@@ -102,7 +102,12 @@ void Shooter::Shoot(float shooterSpeed) {
 	//NOTE: These are reversed from the first bot. Team still needs to swap wiring.
 	//Also: these are REALLY good RPMs. Please do not change unless Mr. Ambrose and Mr. Oomkes are involved
 
-	const float speedAdjust = m_OI->joystick_manipulator->GetRawAxis(3) * 300;
+	//TODO: Add speed adjust back in.
+	const float speedAdjust = 0;
+	//const float speedAdjust = m_OI->joystick_manipulator->GetRawAxis(3) * 300;
+
+
+
 	const float acceleratorSpeed = -3150 + speedAdjust;
 	const float afterBurnerSpeed = -3550 + speedAdjust;
 	float paSpeed = m_particleAccelerator->GetSpeed();
