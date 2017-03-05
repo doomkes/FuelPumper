@@ -32,15 +32,25 @@ TankDrive::TankDrive(
 	, m_rightMotor2(m_rightMotor2)
 {
 	m_leftMotor1->SetControlMode(CANTalon::ControlMode::kPercentVbus);
-	m_leftMotor1->ConfigEncoderCodesPerRev(120);
+	m_leftMotor1->ConfigEncoderCodesPerRev(120); // enc resolution is 360 counts/rev, encoder spins at 1/3 output shaft.
 	m_leftMotor2->SetControlMode(CANTalon::ControlMode::kFollower);
 	m_leftMotor2->ConfigEncoderCodesPerRev(120);
 	m_rightMotor1->SetControlMode(CANTalon::ControlMode::kPercentVbus);
 	m_rightMotor1->ConfigEncoderCodesPerRev(120);
 	m_rightMotor2->SetControlMode(CANTalon::ControlMode::kFollower);
 	m_rightMotor2->ConfigEncoderCodesPerRev(120);
+
 	m_leftMotor2->Set(MOTOR_LEFT_DRIVE1);
 	m_rightMotor2->Set(MOTOR_RIGHT_DRIVE1);
+
+
+
+}
+
+TankDrive::~TankDrive() {
+ 	 }
+
+void TankDrive::Init() {
 	direction = 1;
 	highGear = true;
 	leftPosOld = 0;
@@ -50,12 +60,14 @@ TankDrive::TankDrive(
 	distance = 0;
 	angle = 0;
 	heading = 0;
-}
 
-TankDrive::~TankDrive() {
- 	 }
+	//const float P = SmartDashboard::GetNumber("drive_P", 0);
+	const float P = 15;
+	const float I = SmartDashboard::GetNumber("drive_I", 0);
+	const float D = SmartDashboard::GetNumber("drive_D", 0);
 
-void TankDrive::TeleopInit() {
+	m_leftMotor1->SetPID(P, I, D, 0);
+	m_rightMotor1->SetPID(P, I, D, 0);
 }
 void TankDrive::TeleopPeriodic() {
 	if (direction == 1 && joystickButton_reverseDrive->Get()) {
@@ -80,19 +92,22 @@ void TankDrive::TeleopPeriodic() {
 	else if (!this->highGear && joystickButton_shiftHigh->Get()){
 		TankDrive::HighGear();
 	}
+	Position();
 }
 
 void TankDrive::Position() {
 	const float Pi = 3.141592;
+	//calculates position in inches from revolutions.
 	float rightPosition = m_rightMotor1->GetPosition()*(4*Pi);
 	float leftPosition = -m_leftMotor1->GetPosition()*(4*Pi);
 	distance = ((rightPosition - rightPosOld)+(leftPosition - leftPosOld))/2;
 	angle = m_gyro.GetAngle();
-	m_yPosition = distance * cos((angle*Pi)/180) + m_yPosition;
-	m_xPosition = (distance * sin((angle*Pi)/180) + m_xPosition);
+	float angleInRad = angle * (Pi/180);
+	m_yPosition += distance * cos(angleInRad);
+	m_xPosition += distance * -sin(angleInRad);
 	SmartDashboard::PutNumber("robot x", -m_xPosition);
 	SmartDashboard::PutNumber("robot y", m_yPosition);
-	SmartDashboard::PutNumber("robot angle", angle);
+	SmartDashboard::PutNumber("WHAT THE ANGLE DO BE", angle);
 	rightPosOld = rightPosition;
 	leftPosOld = leftPosition;
 }
@@ -100,6 +115,10 @@ void TankDrive::Position() {
 void TankDrive::Drive(const float leftVal, const float rightVal) {
 	//left motor speed is inverted because the motors are physically opposite the right motors
 	float left = leftVal, right = rightVal;
+	left *= left; // square input.
+	right *= right;
+	left *= (leftVal < 0) ? -1 : 1;
+	right *= (rightVal < 0) ? -1 : 1;
 	if(direction == -1) {
 		std::swap(left, right);
 	}
@@ -118,9 +137,16 @@ void TankDrive::HighGear() {
 	this->highGear = true;
 }
 
-void TankDrive::PositionDrive(const float leftPos, const float rightPos) {
-	m_leftMotor1->SetSetpoint(rightPos * m_countsPerInch);
-	m_rightMotor1->SetSetpoint(-leftPos * m_countsPerInch);
+void TankDrive::PositionDrive(const float leftPos, const float rightPos, bool relative) {
+	if(!relative) {
+		m_leftMotor1->SetSetpoint((-rightPos) * m_revsPerInch);
+		m_rightMotor1->SetSetpoint(leftPos * m_revsPerInch);
+	} else {
+		m_leftMotor1->SetSetpoint((m_leftMotor1->GetPosition() + -rightPos) * m_revsPerInch);
+		m_rightMotor1->SetSetpoint((m_rightMotor1->GetPosition() + leftPos) * m_revsPerInch);
+	}
+	SmartDashboard::PutNumber("RobotLeftPos", m_leftMotor1->GetPosition());
+	SmartDashboard::PutNumber("RobotRightPos", m_rightMotor1->GetPosition());
 }
 
 void TankDrive::SpeedDrive(const float leftSpeed, const float rightSpeed) {
@@ -172,6 +198,7 @@ void TankDrive::Zero()
 	m_rightMotor1->SetPosition(0);
 	m_leftMotor1->Set(0);
 	m_rightMotor1->Set(0);
-	m_leftDistance = 0;
-	m_rightDistance = 0;
+}
+
+double TankDrive::GetAngle() {
 }

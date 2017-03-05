@@ -15,18 +15,17 @@ Autonomous::Autonomous(
 		cs::CvSource &m_outputStream,
 		cs::UsbCamera &camera,
 		TankDrive &Tank,
-		RelativeMovement &Rel
-//		,
-//		grip::BoilerVision &m_boilerVision
+		Shooter &shooter
 		)
 :
 
 		m_cameraServer(m_cameraServer),
 		m_outputStream(m_outputStream),
 		camera(camera),
-		m_boilerVision(m_boilerVision),
 		m_tank(Tank),
-		m_relMove(Rel)
+		m_shooter(shooter),
+		m_chain(m_tank, m_shooter),
+		m_relMove(m_chain)
 {
 
 }
@@ -41,10 +40,34 @@ void Autonomous::AutonomousInit() {
 	m_outputStream = CameraServer::GetInstance()->PutVideo("thresh", 640, 480);
 	camera.SetResolution(640, 480);
 	camera.SetExposureManual(1);
+	m_state = 0;
+	m_chain.Init();
+	m_tank.Init();
+	m_tank.SetMode(DriveMode::POSITION);
+	m_tank.Zero();
 }
 
 void Autonomous::AutonomousPeriodic() {
-	m_relMove.Linear(60, 0, 24);
+	static TrapezoidalMove move;
+	m_tank.Position();
+	static Timer timer;
+	switch(m_state) {
+	case 0:
+//		m_relMove.Linear(0, 71, 30);
+//		m_chain.AddCommand(DRIVE_TURN,-24,0,0);
+
+		m_relMove.Linear(0, 88, 30);
+				m_chain.AddCommand(SHOOT_START,38,50,0);
+		//m_relMove.Arc(false,48,48,48,0,48);
+		m_state++;
+
+		break;
+	case 1:
+		m_chain.AutoPeriodic();
+		m_tank.Position();
+		break;
+	}
+
 //	float t = m_timer.Get();
 //	m_tank.PositionDrive(m_move.Position(t), m_move.Position(t));
 //		cv::Mat frame;

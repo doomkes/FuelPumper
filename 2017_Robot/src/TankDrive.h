@@ -36,8 +36,8 @@ private:
 	float distance;
 	float angle;
 	float heading;
-	float m_leftDistance = 0, m_rightDistance = 0;
-	const float m_countsPerInch = 1/(4*3.141592);
+	float m_absX = 0, m_absY = 0;
+	const float m_revsPerInch = 1/(4*3.141592);
 public:
 	TankDrive(
 			frc::Joystick* m_leftStick
@@ -53,16 +53,17 @@ public:
 	);
 	frc::ADXRS450_Gyro m_gyro;
 	virtual ~TankDrive();
-	void TeleopInit();
+	void Init();
 	void TeleopPeriodic();
 
 	void Drive(const float leftVal, const float rightVal);
-	void PositionDrive(const float leftPos, const float rightPos);
+	void PositionDrive(const float leftPos, const float rightPos, bool relative = true);
 	void SpeedDrive(const float leftSpeed, const float rightSpeed);
 
 	void LowGear();
 	void HighGear();
 	void Position();
+	double GetAngle();
 	float m_xPosition;
 	float m_yPosition;
 

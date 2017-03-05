@@ -20,7 +20,11 @@ class Autonomous {
 	cs::UsbCamera camera;
 	grip::BoilerVision m_boilerVision;
 	TankDrive &m_tank;
+	Shooter &m_shooter;
+
+	ChainCommands m_chain;
 	RelativeMovement m_relMove;
+	int m_state = 0;
 	TrapezoidalMove m_move;
 	Timer m_timer;
 public:
@@ -29,9 +33,7 @@ public:
 		CvSource &m_outputStream,
 		UsbCamera &camera,
 		TankDrive &m_tank,
-		RelativeMovement &relMove
-//		,
-//		BoilerVision &m_boilerVision
+		Shooter &shooter
 	);
 	virtual ~Autonomous();
 
