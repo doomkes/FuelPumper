@@ -7,13 +7,19 @@
 
 #include "ChainCommands.h"
 
-ChainCommands::ChainCommands(TankDrive& Tank, TrapezoidalMove Move):m_tank(Tank),m_move(Move) {
+ChainCommands::ChainCommands(TankDrive& Tank, Shooter& shooter):m_tank(Tank), m_shooter(shooter) {
 	// TODO Auto-generated constructor stub
+
+
+}
+void ChainCommands::Init() {
 	doingCommand=false;
+	m_tank.SetMode(DriveMode::POSITION);
 
 }
 void ChainCommands::AutoPeriodic() {
 	if (doingCommand) {
+		printf("doing command %i\n", commandArray.front().number);
 		if (CheckStatus(commandArray.front())) {
 			commandArray.pop();
 			doingCommand = false;
@@ -51,6 +57,8 @@ void ChainCommands::DoCommand(command Command){
 	float turn;
 	float arcLength;
 
+	m_tank.Zero();
+	m_startAngle = m_tank.m_gyro.GetAngle();
 	switch(Command.number) {
 	case DRIVE_TURN:
 		turn=Command.param1;
@@ -61,9 +69,10 @@ void ChainCommands::DoCommand(command Command){
 		break;
 
 	case DRIVE_STRAIGHT:
+
 		speed = Command.param2;
 		distance = Command.param1;
-		m_move.SetAll(speed,speed,speed,distance);
+		m_move.SetAll(speed,2*speed,speed,distance);
 		m_move.CalcParams();
 		m_timer.Reset();
 		m_timer.Start();
@@ -83,6 +92,27 @@ void ChainCommands::DoCommand(command Command){
 		speed = Command.param2;
 		m_move.SetAll(speed,speed,speed,arcLength);
 		m_move.CalcParams();
+		m_timer.Reset();
+		m_timer.Start();
+		break;
+
+	case DRIVE_WAIT:
+		m_timer.Reset();
+		m_timer.Start();
+		break;
+
+	case SHOOT_START:
+		m_shooter.Shoot(0);
+		m_timer.Reset();
+		m_timer.Start();
+		break;
+
+	case DRIVE_SHOOT:
+		speed = Command.param2;
+		distance = Command.param1;
+		m_move.SetAll(speed,2*speed,speed,distance);
+		m_move.CalcParams();
+		m_shooter.Shoot(0);
 		m_timer.Reset();
 		m_timer.Start();
 		break;
@@ -94,29 +124,48 @@ void ChainCommands::ContinueCommand(command Command){
 	//Variable declaration
 	const float distBtwnWhl = 30.5/2; /*Distance from center of bot to Wheels*/
 	float turn;
-	float t;
-	float pos;
+	const float t = m_timer.Get();
+	static float pos;
 	float radius;
-	float rightPos;
-	float leftPos;
+	float rightPos, leftPos;
+
+	float angle;
+	float angleError;
+	float driveCorrection;
+	float targetAngle;
+	const float angleP = 0.01;
 
 	switch(Command.number) {
-
 	case DRIVE_TURN:
 		turn = Command.param1;
-		t = m_timer.Get();
-		pos=m_move.Position(t);
-		m_tank.PositionDrive(-pos,pos);
+
+		targetAngle = ((turn*6.28318)/wheelCircumInches) * (180/3.14159);
+		angle = m_tank.m_gyro.GetAngle();
+		angleError = (angle - m_startAngle)-targetAngle ;
+		driveCorrection = angleError * angleP;
+
+		// Get robot mostly rotated to targetAngle with trapezoidal move, then correct using error.
+		if(t <= m_move.GetTotalTime()) {
+			pos = m_move.Position(t);
+		} else {
+			pos -= driveCorrection;
+			SmartDashboard::PutNumber("DriveCorrection", driveCorrection);
+		}
+		m_tank.PositionDrive(-pos, pos);
+
 		break;
 
 	case DRIVE_STRAIGHT:
-		t = m_timer.Get();
+		angle = m_tank.m_gyro.GetAngle();
+		angleError = m_startAngle - angle;
+		driveCorrection = angleError * angleP;
+
 		pos=m_move.Position(t);
-		m_tank.PositionDrive(pos,pos);
+		m_tank.PositionDrive(pos - driveCorrection,
+							 pos + driveCorrection);
 		break;
 
 	case DRIVE_ARC_CLOCKWISE:
-		t = m_timer.Get();
 		pos=m_move.Position(t);
 		radius = Command.param3;
 		rightPos = ((radius-distBtwnWhl)/radius)*pos;
@@ -125,14 +174,25 @@ void ChainCommands::ContinueCommand(command Command){
 		break;
 
 	case DRIVE_ARC_COUNTERCLOCKWISE:
-		t = m_timer.Get();
 		pos=m_move.Position(t);
 		radius = Command.param3;
 		rightPos = ((radius+distBtwnWhl)/radius)*pos;
 		leftPos = ((radius-distBtwnWhl)/radius)*pos;
 		m_tank.PositionDrive(leftPos,rightPos);
 		break;
+	case SHOOT_START:
+		m_shooter.Shoot(0);
+		break;
+	case DRIVE_SHOOT:
+		m_shooter.Shoot(0);
+		angle = m_tank.m_gyro.GetAngle();
+		angleError = m_startAngle - angle;
+		driveCorrection = angleError * angleP;
 
+		pos=m_move.Position(t);
+		m_tank.PositionDrive(pos - driveCorrection,
+							 pos + driveCorrection);
+		break;
 	}
 }
 bool ChainCommands::CheckStatus(command Command){
@@ -140,13 +200,14 @@ bool ChainCommands::CheckStatus(command Command){
 	float distance;
 	float speed;
 	float arcLength;
-
+	float time;
+	float turn;
+	float targetAngle;
 	switch(Command.number) {
 	case DRIVE_TURN:
-		//float turn = Command[1];
-		//float angle = m_tank.m_gyro.GetAngle()*(3.14159/180);
-		//float targetAngle = turn/95.819;
-		if (m_timer.Get()>=2)/*(fabs(fabs(targetAngle)-fabs(angle))<=1)*/ {
+		turn = Command.param1;
+		targetAngle = ((turn*6.28318)/wheelCircumInches) * (180/3.14159);
+		if(fabs((m_tank.m_gyro.GetAngle() - m_startAngle) - targetAngle) <= 0.1) {
 			m_timer.Stop();
 			return(true);
 		}
@@ -158,8 +219,9 @@ bool ChainCommands::CheckStatus(command Command){
 	case DRIVE_STRAIGHT:
 		speed = Command.param2;
 		distance = Command.param1;
-		if (m_timer.Get()>=(arcLength/speed+1)) {
+		if (m_timer.Get()>= m_move.GetTotalTime()) {
 			m_timer.Stop();
+			m_tank.PositionDrive(28, 0);
 			return(true);
 		}
 		else {
@@ -169,7 +231,7 @@ bool ChainCommands::CheckStatus(command Command){
 	case DRIVE_ARC_CLOCKWISE:
 		speed = Command.param2;
 		arcLength = Command.param1;
-		if (m_timer.Get()>=(distance/speed+1)) {
+		if (m_timer.Get()>=m_move.GetTotalTime()) {
 			m_timer.Stop();
 			return(true);
 		}
@@ -177,10 +239,43 @@ bool ChainCommands::CheckStatus(command Command){
 			return(false);
 		}
 		break;
+
 	case DRIVE_ARC_COUNTERCLOCKWISE:
 		speed = Command.param2;
 		arcLength = Command.param1;
-		if (m_timer.Get()>=(distance/speed+1)) {
+		if (m_timer.Get()>=m_move.GetTotalTime()) {
+			m_timer.Stop();
+			return(true);
+		}
+		else {
+			return(false);
+		}
+		break;
+
+	case DRIVE_WAIT:
+		time = Command.param1;
+		if (m_timer.Get()>=time) {
+			m_timer.Stop();
+			return(true);
+		}
+		else {
+			return(false);
+		}
+		break;
+
+	case SHOOT_START:
+		time = Command.param1;
+		if (m_timer.Get()>=time) {
+			m_timer.Stop();
+			m_shooter.Stop();
+			return(true);
+		}
+		else {
+			return(false);
+		}
+		break;
+	case DRIVE_SHOOT:
+		if (m_timer.Get()>= m_move.GetTotalTime()) {
 			m_timer.Stop();
 			return(true);
 		}
@@ -190,6 +285,7 @@ bool ChainCommands::CheckStatus(command Command){
 		break;
 
 	}
+	return false;
 }
 ChainCommands::~ChainCommands() {
 	// TODO Auto-generated destructor stub

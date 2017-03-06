@@ -33,8 +33,6 @@ class Robot: public frc::IterativeRobot {
 
 	TankDrive m_tank;
 	TrapezoidalMove m_move;
-	ChainCommands m_chain;
-	RelativeMovement m_relMove;
 	Autonomous *m_autonomous = nullptr;
 	Climber m_climber;
 	Shooter m_shooter;// = nullptr;
@@ -65,15 +63,6 @@ public:
 			ci->canTalon_rightMotor2
 	),
 	m_move(),
-	m_chain(
-				m_tank,
-				m_move
-
-
-		),
-	m_relMove(
-			m_chain
-	),
 	m_pickup(
 			oi->joystickButton_pickup,
 			oi->joystickButton_reversePickup,
@@ -81,9 +70,8 @@ public:
 			ci->canTalon_hopper
 	),
 	m_climber(
+			oi->joystick_manipulator,
 			oi->joystickButton_climb,
-			oi->joystickButton_reverseClimb,
-			oi->joystickButton_climbHold,
 			ci->canTalonclimbMotor
 	),
 	m_gearManipulator(
@@ -96,6 +84,8 @@ public:
 			, ci->canTalon_shootWheel2
 			, ci->canTalon_indexMotor
 			, ci->canTalon_shooterFeeder
+			, oi
+			, ci
 			, ci->digitalOutput_aimLight
 			, oi->joystickButton_shoot
 			, oi->joystickButton_reverseIndex
@@ -113,6 +103,9 @@ public:
 		}
 		cameraServer = CameraServer::GetInstance();
 
+		SmartDashboard::PutNumber("drive_P", 0);
+		SmartDashboard::PutNumber("drive_I", 0);
+		SmartDashboard::PutNumber("drive_D", 0);
 		m_vision = new Vision(
 				cameraServer,
 				ci->usbCamera_1,
@@ -129,18 +122,21 @@ public:
 				oi->joystickButton_cameraLight3
 		);
 
-		m_autonomous = new Autonomous(cameraServer, m_outputStream, camera, m_tank,m_relMove);
-
 		m_shooterSpeed = frc::Preferences::GetInstance()->GetFloat("ShooterSpeed",0);
 
+
+
+		m_autonomous = new Autonomous(cameraServer, m_outputStream, camera, m_tank, m_shooter, m_gearManipulator);
 		m_shooter.Init();
+
+
 	}
 
 	void TeleopInit() override {
 		m_gearManipulator.TeleopInit();
 		m_pickup.TeleopInit();
 		m_shooter.TeleopInit();
-		m_tank.TeleopInit();
+		m_tank.Init();
 		m_climber.TeleopInit();
 		m_vision->TeleopInit();
 		m_tank.SetMode(DriveMode::VBUS);

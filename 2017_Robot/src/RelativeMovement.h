@@ -17,6 +17,7 @@ public:
 	virtual ~RelativeMovement();
 	void Arc(bool,float,float,float,float,float);
 	void Linear(float, float, float);
+	void Wait(float);
 };
 
 #endif /* SRC_RELATIVEMOVEMENT_H_ */
