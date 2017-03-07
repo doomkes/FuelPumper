@@ -28,6 +28,7 @@ class TankDrive {
 	CANTalon* m_leftMotor2;
 	CANTalon* m_rightMotor1;
 	CANTalon* m_rightMotor2;
+	DriverStation m_ds;
 private:
 	int direction;
 	bool highGear;

@@ -132,6 +132,9 @@ void TankDrive::HighGear() {
 }
 
 void TankDrive::PositionDrive(const float leftPos, const float rightPos, bool relative) {
+	if(m_ds.GetAlliance() == DriverStation::kBlue) {
+		std:swap(rightPos,leftPos);
+	}
 	if(!relative) {
 		m_leftMotor1->SetSetpoint((-rightPos) * m_revsPerInch);
 		m_rightMotor1->SetSetpoint(leftPos * m_revsPerInch);

@@ -22,20 +22,18 @@ enum ManStickMap {
 
 enum LStickMap {
 	BUTTON_L_PICKUP = 1,
-	BUTTON_L_REVERSEPICKUP = 4, // TODO Figure out actual button value
-	BUTTON_L_GEAR_RELEASE = 5,
-	BUTTON_L_SHIFT_LOW = 3,
-	BUTTON_L_SHIFT_HIGH = 2,
+	BUTTON_L_REVERSEPICKUP = 5, // TODO Figure out actual button value
+	BUTTON_L_GEAR_RELEASE = 4,
 	BUTTON_L_AIM_LIGHT = 6
 };
 
 
-
 enum RStickMap {
 	BUTTON_R_REVERSE_DRIVE = 1,
+	BUTTON_L_SHIFT_LOW = 3,
+	BUTTON_L_SHIFT_HIGH = 2,
 	BUTTON_R_SET_SPEED_MODE = 10,
 	BUTTON_R_SET_VBUS_MODE = 11,
-	BUTTON_R_RELEASE_GEAR = 3
 };
 
 enum DS_USBMap {
