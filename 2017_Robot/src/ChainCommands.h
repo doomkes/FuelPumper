@@ -46,7 +46,7 @@ protected:
 	Shooter &m_shooter;
 	bool m_doingCommand = false;
 
-	array<command, 2> m_runningCommands;
+	//array<command, 2> m_runningCommands;
 	queue<command> m_commandQueue;
 
 	float m_startAngle = 0;

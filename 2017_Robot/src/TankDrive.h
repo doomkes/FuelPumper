@@ -28,7 +28,6 @@ class TankDrive {
 	CANTalon* m_leftMotor2;
 	CANTalon* m_rightMotor1;
 	CANTalon* m_rightMotor2;
-	DriverStation m_ds;
 private:
 	int direction;
 	bool highGear;
@@ -58,7 +57,7 @@ public:
 	void TeleopPeriodic();
 
 	void Drive(const float leftVal, const float rightVal);
-	void PositionDrive(const float leftPos, const float rightPos, bool relative = true);
+	void PositionDrive(float leftPos, float rightPos, bool relative = true);
 	void SpeedDrive(const float leftSpeed, const float rightSpeed);
 
 	void LowGear();

@@ -119,12 +119,12 @@ void ChainCommands::DoCommand(command Command){
 
 	}
 
-	m_runningCommands[commandGroup] = m_commandQueue.front();
-	m_commandQueue.pop();
-
-	if(m_commandQueue.front().group != Command.group) {
-		DoCommand(m_commandQueue.front());
-	}
+	//m_runningCommands[Command.group] = m_commandQueue.front();
+//	m_commandQueue.pop();
+//
+//	if(m_commandQueue.front().group != Command.group) {
+//		DoCommand(m_commandQueue.front());
+//	}
 }
 
 void ChainCommands::ContinueCommand(command Command){

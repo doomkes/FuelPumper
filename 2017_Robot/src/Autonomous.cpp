@@ -52,8 +52,8 @@ void Autonomous::AutonomousInit() {
 void Autonomous::AutonomousPeriodic() {
 	m_tank.Position();
 
-//	ShootFromHopper();
-	StraightGear();
+	ShootFromHopper();
+//	StraightGear();
 
 //	switch(m_state) {
 //	case 0:
@@ -75,6 +75,8 @@ void Autonomous::AutonomousPeriodic() {
 }
 
 void Autonomous::StraightGear() {
+	float leftPos, rightPos;
+	float t = m_timer.Get();
 	switch(m_state) {
 		case 0: {// initiallize.
 			m_move.SetAll(12, 6, 12, 52.5);
@@ -85,9 +87,7 @@ void Autonomous::StraightGear() {
 			m_state++;
 			break;
 		}
-		case 1: {
-			float leftPos, rightPos;
-			float t = m_timer.Get();
+		case 1: { // drive to peg and release.
 			leftPos = m_move.Position(t);
 			rightPos = leftPos;
 
@@ -108,13 +108,27 @@ void Autonomous::StraightGear() {
 			}
 			break;
 		}
-		case 2: {
-			float leftPos, rightPos;
-			float t = m_timer.Get();
+		case 2: { // backup.
+
 			leftPos = m_move.Position(t);
 			rightPos = leftPos;
 			m_tank.PositionDrive(leftPos, rightPos, false);
+			if(t > m_move.GetTotalTime()) {
+				m_move.SetAll(12,6, 12, 12);
+				m_timer.Reset();
+				m_timer.Start();
+				//m_state++;
+			}
+			break;
+		}
+		case 3: { // 45 deg turn.
+			leftPos = m_move.Position(t);
+			rightPos = -leftPos;
 
+			m_tank.PositionDrive(leftPos, rightPos, false);
+			if(t > m_move.GetTotalTime()) {
+
+			}
 			break;
 		}
 	}
@@ -123,7 +137,7 @@ void Autonomous::StraightGear() {
 void Autonomous::ShootFromHopper() {
 	switch(m_state) {
 		case 0: {// initiallize.
-			m_move.SetAll(45,50, 60, 116);
+			m_move.SetAll(45,50, 60, 111);
 			m_shooter.Stop();
 			m_timer.Reset();
 			m_timer.Start();
@@ -135,14 +149,26 @@ void Autonomous::ShootFromHopper() {
 			float t = m_timer.Get();
 			leftPos = m_move.Position(t);
 			rightPos = leftPos;
-			if(leftPos > 90) { // freeze right side after 68 in.
-				rightPos = 90;
+			if(leftPos > 85) { // freeze right side after 68 in.
+				rightPos = 85;
 			}
-			if(leftPos >= 115) {
+			if(t > m_move.GetTotalTime()) {
 				m_shooter.Shoot(0);
+				m_tank.SetMode(DriveMode::VBUS);
+				m_state++;
 			}
+			// swap left/drive if field is mirrored.
+			if(DriverStation::GetInstance().GetAlliance() == DriverStation::kBlue) {
+				std:swap(rightPos,leftPos);
+			}
+
 			m_tank.PositionDrive(leftPos, rightPos, false);
 			printf("t: %f\nleftPos: %f \nrightPos %f\n", t, leftPos, rightPos);
+			break;
+		}
+		case 2: {
+			m_shooter.Shoot(0);
+			m_tank.Drive(.2, .2);
 			break;
 		}
 	}

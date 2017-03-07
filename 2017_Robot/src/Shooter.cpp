@@ -124,7 +124,7 @@ void Shooter::Shoot(float shooterSpeed) {
 
 	static bool pickingUp = false;
 	if (fabs(paSpeed-acceleratorSpeed)<=300 && fabs(abSpeed-afterBurnerSpeed) <= 300) {
-		m_indexMotor->SetSetpoint(60);
+		m_indexMotor->SetSetpoint(48);
 		m_shooterFeeder->Set(.5);
 
 		//Pulse pickup.
