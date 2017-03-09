@@ -102,7 +102,7 @@ void ChainCommands::DoCommand(command Command){
 		break;
 
 	case SHOOT_START:
-		m_shooter.Shoot(0);
+		m_shooter.Shoot();
 		m_timer.Reset();
 		m_timer.Start();
 		break;
@@ -112,7 +112,7 @@ void ChainCommands::DoCommand(command Command){
 		distance = Command.param1;
 		m_move.SetAll(speed,2*speed,speed,distance);
 		m_move.CalcParams();
-		m_shooter.Shoot(0);
+		m_shooter.Shoot();
 		m_timer.Reset();
 		m_timer.Start();
 		break;
@@ -188,10 +188,10 @@ void ChainCommands::ContinueCommand(command Command){
 		m_tank.PositionDrive(leftPos,rightPos);
 		break;
 	case SHOOT_START:
-		m_shooter.Shoot(0);
+		m_shooter.Shoot();
 		break;
 	case DRIVE_SHOOT:
-		m_shooter.Shoot(0);
+		m_shooter.Shoot();
 		angle = m_tank.m_gyro.GetAngle();
 		angleError = m_startAngle - angle;
 		driveCorrection = angleError * angleP;

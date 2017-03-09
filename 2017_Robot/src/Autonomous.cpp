@@ -38,23 +38,55 @@ Autonomous::~Autonomous() {
 
 void Autonomous::AutonomousInit() {
 //		cameraServer = CameraServer::GetInstance();
-	camera = m_cameraServer->StartAutomaticCapture(0);
-	m_outputStream = CameraServer::GetInstance()->PutVideo("thresh", 640, 480);
-	camera.SetResolution(640, 480);
-	camera.SetExposureManual(1);
+
 	m_state = 0;
 	m_chain.Init();
 	m_tank.Init();
 	m_tank.SetMode(DriveMode::POSITION);
 	m_tank.Zero();
+
+	int autoSelect = Preferences::GetInstance()->GetInt("AutoMode", 0);
+	m_mode = static_cast<AutoMode>(autoSelect);
+
+	string autoName = "";
+
+	switch(autoSelect) {
+	default:
+		autoName = "INVALID";
+		break;
+	case AutoMode::DO_NOTHING:
+		autoName = "DO_NOTHING";
+		break;
+	case AutoMode::DIAGONAL_HOPPER_SHOOT:
+		autoName = "DIAGONAL_HOPPER_SHOOT";
+		break;
+	case AutoMode::ARC_HOPPER_SHOOT:
+
+		break;
+	case AutoMode::CENTER_GEAR_BASELINE:
+		autoName = "CENTER_GEAR";
+		break;
+
+	}
+	SmartDashboard::PutString("AutoName", autoName);
 }
 
 void Autonomous::AutonomousPeriodic() {
 	m_tank.Position();
 
-	ShootFromHopper();
-//	StraightGear();
-
+	switch(m_mode) {
+	case AutoMode::DO_NOTHING:
+		break;
+	case AutoMode::DIAGONAL_HOPPER_SHOOT:
+		ShootFromHopper();
+		break;
+	case AutoMode::CENTER_GEAR_BASELINE:
+		StraightGear();
+		break;
+	case AutoMode::ARC_HOPPER_SHOOT:
+		ArcShootFromHopper();
+		break;
+	}
 //	switch(m_state) {
 //	case 0:
 ////		m_relMove.Linear(0, 71, 30);
@@ -74,6 +106,10 @@ void Autonomous::AutonomousPeriodic() {
 
 }
 
+/*
+ * Drive forward and place a gear on the middle peg
+ * then backup halfway and do a 45 deg turn, & drive past the baseline.
+ */
 void Autonomous::StraightGear() {
 	float leftPos, rightPos;
 	float t = m_timer.Get();
@@ -95,8 +131,8 @@ void Autonomous::StraightGear() {
 				m_gear.Release(true);
 				leftPos += 2;
 			}
-
-			m_tank.PositionDrive(-leftPos, -rightPos, false);
+			float angleError = m_startAngle = m_tank.GetAngle();
+			m_tank.StraightPositionDrive(-leftPos, -rightPos, angleError);
 			printf("t: %f\nleftPos: %f \nrightPos %f\n", t, leftPos, rightPos);
 
 			if(t >= m_move.GetTotalTime() + 1) {
@@ -127,8 +163,18 @@ void Autonomous::StraightGear() {
 
 			m_tank.PositionDrive(leftPos, rightPos, false);
 			if(t > m_move.GetTotalTime()) {
-
+				m_move.SetAll(24,24, 24, 60);
+				m_tank.Zero();
+				m_state++;
 			}
+			break;
+		}
+		case 4: { // final move to cross baseline.
+			float leftPos, rightPos;
+			float t = m_timer.Get();
+			leftPos = m_move.Position(t);
+			rightPos = leftPos;
+			m_tank.PositionDrive(leftPos, rightPos, false);
 			break;
 		}
 	}
@@ -138,7 +184,9 @@ void Autonomous::ShootFromHopper() {
 	switch(m_state) {
 		case 0: {// initiallize.
 			m_move.SetAll(45,50, 60, 111);
+			m_startAngle = m_tank.GetAngle();
 			m_shooter.Stop();
+			m_tank.Zero();
 			m_timer.Reset();
 			m_timer.Start();
 			m_state++;
@@ -146,28 +194,95 @@ void Autonomous::ShootFromHopper() {
 		}
 		case 1: {
 			float leftPos, rightPos;
+			float angleError = 0;
 			float t = m_timer.Get();
 			leftPos = m_move.Position(t);
 			rightPos = leftPos;
-			if(leftPos > 85) { // freeze right side after 68 in.
+
+
+			if(leftPos < 85) {
+				angleError = m_startAngle - m_tank.GetAngle();
+			} else { // freeze right side after 85 in.
 				rightPos = 85;
+				angleError = 0;
 			}
-			if(t > m_move.GetTotalTime()) {
-				m_shooter.Shoot(0);
-				m_tank.SetMode(DriveMode::VBUS);
-				m_state++;
-			}
+
 			// swap left/drive if field is mirrored.
 			if(DriverStation::GetInstance().GetAlliance() == DriverStation::kBlue) {
-				std:swap(rightPos,leftPos);
+				std::swap(rightPos,leftPos);
 			}
 
 			m_tank.PositionDrive(leftPos, rightPos, false);
+			//m_tank.StraightPositionDrive(leftPos, rightPos, angleError);
+
+			if(t > m_move.GetTotalTime()) {
+				m_shooter.Shoot();
+				m_tank.SetMode(DriveMode::VBUS);
+				m_state++;
+			}
+
 			printf("t: %f\nleftPos: %f \nrightPos %f\n", t, leftPos, rightPos);
 			break;
 		}
 		case 2: {
-			m_shooter.Shoot(0);
+			m_shooter.Shoot();
+			m_tank.Drive(.2, .2);
+			break;
+		}
+	}
+}
+
+void Autonomous::ArcShootFromHopper() {
+	const float straight1Dist = 56.88;
+	const float innerArcDist = 23.56;
+	const float outerArcDist = 69.712;
+	const float straight2Dist = 20.15;
+	constexpr float totalDist = straight1Dist + innerArcDist + straight2Dist;
+	constexpr float ratio = outerArcDist / innerArcDist; //2.9586;
+
+	switch(m_state) {
+		case 0: {// initiallize.
+			m_move.SetAll(45,50, 60, totalDist);
+			m_startAngle = m_tank.GetAngle();
+			m_shooter.Stop();
+			m_tank.Zero();
+			m_timer.Reset();
+			m_timer.Start();
+			m_state++;
+			break;
+		}
+		case 1: {
+			float leftPos, rightPos;
+			float angleError = 0;
+			float t = m_timer.Get();
+			rightPos = m_move.Position(t);
+			leftPos = rightPos;
+
+			if(rightPos > straight1Dist && rightPos < innerArcDist) {
+				leftPos *= ratio;
+				angleError = 0;
+			}
+
+			// swap left/drive if field is mirrored.
+			if(DriverStation::GetInstance().GetAlliance() == DriverStation::kBlue) {
+				std::swap(rightPos,leftPos);
+			}
+
+			//m_tank.PositionDrive(leftPos, rightPos, false);
+			m_tank.StraightPositionDrive(leftPos, rightPos, angleError);
+
+			if(t > m_move.GetTotalTime()) {
+				m_shooter.Shoot();
+				m_tank.SetMode(DriveMode::VBUS);
+				m_state++;
+			}
+
+			printf("t: %f\nleftPos: %f \nrightPos %f\n", t, leftPos, rightPos);
+			break;
+		}
+		case 2: { // Shoot.
+			m_shooter.Shoot();
+			// keep a small driving force against hopper.
 			m_tank.Drive(.2, .2);
 			break;
 		}

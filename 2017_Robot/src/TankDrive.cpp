@@ -101,7 +101,7 @@ void TankDrive::Position() {
 	m_xPosition += distance * -sin(angleInRad);
 	SmartDashboard::PutNumber("robot x", -m_xPosition);
 	SmartDashboard::PutNumber("robot y", m_yPosition);
-	SmartDashboard::PutNumber("WHAT THE ANGLE DO BE", angle);
+	SmartDashboard::PutNumber("robot angle", angle);
 	rightPosOld = rightPosition;
 	leftPosOld = leftPosition;
 }
@@ -143,22 +143,13 @@ void TankDrive::PositionDrive(float leftPos, float rightPos, bool relative) {
 	SmartDashboard::PutNumber("RobotRightPos", m_rightMotor1->GetPosition());
 }
 
-void TankDrive::SpeedDrive(const float leftSpeed, const float rightSpeed) {
-//	static Timer timer;
-//	float dt = timer.Get();
-//
-//	if(dt > 0.025) {
-//		dt = 0.025;
-//	}
-//
-//	m_leftDistance += leftSpeed*dt;
-//	m_rightDistance += rightSpeed*dt;
-//
-//	m_leftMotor1.Set(-m_leftDistance*m_countPerInch);
-//	m_rightMotor1.Set(m_rightDistance*m_countPerInch);
-//
-//	timer.Reset();
-//	timer.Start();
+void TankDrive::StraightPositionDrive(float leftPos, float rightPos, double angleError) {
+	// inches/angle error
+	const float pGain = 0.01;
+
+	const float driveCorrection = angleError * pGain;
+
+	PositionDrive(leftPos + driveCorrection, rightPos - driveCorrection);
 }
 
 void TankDrive::SetMode(DriveMode mode){
@@ -202,4 +193,5 @@ void TankDrive::Zero()
 }
 
 double TankDrive::GetAngle() {
+	return m_gyro.GetAngle();
 }

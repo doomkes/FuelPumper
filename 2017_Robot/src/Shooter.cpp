@@ -60,7 +60,7 @@ void Shooter::TeleopPeriodic() {
 //		if (reverseIndexJoystickButton.Get()) {
 //			ReverseIndex();
 //		} else Shoot(m_shooterSpeed);
-		Shoot(m_shooterSpeed);
+		Shoot();
 
 
 //		if(pickupTimer.Get() >= 1) {
@@ -84,7 +84,7 @@ void Shooter::TeleopPeriodic() {
 }
 
 
-void Shooter::Shoot(float shooterSpeed) {
+void Shooter::Shoot() {
 	double IndexVoltageFactor = 1;
 	double IndexMotorAmps = m_pdp.GetCurrent(4);
 	SmartDashboard::PutNumber("Index Current", IndexMotorAmps);
@@ -124,13 +124,13 @@ void Shooter::Shoot(float shooterSpeed) {
 
 	static bool pickingUp = false;
 	if (fabs(paSpeed-acceleratorSpeed)<=300 && fabs(abSpeed-afterBurnerSpeed) <= 300) {
-		m_indexMotor->SetSetpoint(48);
-		m_shooterFeeder->Set(.5);
+		SetIndexer(48);
 
 		//Pulse pickup.
 		if(firstTime) {
 			pickupTimer.Start();
 		}
+
 		if(pickupTimer.Get() >= 1) {
 			m_CI->canTalon_hopper->Set(-1);
 			m_CI->canTalon_intake->Set(-1);
@@ -142,6 +142,11 @@ void Shooter::Shoot(float shooterSpeed) {
 			m_CI->canTalon_intake->Set(0);
 		}
 	}
+}
+
+void Shooter::SetIndexer(float speed) {
+	m_indexMotor->SetSetpoint(speed);
+	m_shooterFeeder->Set(.5);
 }
 
 void Shooter::ReverseIndex() {

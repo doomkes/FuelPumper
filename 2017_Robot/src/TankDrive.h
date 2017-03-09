@@ -60,6 +60,8 @@ public:
 	void PositionDrive(float leftPos, float rightPos, bool relative = true);
 	void SpeedDrive(const float leftSpeed, const float rightSpeed);
 
+	void StraightPositionDrive(float leftPos, float rightPos, double angleError);
+
 	void LowGear();
 	void HighGear();
 	void Position();
