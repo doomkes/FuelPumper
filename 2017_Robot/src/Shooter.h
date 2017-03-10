@@ -11,15 +11,16 @@
 #include <WPILib.h>
 #include <CANTalon.h>
 #include "RobotMap.h"
-
-
+#include "OI.h"
+#include "CI.h"
 class Shooter {
 	CANTalon* m_particleAccelerator;
 	CANTalon* m_afterBurner;
 	CANTalon* m_indexMotor;
 	frc::Talon* m_shooterFeeder;
 	frc::DigitalOutput* m_aimLight;
-
+	OI *m_OI;
+	CI *m_CI;
 	//	int m_shootButton;
 	//	frc::Joystick& m_joystickForShootButton;
 	//	int m_reverseIndexButton;
@@ -41,6 +42,8 @@ public:
 			, CANTalon* m_shootWheel2
 			, CANTalon* m_indexMotor
 			, frc::Talon* m_shooterFeeder
+			, OI *OI
+			, CI *CI
 			, frc::DigitalOutput* m_aimLight
 			, frc::JoystickButton* joystickButton_shoot
 			, frc::JoystickButton* joystickButton_reverseIndex

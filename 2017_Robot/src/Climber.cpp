@@ -8,21 +8,17 @@
 #include "Climber.h"
 
 Climber::Climber(
+		frc::Joystick* ManStick,
 		frc::JoystickButton* ClimbButton
-		, frc::JoystickButton* ReverseButton
-		, frc::JoystickButton* HoldButton
-		, CANTalon* m_climbMotor
+		, CANTalon* ClimbMotor
 		)
 		:
-		m_climbBtn(ClimbButton)
-		, m_reverseBtn(ReverseButton)
-		, m_holdBtn(HoldButton)
-		, m_climbMotor(m_climbMotor)
+		m_manStick(ManStick)
+		,m_climbBtn(ClimbButton)
+		, m_climbMotor(ClimbMotor)
 {
 	m_climbMotor->SetControlMode(CANTalon::ControlMode::kPercentVbus);
 	m_climbMotor->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
-	m_climbing = false;
-	m_direction = 1;
 }
 
 
@@ -35,46 +31,23 @@ void Climber::TeleopInit() {
 }
 
 void Climber::TeleopPeriodic() {
-	if(!m_climbing) {
-		if(m_climbBtn->Get()) {
-			m_direction = m_reverseBtn->Get() ? -1 : 1;
-			this->Climb(true, this -> m_direction);
-		}
-		else if (m_holdBtn->Get()) {
-			Hold();
-		}
+	if(m_climbBtn->Get()) {
+		float power = m_manStick->GetY();
+		this->Climb(power);
 	}
-	else {
-		if( !m_climbBtn->Get() && !m_reverseBtn->Get() && !m_holdBtn->Get()) {
-			this -> m_direction = 0;
-			this -> Climb(false,this -> m_direction);
-		}
-		else if ( m_climbBtn->Get() && m_reverseBtn->Get() && !m_holdBtn->Get()) {
-			this -> m_direction = -1;
-			this -> Climb(true, this -> m_direction);
-		}
-		else if(m_holdBtn->Get()) {
-			Hold();
-		}
+	else if (m_manStick->GetRawButton(BUTTOM_M_HOLD)) {
+		//this->Hold();
 	}
+	SmartDashboard::PutNumber("ClimbCurrent", m_climbMotor->GetOutputCurrent());
 }
-
-void Climber::Climb(bool shouldClimb, int direction) {
-	float speed = Preferences::GetInstance()->GetFloat("ClimberSpeed",0);
+void Climber::Climb(float power) {
 	m_climbMotor->SetControlMode(CANTalon::ControlMode::kPercentVbus);
-	if(shouldClimb){
-		this -> m_climbing = true;
-		m_climbMotor->SetSetpoint(0.250 * direction);
-	}
-	else {
-		this -> m_climbing = false;
-		m_climbMotor->SetSetpoint(0);
-	}
+	m_climbMotor->SetSetpoint(power);
+
 }
 
 void Climber::Hold() {
-	const float holdCurrent = 3;
-
+	const float holdCurrent = 4;
 	m_climbMotor->SetControlMode(CANTalon::ControlMode::kCurrent);
 	m_climbMotor->SetSetpoint(holdCurrent);
 }
