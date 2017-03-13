@@ -73,7 +73,6 @@ void Autonomous::AutonomousInit() {
 
 void Autonomous::AutonomousPeriodic() {
 	m_tank.Position();
-
 	switch(m_mode) {
 	case AutoMode::DO_NOTHING:
 		break;
@@ -85,6 +84,13 @@ void Autonomous::AutonomousPeriodic() {
 		break;
 	case AutoMode::ARC_HOPPER_SHOOT:
 		ArcShootFromHopper();
+		break;
+	case AutoMode::POS_TEST:
+		PositionTest();
+		break;
+	case AutoMode::VBUS_TEST:
+		m_tank.SetMode(DriveMode::VBUS);
+		VBusTest();
 		break;
 	}
 //	switch(m_state) {
@@ -113,9 +119,15 @@ void Autonomous::AutonomousPeriodic() {
 void Autonomous::StraightGear() {
 	float leftPos, rightPos;
 	float t = m_timer.Get();
+
+	// Distance to the face of the airship, in inches.
+	const float airShipDist = 93.25;
+	// inches.
+	const float pegLength = 13;
 	switch(m_state) {
 		case 0: {// initiallize.
-			m_move.SetAll(12, 6, 12, 52.5);
+			//m_move.SetAll(12, 6, 12, 52.5);
+			m_move.SetAll(12, 6, 12, airShipDist - pegLength);
 			m_shooter.Stop();
 			m_timer.Reset();
 			m_timer.Start();
@@ -127,12 +139,14 @@ void Autonomous::StraightGear() {
 			leftPos = m_move.Position(t);
 			rightPos = leftPos;
 
-			if(leftPos >= 52.5) {
+			if(t >= m_move.GetTotalTime()) {
 				m_gear.Release(true);
 				leftPos += 2;
 			}
-			float angleError = m_startAngle = m_tank.GetAngle();
-			m_tank.StraightPositionDrive(-leftPos, -rightPos, angleError);
+			float angleError = 0;//m_startAngle = m_tank.GetAngle();
+			//m_tank.StraightPositionDrive(leftPos, rightPos, angleError);
+			m_tank.PositionDrive(-leftPos, -rightPos, false);
+
 			printf("t: %f\nleftPos: %f \nrightPos %f\n", t, leftPos, rightPos);
 
 			if(t >= m_move.GetTotalTime() + 1) {
@@ -150,9 +164,9 @@ void Autonomous::StraightGear() {
 			rightPos = leftPos;
 			m_tank.PositionDrive(leftPos, rightPos, false);
 			if(t > m_move.GetTotalTime()) {
-				m_move.SetAll(12,6, 12, 12);
-				m_timer.Reset();
-				m_timer.Start();
+//				m_move.SetAll(12,6, 12, 12);
+//				m_timer.Reset();
+//				m_timer.Start();
 				//m_state++;
 			}
 			break;
@@ -183,7 +197,7 @@ void Autonomous::StraightGear() {
 void Autonomous::ShootFromHopper() {
 	switch(m_state) {
 		case 0: {// initiallize.
-			m_move.SetAll(45,50, 60, 111);
+			m_move.SetAll(45,50, 60, 116);
 			m_startAngle = m_tank.GetAngle();
 			m_shooter.Stop();
 			m_tank.Zero();
@@ -203,6 +217,7 @@ void Autonomous::ShootFromHopper() {
 			if(leftPos < 85) {
 				angleError = m_startAngle - m_tank.GetAngle();
 			} else { // freeze right side after 85 in.
+				m_shooter.Spinup();
 				rightPos = 85;
 				angleError = 0;
 			}
@@ -225,8 +240,12 @@ void Autonomous::ShootFromHopper() {
 			break;
 		}
 		case 2: {
+			//if(DriverStation::GetInstance().GetAlliance() == DriverStation::kBlue) {
+			//	std::swap(rightPos,leftPos);
+			//}
+
 			m_shooter.Shoot();
-			m_tank.Drive(.2, .2);
+			m_tank.Drive(-.2, -.45);
 			break;
 		}
 	}
@@ -283,8 +302,16 @@ void Autonomous::ArcShootFromHopper() {
 		case 2: { // Shoot.
 			m_shooter.Shoot();
 			// keep a small driving force against hopper.
-			m_tank.Drive(.2, .2);
+			m_tank.Drive(.4, .2);
 			break;
 		}
 	}
+}
+
+void Autonomous::PositionTest() {
+	m_tank.PositionDrive(5,5);
+}
+
+void Autonomous::VBusTest() {
+	m_tank.Drive(-0.2, -0.45);
 }

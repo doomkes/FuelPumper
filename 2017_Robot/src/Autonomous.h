@@ -21,6 +21,8 @@ enum AutoMode {
 	DIAGONAL_HOPPER_SHOOT,
 	ARC_HOPPER_SHOOT,
 	CENTER_GEAR_BASELINE,
+	POS_TEST = 99,
+	VBUS_TEST = 98,
 };
 
 class Autonomous {
@@ -55,6 +57,8 @@ public:
 	void StraightGear();
 	void ShootFromHopper();
 	void ArcShootFromHopper();
+	void PositionTest();
+	void VBusTest();
 };
 
 #endif /* SRC_AUTONOMOUS_H_ */
