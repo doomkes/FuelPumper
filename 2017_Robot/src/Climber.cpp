@@ -36,7 +36,9 @@ void Climber::TeleopPeriodic() {
 		this->Climb(power);
 	}
 	else if (m_manStick->GetRawButton(BUTTOM_M_HOLD)) {
-		//this->Hold();
+		this->Hold();
+	} else {
+		Climb(0);
 	}
 	SmartDashboard::PutNumber("ClimbCurrent", m_climbMotor->GetOutputCurrent());
 }
