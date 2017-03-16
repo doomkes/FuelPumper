@@ -10,6 +10,22 @@
 using namespace cs;
 using namespace grip;
 
+struct RobotDimensions {
+	static constexpr float bumperWidth = 3.35;
+	static constexpr float robotWidth = 33;
+	static constexpr float robotLength = 29;
+	static constexpr float betweenWheels = 29.5;
+	static constexpr float centerToWheel = betweenWheels/2;
+	static constexpr float width = robotWidth + (2 * bumperWidth);
+	static constexpr float length = robotLength + (2 * bumperWidth);
+};
+
+extern RobotDimensions robotDimensions;
+
+struct FieldDimensions {
+	//TODO put field dimensions in here
+};
+
 Autonomous::Autonomous(
 	CameraServer *m_cameraServer,
 		cs::CvSource &m_outputStream,
@@ -72,7 +88,7 @@ void Autonomous::AutonomousInit() {
 }
 
 void Autonomous::AutonomousPeriodic() {
-	m_tank.Position();
+//	m_tank.Position();
 	switch(m_mode) {
 	case AutoMode::DO_NOTHING:
 		break;
@@ -252,16 +268,28 @@ void Autonomous::ShootFromHopper() {
 }
 
 void Autonomous::ArcShootFromHopper() {
-	const float straight1Dist = 56.88;
-	const float innerArcDist = 23.56;
-	const float outerArcDist = 69.712;
-	const float straight2Dist = 20.15;
-	constexpr float totalDist = straight1Dist + innerArcDist + straight2Dist;
-	constexpr float ratio = outerArcDist / innerArcDist; //2.9586;
+	static float arcRightPos = 0;
+	static float arcLeftPos= 0;
+
+	constexpr float straight1Dist = 32;
+	constexpr float arcRadius = 40;
+	constexpr float arcAngle = 1.9198621771937625346160598453375;
+	constexpr float straight2Dist = 0;
+
+	constexpr float arcDistance = arcRadius*arcAngle;
+	constexpr float innerArcRadius = arcRadius - robotDimensions.centerToWheel;
+	constexpr float outerArcRadius = arcRadius + robotDimensions.centerToWheel;
+	constexpr float innerArcDist = innerArcRadius*arcAngle;
+	constexpr float outerArcDist = outerArcRadius*arcAngle;
+
+	constexpr float innerRatio = innerArcDist/arcDistance;
+	constexpr float outerRatio =  outerArcDist/arcDistance;
+
+	constexpr float totalDist = straight1Dist + arcDistance + straight2Dist;
 
 	switch(m_state) {
 		case 0: {// initiallize.
-			m_move.SetAll(45,50, 60, totalDist);
+			m_move.SetAll(50, 80, 100, totalDist);
 			m_startAngle = m_tank.GetAngle();
 			m_shooter.Stop();
 			m_tank.Zero();
@@ -271,24 +299,36 @@ void Autonomous::ArcShootFromHopper() {
 			break;
 		}
 		case 1: {
-			float leftPos, rightPos;
-			float angleError = 0;
 			float t = m_timer.Get();
-			rightPos = m_move.Position(t);
-			leftPos = rightPos;
+			float centerPos = m_move.Position(t);
+			float leftPos = centerPos;
+			float rightPos = centerPos;
 
-			if(rightPos > straight1Dist && rightPos < innerArcDist) {
-				leftPos *= ratio;
-				angleError = 0;
+			if(centerPos > straight1Dist && centerPos < (straight1Dist+arcDistance)) {
+				centerPos -= straight1Dist;
+				leftPos = centerPos;
+				rightPos = centerPos;
+				leftPos *= outerRatio;
+				rightPos *= innerRatio;
+				leftPos += straight1Dist;
+				rightPos += straight1Dist;
+				arcRightPos = rightPos;
+				arcLeftPos = leftPos;
 			}
+//			if(centerPos > (straight1Dist+arcDistance)) {
+//				centerPos -= (straight1Dist+arcDistance);
+//				leftPos = centerPos;
+//				rightPos = centerPos;
+//				leftPos +=arcLeftPos;
+//				rightPos +=arcRightPos;
+//			}
 
 			// swap left/drive if field is mirrored.
 			if(DriverStation::GetInstance().GetAlliance() == DriverStation::kBlue) {
 				std::swap(rightPos,leftPos);
 			}
 
-			//m_tank.PositionDrive(leftPos, rightPos, false);
-			m_tank.StraightPositionDrive(leftPos, rightPos, angleError);
+			m_tank.PositionDrive(leftPos, rightPos, false);
 
 			if(t > m_move.GetTotalTime()) {
 				m_shooter.Shoot();
@@ -300,9 +340,9 @@ void Autonomous::ArcShootFromHopper() {
 			break;
 		}
 		case 2: { // Shoot.
-			m_shooter.Shoot();
+			//m_shooter.Shoot();
 			// keep a small driving force against hopper.
-			m_tank.Drive(.4, .2);
+			m_tank.Drive(-.2, -.2);
 			break;
 		}
 	}
