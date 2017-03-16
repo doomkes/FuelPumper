@@ -35,7 +35,6 @@ class Shooter {
 	PowerDistributionPanel m_pdp;
 
 	float m_shooterSpeed;
-
 public:
 	Shooter(
 			CANTalon* m_shootWheel1
@@ -56,7 +55,9 @@ public:
 
 	//Want to allow it to activate shooter motors let
 	//then get up to speed then activate index motor
-	void Shoot(float);
+	void Shoot();
+	void Spinup();
+	void SetIndexer(float speed);
 	void Stop();
 	void ReverseIndex();
 	void Init();

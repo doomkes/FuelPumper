@@ -20,7 +20,7 @@ class Pickup {
 	// Hopper Motor pushs into Hopper
 	frc::Talon* m_hopperMotor;
 	PowerDistributionPanel m_pdp;
-
+	float m_lastSetpoint = 0;
 public:
 	Pickup(
 		frc::JoystickButton* joystickButton_pickup

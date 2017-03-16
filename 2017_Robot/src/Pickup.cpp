@@ -53,8 +53,10 @@ void Pickup::Intake() {
 
 	double IntakeVoltageFactor = 1;
 	double HopperVoltageFactor = 1;
+
 	double bottomIntakeMotorAmps = m_pdp.GetCurrent(14);
 	double topIntakeMotorAmps = m_pdp.GetCurrent(15);
+
 	SmartDashboard::PutNumber("Intake Current", bottomIntakeMotorAmps);
 	SmartDashboard::PutNumber("Hopper Current", topIntakeMotorAmps);
 

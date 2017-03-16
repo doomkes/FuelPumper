@@ -97,11 +97,13 @@ public:
 }
 
 	void RobotInit() override {
-		SmartDashboard::PutNumber("Exposure", 1);
-		if(!Preferences::GetInstance()->ContainsKey("Exposure")) {
-			Preferences::GetInstance()->PutFloat("Exposure", 1);
-		}
+		float exposure = Preferences::GetInstance()->GetFloat("Exposure", 25);
 		cameraServer = CameraServer::GetInstance();
+
+		camera = cameraServer->StartAutomaticCapture(0);
+		m_outputStream = CameraServer::GetInstance()->PutVideo("thresh", 640, 480);
+		camera.SetResolution(640, 480);
+		camera.SetExposureManual(exposure);
 
 		SmartDashboard::PutNumber("drive_P", 0);
 		SmartDashboard::PutNumber("drive_I", 0);

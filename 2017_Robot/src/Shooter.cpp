@@ -56,35 +56,19 @@ void Shooter::TeleopPeriodic() {
 	}
 
 	static bool pickingUp = false;
-	if (joystickButton_shoot->Get()) {
-//		if (reverseIndexJoystickButton.Get()) {
-//			ReverseIndex();
-//		} else Shoot(m_shooterSpeed);
-		Shoot(m_shooterSpeed);
-
-
-//		if(pickupTimer.Get() >= 1) {
-//			m_CI->canTalon_hopper->Set(-1);
-//			m_CI->canTalon_intake->Set(-1);
-//			pickingUp = true;
-//			pickupTimer.Reset();
-//		}
-//		if (pickingUp == true && pickupTimer.Get() >= 0.5) {
-//			m_CI->canTalon_hopper->Set(0);
-//			m_CI->canTalon_intake->Set(0);
-//		}
-
-	} else Stop();
-	SmartDashboard::PutBoolean("Shooter_ShootBtn", joystickButton_shoot->Get());
-	if (joystickButton_shoot->Get()) {
-		AimLight(true);
-	}  else {
-		AimLight(false);
+	if (joystickButton_shoot->Get() || m_OI->joyStickButton_adjShoot->Get()) {
+		Shoot();
 	}
+	else if(m_OI->joystickButton_reverseIndex->Get()) {
+		ReverseIndex();
+	}
+	else Stop();
+
+	SmartDashboard::PutBoolean("Shooter_ShootBtn", joystickButton_shoot->Get());
 }
 
 
-void Shooter::Shoot(float shooterSpeed) {
+void Shooter::Shoot() {
 	double IndexVoltageFactor = 1;
 	double IndexMotorAmps = m_pdp.GetCurrent(4);
 	SmartDashboard::PutNumber("Index Current", IndexMotorAmps);
@@ -99,38 +83,36 @@ void Shooter::Shoot(float shooterSpeed) {
 //		IndexVoltageFactor += .005;
 //	}
 
-	//NOTE: These are reversed from the first bot. Team still needs to swap wiring.
-	//Also: these are REALLY good RPMs. Please do not change unless Mr. Ambrose and Mr. Oomkes are involved
+	float speedAdjust = 0;
+	float sliderPos =  m_OI->joystick_manipulator->GetRawAxis(3);
+	bool AdjBtn = m_OI->joyStickButton_adjShoot->Get();
 
-	//TODO: Add speed adjust back in.
-	const float speedAdjust = 0;
-	//const float speedAdjust = m_OI->joystick_manipulator->GetRawAxis(3) * 300;
-
-
+	if(AdjBtn) {
+		speedAdjust = 150 * (sliderPos);
+	}
 
 	const float acceleratorSpeed = -3150 + speedAdjust;
 	const float afterBurnerSpeed = -3550 + speedAdjust;
 	float paSpeed = m_particleAccelerator->GetSpeed();
 	float abSpeed = m_afterBurner->GetSpeed();
 
-	//if (fabs(paSpeed - acceleratorSpeed) < 300) {
-		SmartDashboard::PutNumber("PASpeed", paSpeed);
-		SmartDashboard::PutNumber("ABSpeed", abSpeed);
-	//}
+	SmartDashboard::PutNumber("PASpeed", paSpeed);
+	SmartDashboard::PutNumber("ABSpeed", abSpeed);
+
 	m_particleAccelerator->SetSetpoint(acceleratorSpeed);
 	m_afterBurner->SetSetpoint(afterBurnerSpeed);
 	static bool firstTime = true;
 	static Timer pickupTimer;
 
 	static bool pickingUp = false;
-	if (fabs(paSpeed-acceleratorSpeed)<=300 && fabs(abSpeed-afterBurnerSpeed) <= 300) {
-		m_indexMotor->SetSetpoint(60);
-		m_shooterFeeder->Set(.5);
+	if (fabs(paSpeed-acceleratorSpeed)<=150 && fabs(abSpeed-afterBurnerSpeed) <= 150) {
+		SetIndexer(48);
 
 		//Pulse pickup.
 		if(firstTime) {
 			pickupTimer.Start();
 		}
+
 		if(pickupTimer.Get() >= 1) {
 			m_CI->canTalon_hopper->Set(-1);
 			m_CI->canTalon_intake->Set(-1);
@@ -144,20 +126,13 @@ void Shooter::Shoot(float shooterSpeed) {
 	}
 }
 
-void Shooter::ReverseIndex() {
-	double IndexVoltageFactor = 1;
-	double IndexMotorAmps = m_pdp.GetCurrent(16666);
-	SmartDashboard::PutNumber("Index Current", IndexMotorAmps);
+void Shooter::SetIndexer(float speed) {
+	m_indexMotor->SetSetpoint(speed);
+	m_shooterFeeder->Set(.5);
+}
 
-	if (abs(IndexMotorAmps) > 7.5) {
-		IndexVoltageFactor -= .005;
-		SmartDashboard::PutBoolean ("Indexer Is Jammed.", true);
-	}
-	else {
-		SmartDashboard::PutBoolean ("Indexer Is Jammed.", false);
-		IndexVoltageFactor += .005;
-	}
-	m_indexMotor->SetSetpoint (-1000);
+void Shooter::ReverseIndex() {
+	m_indexMotor->SetSetpoint(-20);
 }
 
 
@@ -196,7 +171,13 @@ void Shooter::Init() {
 	m_particleAccelerator->SetSetpoint(0);
 	m_afterBurner->SetSetpoint(0);
 }
+void Shooter::Spinup() {
+	const float acceleratorSpeed = -3150;
+	const float afterBurnerSpeed = -3550;
 
+	m_particleAccelerator->SetSetpoint(acceleratorSpeed);
+	m_afterBurner->SetSetpoint(afterBurnerSpeed);
+}
 void Shooter::AimLight(bool state) {
 
 	if(state)
