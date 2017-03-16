@@ -40,6 +40,13 @@ TankDrive::TankDrive(
 	m_rightMotor2->SetControlMode(CANTalon::ControlMode::kFollower);
 	m_rightMotor2->ConfigEncoderCodesPerRev(120);
 
+
+	m_leftMotor1->SetCurrentLimit(30);
+	m_rightMotor1->SetCurrentLimit(30);
+
+	m_leftMotor1->EnableCurrentLimit(true);
+	m_rightMotor1->EnableCurrentLimit(true);
+
 	m_leftMotor1->SetInverted(false);
 	m_rightMotor1->SetInverted(false);
 
@@ -76,7 +83,18 @@ void TankDrive::TeleopPeriodic() {
 		direction = 1;
 	}
 
-	this->Drive(this->m_leftStick->GetY() * direction, this->m_rightStick->GetY() * direction);
+	float leftVal = this->m_leftStick->GetY() * direction;
+	float rightVal = this->m_rightStick->GetY() * direction;
+
+	float left = leftVal * leftVal; // square input.
+	float right = rightVal * rightVal;
+
+	left *= (leftVal < 0) ? -1 : 1;
+	right *= (rightVal < 0) ? -1 : 1;
+
+	this->Drive(left, right);
+
+
 	float WheelSpeed = ((fabs(m_rightMotor1->GetSpeed())+fabs(m_leftMotor1->GetSpeed()))/60)/2;
 	//^^above^^Gives us the average rotations per second of the two encoders
 
@@ -121,10 +139,7 @@ void TankDrive::Position() {
 void TankDrive::Drive(const float leftVal, const float rightVal) {
 	//left motor speed is inverted because the motors are physically opposite the right motors
 	float left = leftVal, right = rightVal;
-	left *= left; // square input.
-	right *= right;
-	left *= (leftVal < 0) ? -1 : 1;
-	right *= (rightVal < 0) ? -1 : 1;
+
 	if(direction == -1) {
 		std::swap(left, right);
 	}
@@ -152,8 +167,12 @@ void TankDrive::PositionDrive(float leftPos, float rightPos, bool relative) {
 		m_leftMotor1->SetSetpoint((m_leftMotor1->GetPosition() + -rightPos) * m_revsPerInch);
 		m_rightMotor1->SetSetpoint((m_rightMotor1->GetPosition() + leftPos) * m_revsPerInch);
 	}
-	SmartDashboard::PutNumber("RobotLeftPos", m_leftMotor1->GetPosition());
-	SmartDashboard::PutNumber("RobotRightPos", m_rightMotor1->GetPosition());
+
+	SmartDashboard::PutNumber("leftClosedLoopError", m_leftMotor1->GetClosedLoopError());
+	SmartDashboard::PutNumber("rightClosedLoopError", m_rightMotor1->GetClosedLoopError());
+
+//	SmartDashboard::PutNumber("RobotLeftPos", m_leftMotor1->GetPosition());
+//	SmartDashboard::PutNumber("RobotRightPos", m_rightMotor1->GetPosition());
 }
 
 void TankDrive::StraightPositionDrive(float leftPos, float rightPos, double angleError) {
@@ -162,7 +181,7 @@ void TankDrive::StraightPositionDrive(float leftPos, float rightPos, double angl
 
 	const float driveCorrection = angleError * pGain;
 
-	PositionDrive(leftPos + driveCorrection, rightPos - driveCorrection);
+	PositionDrive(leftPos + driveCorrection, rightPos - driveCorrection, false);
 }
 
 void TankDrive::SetMode(DriveMode mode){
