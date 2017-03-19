@@ -83,8 +83,23 @@ void TankDrive::TeleopPeriodic() {
 		direction = 1;
 	}
 
-	float leftVal = this->m_leftStick->GetY() * direction;
-	float rightVal = this->m_rightStick->GetY() * direction;
+
+    float joystickMultiplier = Preferences::GetInstance()->GetDouble("JoystickMultpilier",1);
+	float leftVal = this->m_leftStick->GetY() * direction*joystickMultiplier;
+	float rightVal = this->m_rightStick->GetY() * direction*joystickMultiplier;
+
+	if(leftVal > 1) leftVal = 1;
+	else if(leftVal < -1) leftVal = -1;
+	if(rightVal > 1) rightVal = 1;
+	else if(rightVal < -1) rightVal = -1;
+
+	float average = (leftVal+rightVal)/2;
+	float split = (leftVal-rightVal)/2;
+	float multiplier = 1-average;
+	float leftScale = split*multiplier;
+	float rightScale = -1 * (split*multiplier);
+	leftVal+=leftScale;
+	rightVal+=rightScale;
 
 	float left = leftVal * leftVal; // square input.
 	float right = rightVal * rightVal;
