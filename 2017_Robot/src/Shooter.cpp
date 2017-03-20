@@ -82,7 +82,7 @@ void Shooter::Shoot() {
 //		SmartDashboard::PutBoolean ("Indexer Is Jammed.", false);
 //		IndexVoltageFactor += .005;
 //	}
-
+	float ballsPS;
 	float speedAdjust = 0;
 	float sliderPos =  m_OI->joystick_manipulator->GetRawAxis(3);
 	bool AdjBtn = m_OI->joyStickButton_adjShoot->Get();
@@ -92,7 +92,7 @@ void Shooter::Shoot() {
 	}
 
 	const float acceleratorSpeed = -3150 + speedAdjust;
-	const float afterBurnerSpeed = -3550 + speedAdjust;
+	const float afterBurnerSpeed = -3800 + speedAdjust; //was 3550
 	float paSpeed = m_particleAccelerator->GetSpeed();
 	float abSpeed = m_afterBurner->GetSpeed();
 
@@ -106,7 +106,8 @@ void Shooter::Shoot() {
 
 	static bool pickingUp = false;
 	if (fabs(paSpeed-acceleratorSpeed)<=150 && fabs(abSpeed-afterBurnerSpeed) <= 150) {
-		SetIndexer(48);
+		ballsPS = Preferences::GetInstance()->GetDouble("IndexBallsPS", 4);
+		SetIndexer(12*ballsPS);
 
 		//Pulse pickup.
 		if(firstTime) {
