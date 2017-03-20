@@ -29,13 +29,13 @@ class TankDrive {
 	CANTalon* m_rightMotor1;
 	CANTalon* m_rightMotor2;
 private:
-	int direction;
-	bool highGear;
-	float rightPosOld;
-	float leftPosOld;
-	float distance;
-	float angle;
-	float heading;
+	int direction = 1;
+	bool highGear = true;
+	float rightPosOld = 0;
+	float leftPosOld = 0;
+	float distance = 0;
+	float angle = 0;
+	float heading = 0;
 	float m_absX = 0, m_absY = 0;
 	const float m_revsPerInch = 1/(4*3.141592);
 public:
@@ -66,8 +66,8 @@ public:
 	void HighGear();
 	void Position();
 	double GetAngle();
-	float m_xPosition;
-	float m_yPosition;
+	float m_xPosition = 0;
+	float m_yPosition = 0;
 
 	void SetMode(DriveMode);
 	void Zero();
