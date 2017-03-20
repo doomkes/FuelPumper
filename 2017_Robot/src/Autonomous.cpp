@@ -116,6 +116,33 @@ void Autonomous::AutonomousPeriodic() {
  * Drive forward and place a gear on the middle peg
  * then backup halfway and do a 45 deg turn, & drive past the baseline.
  */
+
+void Autonomous::BaseLine() {
+	float leftPos, rightPos;
+	float t = m_timer.Get();
+
+	const float baseLineDist = 93.25 + 35.7/2;
+
+	switch(m_state) {
+	case 0 : {// initialize.
+		m_move.SetAll(30, 30, 30, baseLineDist);
+		m_shooter.Stop();
+		m_timer.Reset();
+		m_timer.Start();
+		m_gear.Release(false);
+		m_state++;
+		break;
+	}
+	case 1: {// drive to base line
+		float leftPos, rightPos;
+		float t = m_timer.Get();
+		leftPos = m_move.Position(t);
+		rightPos = leftPos;
+		m_tank.PositionDrive(leftPos, rightPos, false);
+					break;
+	}
+	}
+}
 void Autonomous::StraightGear() {
 	float leftPos, rightPos;
 	float t = m_timer.Get();
@@ -125,7 +152,7 @@ void Autonomous::StraightGear() {
 	// inches.
 	const float pegLength = 13;
 	switch(m_state) {
-		case 0: {// initiallize.
+		case 0: {// initialize.
 			//m_move.SetAll(12, 6, 12, 52.5);
 			m_move.SetAll(12, 6, 12, airShipDist - pegLength);
 			m_shooter.Stop();
