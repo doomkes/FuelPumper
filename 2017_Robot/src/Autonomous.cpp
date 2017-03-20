@@ -66,6 +66,9 @@ void Autonomous::AutonomousInit() {
 	case AutoMode::CENTER_GEAR_BASELINE:
 		autoName = "CENTER_GEAR";
 		break;
+	case AutoMode::STATIONARY_SHOOT:
+		autoName = "STATIONARY_SHOOT";
+		break;
 
 	}
 	SmartDashboard::PutString("AutoName", autoName);
@@ -91,6 +94,9 @@ void Autonomous::AutonomousPeriodic() {
 	case AutoMode::VBUS_TEST:
 		m_tank.SetMode(DriveMode::VBUS);
 		VBusTest();
+		break;
+	case AutoMode::STATIONARY_SHOOT:
+		StationaryShoot();
 		break;
 	}
 //	switch(m_state) {
@@ -314,4 +320,9 @@ void Autonomous::PositionTest() {
 
 void Autonomous::VBusTest() {
 	m_tank.Drive(-0.2, -0.45);
+}
+
+void Autonomous::StationaryShoot() {
+	m_shooter.Shoot();
+
 }
