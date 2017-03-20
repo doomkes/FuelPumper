@@ -63,6 +63,9 @@ void Autonomous::AutonomousInit() {
 	case AutoMode::ARC_HOPPER_SHOOT:
 
 		break;
+	case AutoMode::BASE_LINE:
+	    autoName = "BASE_LINE";
+	    break;
 	case AutoMode::CENTER_GEAR_BASELINE:
 		autoName = "CENTER_GEAR";
 		break;
@@ -85,6 +88,9 @@ void Autonomous::AutonomousPeriodic() {
 	case AutoMode::ARC_HOPPER_SHOOT:
 		ArcShootFromHopper();
 		break;
+	case AutoMode::BASE_LINE:
+	     BaseLine();
+	     break;
 	case AutoMode::POS_TEST:
 		PositionTest();
 		break;
