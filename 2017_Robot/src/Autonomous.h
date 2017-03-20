@@ -21,6 +21,7 @@ enum AutoMode {
 	DIAGONAL_HOPPER_SHOOT,
 	ARC_HOPPER_SHOOT,
 	CENTER_GEAR_BASELINE,
+	ARC_SIDE_GEAR,
 	POS_TEST = 99,
 	VBUS_TEST = 98,
 };
@@ -55,6 +56,7 @@ public:
 	void AutonomousInit();
 
 	void StraightGear();
+	void ArcSideGear();
 	void ShootFromHopper();
 	void ArcShootFromHopper();
 	void PositionTest();
