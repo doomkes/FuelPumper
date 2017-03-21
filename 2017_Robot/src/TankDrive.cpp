@@ -84,42 +84,42 @@ void TankDrive::TeleopPeriodic() {
 	} else if (direction == -1 && !joystickButton_reverseDrive->Get()) {
 		direction = 1;
 	}
+	static float leftPos =0;
+	static float rightPos = 0;
 
+//    float joystickMultiplier = Preferences::GetInstance()->GetDouble("JoystickMultpilier",1);
+	float leftVal = this->m_leftStick->GetY() * direction/**joystickMultiplier*/;
+	float rightVal = this->m_rightStick->GetY() * direction/**joystickMultiplier*/;
+//
+//	if(leftVal > 1) leftVal = 1;
+//	else if(leftVal < -1) leftVal = -1;
+//	if(rightVal > 1) rightVal = 1;
+//	else if(rightVal < -1) rightVal = -1;
+//
+//	float average = (leftVal+rightVal)/2;
+//	float split = (leftVal-rightVal)/2;
+//	float multiplier = 1-average;
+//	float leftScale = split*multiplier;
+//	float rightScale = -1 * (split*multiplier);
+//	leftVal+=leftScale;
+//	rightVal+=rightScale;
+//
+//	float left = leftVal * leftVal; // square input.
+//	float right = rightVal * rightVal;
+//
+//	left *= (leftVal < 0) ? -1 : 1;
+//	right *= (rightVal < 0) ? -1 : 1;
+//	this->Drive(left, right);
+	SmartDashboard::PutNumber("RobotLeftPos", m_leftMotor1->GetPosition());
+	SmartDashboard::PutNumber("RobotRightPos", m_rightMotor1->GetPosition());
+	leftPos = leftVal*10;
+	rightPos= rightVal*10;
 
-    float joystickMultiplier = Preferences::GetInstance()->GetDouble("JoystickMultpilier",1);
-	float leftVal = this->m_leftStick->GetY() * direction*joystickMultiplier;
-	float rightVal = this->m_rightStick->GetY() * direction*joystickMultiplier;
+	SmartDashboard::PutNumber("JoysLeftPos", leftPos);
+	SmartDashboard::PutNumber("JoysRightPos",rightPos);
+	m_leftMotor1->SetSetpoint(((m_leftMotor1->GetPosition()/m_revsPerInch) + -leftPos) * m_revsPerInch);
+	m_rightMotor1->SetSetpoint(((m_rightMotor1->GetPosition()/m_revsPerInch) + rightPos) * m_revsPerInch);
 
-	if(leftVal > 1) leftVal = 1;
-	else if(leftVal < -1) leftVal = -1;
-	if(rightVal > 1) rightVal = 1;
-	else if(rightVal < -1) rightVal = -1;
-
-	float average = (leftVal+rightVal)/2;
-	float split = (leftVal-rightVal)/2;
-	float multiplier = 1-average;
-	float leftScale = split*multiplier;
-	float rightScale = -1 * (split*multiplier);
-	leftVal+=leftScale;
-	rightVal+=rightScale;
-
-	float left = leftVal * leftVal; // square input.
-	float right = rightVal * rightVal;
-
-	left *= (leftVal < 0) ? -1 : 1;
-	right *= (rightVal < 0) ? -1 : 1;
-
-	this->Drive(left, right);
-
-
-	float WheelSpeed = ((fabs(m_rightMotor1->GetSpeed())+fabs(m_leftMotor1->GetSpeed()))/60)/2;
-	//^^above^^Gives us the average rotations per second of the two encoders
-
-	float DriveSpeed = (WheelSpeed*(4*3.1415))/12;
-	//^^above^^Gives us speed in feet per second
-	if (DriveSpeed >= 6.4){
-		TankDrive::HighGear();
-	}
 
 	if ( joystickButton_shiftLow->Get()){
 		TankDrive::LowGear();
@@ -129,18 +129,12 @@ void TankDrive::TeleopPeriodic() {
 	else {
 		HighGear();
 	}
-//	else if ( joystickButton_shiftHigh->Get()){
-//		TankDrive::HighGear();
-//		SmartDashboard::PutString("Gear","High");
-//	}
-
 	if ( joystickButton_vbus->Get()){
 		this->SetMode(DriveMode::VBUS);
 
 	}
 
-
-	Position();
+  Position();
 }
 
 void TankDrive::Position() {
@@ -212,11 +206,19 @@ void TankDrive::SetMode(DriveMode mode){
 	Zero();
 	switch(mode){
 
-	case DriveMode::SPEED:
+	case DriveMode::TELEPOSITION:{
 
-		m_leftMotor1->SetControlMode(frc::CANSpeedController::kSpeed);
-		m_rightMotor1->SetControlMode(frc::CANSpeedController::kSpeed);
+		m_leftMotor1->SetControlMode(frc::CANSpeedController::kPosition);
+		m_rightMotor1->SetControlMode(frc::CANSpeedController::kPosition);
+		//const float P = SmartDashboard::GetNumber("drive_P", 0);
+		const float P = 4;
+		const float I = SmartDashboard::GetNumber("drive_I", 0);
+		const float D = SmartDashboard::GetNumber("drive_D", 0);
+
+		m_leftMotor1->SetPID(P, I, D, 0);
+		m_rightMotor1->SetPID(P, I, D, 0);
 		break;
+	}
 	case DriveMode::POSITION: {
 
 		m_leftMotor1->SetControlMode(frc::CANSpeedController::kPosition);

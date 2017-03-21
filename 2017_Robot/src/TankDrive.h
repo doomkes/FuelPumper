@@ -13,7 +13,7 @@
 #include "RobotMap.h"
 enum DriveMode{
 	POSITION,
-	SPEED,
+	TELEPOSITION,
 	VBUS
 };
 using namespace std;
