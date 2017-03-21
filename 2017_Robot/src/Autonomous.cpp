@@ -498,7 +498,7 @@ void Autonomous::BaseLine() {
 
 	switch(m_state) {
 	case 0 : {// initialize.
-		m_move.SetAll(30, 30, 30, baseLineDist);
+		m_move.SetAll(50, 50, 50, baseLineDist);
 		m_shooter.Stop();
 		m_timer.Reset();
 		m_timer.Start();
