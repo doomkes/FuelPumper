@@ -23,6 +23,7 @@ class TankDrive {
 	frc::JoystickButton* joystickButton_reverseDrive;
 	frc::JoystickButton* joystickButton_shiftLow;
 	frc::JoystickButton* joystickButton_shiftHigh;
+	frc::JoystickButton* joystickButton_vbus;
 	frc::Solenoid* m_gearShift;
 	CANTalon* m_leftMotor1;
 	CANTalon* m_leftMotor2;
@@ -45,6 +46,7 @@ public:
 			, frc::JoystickButton* joystickButton_reverseDrive
 			, frc::JoystickButton* joystickButton_shiftLow
 			, frc::JoystickButton* joystickButton_shiftHigh
+			, frc::JoystickButton* joystickButton_vbus
 			,frc::Solenoid* m_gearShift
 			,CANTalon* m_leftMotor1
 			,CANTalon* m_leftMotor2

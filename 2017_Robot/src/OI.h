@@ -38,6 +38,7 @@ public:
 	frc::JoystickButton* joystickButton_reverseDrive = new frc::JoystickButton(joystick_driverRight, BUTTON_R_REVERSE_DRIVE);
 	frc::JoystickButton* joystickButton_shiftLow = new frc::JoystickButton(joystick_driverRight, BUTTON_L_SHIFT_LOW);
 	frc::JoystickButton* joystickButton_shiftHigh = new frc::JoystickButton(joystick_driverRight, BUTTON_L_SHIFT_HIGH);
+	frc::JoystickButton* joystickButton_vbus = new frc::JoystickButton(joystick_driverRight, BUTTON_R_SET_VBUS_MODE);
 
 	frc::JoystickButton* joystickButton_camera1 = new frc::JoystickButton(joystick_driverRight, CAMERA_1);
 	frc::JoystickButton* joystickButton_camera2 = new frc::JoystickButton(joystick_driverRight, CAMERA_2);

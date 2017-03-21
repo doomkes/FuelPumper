@@ -13,6 +13,7 @@ TankDrive::TankDrive(
 		, frc::JoystickButton* joystickButton_reverseDrive
 		, frc::JoystickButton* joystickButton_shiftLow
 		, frc::JoystickButton* joystickButton_shiftHigh
+		, frc::JoystickButton* joystickButton_vbus
 		,frc::Solenoid* m_gearShift
 		,CANTalon* m_leftMotor1
 		,CANTalon* m_leftMotor2
@@ -25,6 +26,7 @@ TankDrive::TankDrive(
 	, joystickButton_reverseDrive(joystickButton_reverseDrive)
 	, joystickButton_shiftLow(joystickButton_shiftLow)
 	, joystickButton_shiftHigh(joystickButton_shiftHigh)
+	, joystickButton_vbus(joystickButton_vbus)
 	, m_gearShift(m_gearShift)
 	, m_leftMotor1(m_leftMotor1)
 	, m_leftMotor2(m_leftMotor2)
@@ -131,6 +133,13 @@ void TankDrive::TeleopPeriodic() {
 //		TankDrive::HighGear();
 //		SmartDashboard::PutString("Gear","High");
 //	}
+
+	if ( joystickButton_vbus->Get()){
+		this->SetMode(DriveMode::VBUS);
+
+	}
+
+
 	Position();
 }
 
