@@ -93,7 +93,9 @@ void Autonomous::AutonomousInit() {
 	case AutoMode::BASE_LINE:
 	    autoName = "BASE_LINE";
 	    break;
-
+	case AutoMode::SHOOT_AND_GEAR:
+		autoName = "SHOOT_AND_GEAR";
+		break;
 	}
 	SmartDashboard::PutString("AutoName", autoName);
 }
@@ -127,6 +129,9 @@ void Autonomous::AutonomousPeriodic() {
 		break;
 	case AutoMode::BASE_LINE:
 	     BaseLine();
+	     break;
+	case AutoMode::SHOOT_AND_GEAR:
+	     ShootAndGear();
 	     break;
 	}
 //	switch(m_state) {
@@ -515,4 +520,8 @@ void Autonomous::BaseLine() {
 					break;
 	}
 	}
+}
+
+void Autonomous::ShootAndGear() {
+
 }

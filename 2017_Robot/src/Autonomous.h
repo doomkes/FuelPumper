@@ -24,6 +24,7 @@ enum AutoMode {
 	ARC_SIDE_GEAR,
 	STATIONARY_SHOOT,
 	BASE_LINE,
+	SHOOT_AND_GEAR,
 	POS_TEST = 99,
 	VBUS_TEST = 98,
 };
@@ -65,6 +66,8 @@ public:
 	void VBusTest();
 	void StationaryShoot();
 	void BaseLine();
+	void ShootAndGear() {
+
 
 };
 
