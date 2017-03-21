@@ -66,9 +66,9 @@ public:
 	void VBusTest();
 	void StationaryShoot();
 	void BaseLine();
-	void ShootAndGear() {
-
-
+	void ShootAndGear();
 };
+
+
 
 #endif /* SRC_AUTONOMOUS_H_ */

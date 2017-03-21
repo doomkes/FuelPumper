@@ -25,6 +25,7 @@
 using frc::SmartDashboard;
 using namespace std;
 using namespace frc;
+
 class Robot: public frc::IterativeRobot {
 	OI* oi = new OI();
 	CI* ci = new CI();
@@ -56,6 +57,7 @@ public:
 			oi->joystickButton_reverseDrive,
 			oi->joystickButton_shiftLow,
 			oi->joystickButton_shiftHigh,
+			oi->joystickButton_vbus,
 			ci->solenoid_gearShift,
 			ci->canTalon_leftMotor1,
 			ci->canTalon_leftMotor2,
