@@ -141,7 +141,7 @@ public:
 		m_tank.Init();
 		m_climber.TeleopInit();
 		m_vision->TeleopInit();
-		m_tank.SetMode(DriveMode::VBUS);
+		m_tank.SetMode(DriveMode::TELEPOSITION);
 	}
 
 	void TeleopPeriodic() override {
