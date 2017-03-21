@@ -63,7 +63,7 @@ public:
 	void SpeedDrive(const float leftSpeed, const float rightSpeed);
 
 	void StraightPositionDrive(float leftPos, float rightPos, double angleError);
-
+	void ShiftMove(bool start);
 	void LowGear();
 	void HighGear();
 	void Position();

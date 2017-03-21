@@ -164,7 +164,35 @@ void TankDrive::Drive(const float leftVal, const float rightVal) {
 	m_leftMotor1->SetSetpoint(-left);
 	m_rightMotor1->SetSetpoint(right);
 }
+void TankDrive::ShiftMove(bool start) {
+	static frc::Timer timer;
+	float leftPos = 0, rightPos = 0;
 
+	const float PI = 3.14159;
+	const float amplitude = 5;
+	if(start) {
+		timer.Reset();
+		timer.Start();
+	}
+	float t = timer.Get();
+	float alpha = (t/5) * (5/2)*PI;
+
+	if(alpha < 2*PI) {
+		leftPos = (-cos(alpha) + 1)/2 * amplitude;
+	} else {
+		leftPos = 0;
+	}
+	if((alpha > PI/2) && (alpha < 5/2 * PI)) {
+		//rightPos = (-cos(alpha + (3/2*PI)) + 1)/2 * amplitude;
+		rightPos = 0;
+	} else {
+		rightPos = 0;
+	}
+
+	PositionDrive(leftPos, rightPos, false);
+	printf("left %f, right %f\n", leftPos, rightPos);
+	printf("alpha %f, time %f", alpha, t);
+}
 void TankDrive::LowGear() {
 	m_gearShift->Set(true);
 	this->highGear = false;
