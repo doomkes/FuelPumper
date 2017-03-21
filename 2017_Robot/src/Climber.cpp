@@ -15,10 +15,13 @@ Climber::Climber(
 		:
 		m_manStick(ManStick)
 		,m_climbBtn(ClimbButton)
-		, m_climbMotor(ClimbMotor)
+		,m_climbMotor(ClimbMotor)
 {
 	m_climbMotor->SetControlMode(CANTalon::ControlMode::kPercentVbus);
 	m_climbMotor->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
+
+	this->reachedTop = false;
+	this->usedCurrent = 0;
 }
 
 
@@ -28,19 +31,27 @@ Climber::~Climber() {
 
 void Climber::TeleopInit() {
 	m_climbMotor->SetControlMode(CANTalon::ControlMode::kPercentVbus);
+	this->reachedTop = false;
 }
 
 void Climber::TeleopPeriodic() {
-	if(m_climbBtn->Get()) {
+	if(!this->reachedTop && m_climbBtn->Get()) {
 		float power = m_manStick->GetY();
 		this->Climb(power);
 	}
-	else if (m_manStick->GetRawButton(BUTTOM_M_HOLD)) {
+	else if (this->reachedTop || m_manStick->GetRawButton(BUTTOM_M_HOLD)) {
 		this->Hold();
 	} else {
 		Climb(0);
 	}
-	SmartDashboard::PutNumber("ClimbCurrent", m_climbMotor->GetOutputCurrent());
+
+	this->usedCurrent = m_climbMotor->GetOutputCurrent();
+
+	if (this->usedCurrent > CLIMBER_AUTOSTOP_CURRENT_THRESHOLD) {
+		this->reachedTop = true;
+	}
+
+	SmartDashboard::PutNumber("ClimbCurrent", this->usedCurrent);
 }
 void Climber::Climb(float power) {
 	m_climbMotor->SetControlMode(CANTalon::ControlMode::kPercentVbus);

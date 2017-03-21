@@ -55,6 +55,10 @@ enum SolenoidMap {
 	SOLENOID_GEAR_SHIFT=0
 };
 
+enum ClimberMap {
+	CLIMBER_AUTOSTOP_CURRENT_THRESHOLD = 8
+};
+
 enum CANTalonMap {
 	MOTOR_RIGHT_DRIVE1 = 7,
 	MOTOR_RIGHT_DRIVE2 = 8,

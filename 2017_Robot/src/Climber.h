@@ -26,6 +26,8 @@ public:
 	void Climb(float);
 	void Hold();
 private:
+	bool reachedTop;
+	double usedCurrent;
 };
 
 #endif /* SRC_CLIMBER_H_ */
