@@ -15,6 +15,19 @@
 #include "GearManipulator.h"
 using namespace cs;
 using namespace grip;
+
+enum AutoMode {
+	DO_NOTHING,
+	DIAGONAL_HOPPER_SHOOT,
+	ARC_HOPPER_SHOOT,
+	CENTER_GEAR_BASELINE,
+	ARC_SIDE_GEAR,
+	STATIONARY_SHOOT,
+	BASE_LINE,
+	POS_TEST = 99,
+	VBUS_TEST = 98,
+};
+
 class Autonomous {
 	CameraServer *m_cameraServer = nullptr;
 	cs::CvSource m_outputStream;
@@ -25,7 +38,9 @@ class Autonomous {
 	GearManipulator& m_gear;
 	ChainCommands m_chain;
 	RelativeMovement m_relMove;
+	AutoMode m_mode = DO_NOTHING;
 	int m_state = 0;
+	float m_startAngle = 0;
 	TrapezoidalMove m_move;
 	Timer m_timer;
 public:
@@ -43,7 +58,14 @@ public:
 	void AutonomousInit();
 
 	void StraightGear();
+	void ArcSideGear();
 	void ShootFromHopper();
+	void ArcShootFromHopper();
+	void PositionTest();
+	void VBusTest();
+	void StationaryShoot();
+	void BaseLine();
+
 };
 
 #endif /* SRC_AUTONOMOUS_H_ */

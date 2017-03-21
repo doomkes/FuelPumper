@@ -13,25 +13,25 @@ ChainCommands::ChainCommands(TankDrive& Tank, Shooter& shooter):m_tank(Tank), m_
 
 }
 void ChainCommands::Init() {
-	doingCommand=false;
+	m_doingCommand=false;
 	m_tank.SetMode(DriveMode::POSITION);
 
 }
 void ChainCommands::AutoPeriodic() {
-	if (doingCommand) {
-		printf("doing command %i\n", commandArray.front().number);
-		if (CheckStatus(commandArray.front())) {
-			commandArray.pop();
-			doingCommand = false;
+	if (m_doingCommand) {
+		printf("doing command %i\n", m_commandQueue.front().number);
+		if (CheckStatus(m_commandQueue.front())) {
+			m_commandQueue.pop();
+			m_doingCommand = false;
 		}
 		else {
-			ContinueCommand(commandArray.front());
+			ContinueCommand(m_commandQueue.front());
 		}
 	}
 	else {
-		if (!commandArray.empty()) {
-			doingCommand = true;
-			DoCommand(commandArray.front());
+		if (!m_commandQueue.empty()) {
+			m_doingCommand = true;
+			DoCommand(m_commandQueue.front());
 		}
 	}
 	//Currently doing commands? yes=Check status no=start new
@@ -47,7 +47,7 @@ void ChainCommands::AddCommand(int commandNum, float variable1, float variable2,
 	Command.param1 = variable1;
 	Command.param2 = variable2;
 	Command.param3 = variable3;
-	commandArray.push(Command);
+	m_commandQueue.push(Command);
 }
 
 void ChainCommands::DoCommand(command Command){
@@ -59,6 +59,7 @@ void ChainCommands::DoCommand(command Command){
 
 	m_tank.Zero();
 	m_startAngle = m_tank.m_gyro.GetAngle();
+
 	switch(Command.number) {
 	case DRIVE_TURN:
 		turn=Command.param1;
@@ -69,7 +70,6 @@ void ChainCommands::DoCommand(command Command){
 		break;
 
 	case DRIVE_STRAIGHT:
-
 		speed = Command.param2;
 		distance = Command.param1;
 		m_move.SetAll(speed,2*speed,speed,distance);
@@ -102,7 +102,7 @@ void ChainCommands::DoCommand(command Command){
 		break;
 
 	case SHOOT_START:
-		m_shooter.Shoot(0);
+		m_shooter.Shoot();
 		m_timer.Reset();
 		m_timer.Start();
 		break;
@@ -112,12 +112,19 @@ void ChainCommands::DoCommand(command Command){
 		distance = Command.param1;
 		m_move.SetAll(speed,2*speed,speed,distance);
 		m_move.CalcParams();
-		m_shooter.Shoot(0);
+		m_shooter.Shoot();
 		m_timer.Reset();
 		m_timer.Start();
 		break;
 
 	}
+
+	//m_runningCommands[Command.group] = m_commandQueue.front();
+//	m_commandQueue.pop();
+//
+//	if(m_commandQueue.front().group != Command.group) {
+//		DoCommand(m_commandQueue.front());
+//	}
 }
 
 void ChainCommands::ContinueCommand(command Command){
@@ -181,10 +188,10 @@ void ChainCommands::ContinueCommand(command Command){
 		m_tank.PositionDrive(leftPos,rightPos);
 		break;
 	case SHOOT_START:
-		m_shooter.Shoot(0);
+		m_shooter.Shoot();
 		break;
 	case DRIVE_SHOOT:
-		m_shooter.Shoot(0);
+		m_shooter.Shoot();
 		angle = m_tank.m_gyro.GetAngle();
 		angleError = m_startAngle - angle;
 		driveCorrection = angleError * angleP;

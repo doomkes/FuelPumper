@@ -13,8 +13,9 @@
 
 enum ManStickMap {
 	BUTTON_M_SHOOT = 5,
+	BUTTON_M_ADJ_SHOOT = 6,
 	BUTTON_M_LIMIT_SHOOT = 1,
-	BUTTON_M_REVERSEINDEX = 6, //TODO find real number for this.
+	BUTTON_M_REVERSEINDEX = 4, //TODO find real number for this.
 	BUTTON_M_CLIMB = 2, //TODO find real number for this
 	BUTTON_M_REVERSECLIMB = 8, //TODO find real number for this
 	BUTTOM_M_HOLD =3,
@@ -22,20 +23,18 @@ enum ManStickMap {
 
 enum LStickMap {
 	BUTTON_L_PICKUP = 1,
-	BUTTON_L_REVERSEPICKUP = 4, // TODO Figure out actual button value
-	BUTTON_L_GEAR_RELEASE = 5,
-	BUTTON_L_SHIFT_LOW = 3,
-	BUTTON_L_SHIFT_HIGH = 2,
+	BUTTON_L_REVERSEPICKUP = 5, // TODO Figure out actual button value
+	BUTTON_L_GEAR_RELEASE = 4,
 	BUTTON_L_AIM_LIGHT = 6
 };
 
 
-
 enum RStickMap {
 	BUTTON_R_REVERSE_DRIVE = 1,
+	BUTTON_L_SHIFT_LOW = 3,
+	BUTTON_L_SHIFT_HIGH = 2,
 	BUTTON_R_SET_SPEED_MODE = 10,
 	BUTTON_R_SET_VBUS_MODE = 11,
-	BUTTON_R_RELEASE_GEAR = 3
 };
 
 enum DS_USBMap {
@@ -56,13 +55,17 @@ enum SolenoidMap {
 	SOLENOID_GEAR_SHIFT=0
 };
 
+enum ClimberMap {
+	CLIMBER_AUTOSTOP_CURRENT_THRESHOLD = 8
+};
+
 enum CANTalonMap {
-	MOTOR_RIGHT_DRIVE1 = 5,
-	MOTOR_RIGHT_DRIVE2 = 6,
-	MOTOR_LEFT_DRIVE1 = 7,
-	MOTOR_LEFT_DRIVE2 = 8,
-	MOTOR_SHOOT1 = 4,
-	MOTOR_SHOOT2 = 3,
+	MOTOR_RIGHT_DRIVE1 = 7,
+	MOTOR_RIGHT_DRIVE2 = 8,
+	MOTOR_LEFT_DRIVE1 = 5,
+	MOTOR_LEFT_DRIVE2 = 6,
+	MOTOR_SHOOT1 = 3,
+	MOTOR_SHOOT2 = 4,
 	MOTOR_SHOOT3 = 2,
 	MOTOR_SHOOT4 = 1,
 	MOTOR_INDEXER = 9,

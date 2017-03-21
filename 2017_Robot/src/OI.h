@@ -23,6 +23,7 @@ public:
 
 	// Buttons
 	frc::JoystickButton* joystickButton_shoot = new frc::JoystickButton(joystick_manipulator, BUTTON_M_SHOOT);
+	frc::JoystickButton* joyStickButton_adjShoot = new frc::JoystickButton(joystick_manipulator, BUTTON_M_ADJ_SHOOT);
 	frc::JoystickButton* joystickButton_reverseIndex = new frc::JoystickButton(joystick_manipulator, BUTTON_M_REVERSEINDEX);
 	frc::JoystickButton* joystickButton_aimLight = new frc::JoystickButton(joystick_driverLeft, BUTTON_L_AIM_LIGHT);
 
@@ -35,8 +36,8 @@ public:
 	frc::JoystickButton* joystickButton_reversePickup = new frc::JoystickButton(joystick_driverLeft, BUTTON_L_REVERSEPICKUP);
 
 	frc::JoystickButton* joystickButton_reverseDrive = new frc::JoystickButton(joystick_driverRight, BUTTON_R_REVERSE_DRIVE);
-	frc::JoystickButton* joystickButton_shiftLow = new frc::JoystickButton(joystick_driverLeft, BUTTON_L_SHIFT_LOW);
-	frc::JoystickButton* joystickButton_shiftHigh = new frc::JoystickButton(joystick_driverLeft, BUTTON_L_SHIFT_HIGH);
+	frc::JoystickButton* joystickButton_shiftLow = new frc::JoystickButton(joystick_driverRight, BUTTON_L_SHIFT_LOW);
+	frc::JoystickButton* joystickButton_shiftHigh = new frc::JoystickButton(joystick_driverRight, BUTTON_L_SHIFT_HIGH);
 
 	frc::JoystickButton* joystickButton_camera1 = new frc::JoystickButton(joystick_driverRight, CAMERA_1);
 	frc::JoystickButton* joystickButton_camera2 = new frc::JoystickButton(joystick_driverRight, CAMERA_2);
