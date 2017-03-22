@@ -288,9 +288,12 @@ void TankDrive::SetMode(DriveMode mode){
 		const float P = 4;
 		const float I = SmartDashboard::GetNumber("drive_I", 0);
 		const float D = SmartDashboard::GetNumber("drive_D", 0);
-
-		m_leftMotor1->SetPID(P, I, D, 0);
-		m_rightMotor1->SetPID(P, I, D, 0);
+		if(P != m_leftMotor1->GetP()) {
+			m_leftMotor1->SetPID(P, I, D, 0);
+		}
+		if(P != m_rightMotor1->GetP()) {
+			m_rightMotor1->SetPID(P, I, D, 0);
+		}
 		break;
 	}
 	case DriveMode::POSITION: {
@@ -302,8 +305,12 @@ void TankDrive::SetMode(DriveMode mode){
 		const float I = SmartDashboard::GetNumber("drive_I", 0);
 		const float D = SmartDashboard::GetNumber("drive_D", 0);
 
-		m_leftMotor1->SetPID(P, I, D, 0);
-		m_rightMotor1->SetPID(P, I, D, 0);
+		if(P != m_leftMotor1->GetP()) {
+			m_leftMotor1->SetPID(P, I, D, 0);
+		}
+		if(P != m_rightMotor1->GetP()) {
+			m_rightMotor1->SetPID(P, I, D, 0);
+		}
 		break;
 	}
 	case DriveMode::VBUS:
