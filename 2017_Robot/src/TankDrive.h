@@ -14,8 +14,10 @@
 enum DriveMode{
 	POSITION,
 	TELEPOSITION,
-	VBUS
+	VBUS,
+	SHIFT_MOVE,
 };
+
 using namespace std;
 class TankDrive {
 	frc::Joystick* m_leftStick;
@@ -30,6 +32,7 @@ class TankDrive {
 	CANTalon* m_rightMotor1;
 	CANTalon* m_rightMotor2;
 private:
+	DriveMode m_mode = DriveMode::VBUS;
 	int direction = 1;
 	bool highGear = true;
 	float rightPosOld = 0;
@@ -39,6 +42,7 @@ private:
 	float heading = 0;
 	float m_absX = 0, m_absY = 0;
 	const float m_revsPerInch = 1/(4*3.141592);
+	bool m_shiftMoveDone = false;
 public:
 	TankDrive(
 			frc::Joystick* m_leftStick
@@ -63,7 +67,7 @@ public:
 	void SpeedDrive(const float leftSpeed, const float rightSpeed);
 
 	void StraightPositionDrive(float leftPos, float rightPos, double angleError);
-	void ShiftMove(bool start);
+	void ShiftMove(bool start, bool dirLeft);
 	void LowGear();
 	void HighGear();
 	void Position();

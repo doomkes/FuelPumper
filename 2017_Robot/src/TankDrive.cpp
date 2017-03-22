@@ -84,57 +84,92 @@ void TankDrive::TeleopPeriodic() {
 	} else if (direction == -1 && !joystickButton_reverseDrive->Get()) {
 		direction = 1;
 	}
-	static float leftPos =0;
-	static float rightPos = 0;
 
+	static float leftPos = 0;
+	static float rightPos = 0;
 //    float joystickMultiplier = Preferences::GetInstance()->GetDouble("JoystickMultpilier",1);
 	float leftVal = this->m_leftStick->GetY() * direction/**joystickMultiplier*/;
 	float rightVal = this->m_rightStick->GetY() * direction/**joystickMultiplier*/;
 //
-//	if(leftVal > 1) leftVal = 1;
-//	else if(leftVal < -1) leftVal = -1;
-//	if(rightVal > 1) rightVal = 1;
-//	else if(rightVal < -1) rightVal = -1;
-//
-//	float average = (leftVal+rightVal)/2;
-//	float split = (leftVal-rightVal)/2;
-//	float multiplier = 1-average;
-//	float leftScale = split*multiplier;
-//	float rightScale = -1 * (split*multiplier);
-//	leftVal+=leftScale;
-//	rightVal+=rightScale;
-//
-//	float left = leftVal * leftVal; // square input.
-//	float right = rightVal * rightVal;
-//
-//	left *= (leftVal < 0) ? -1 : 1;
-//	right *= (rightVal < 0) ? -1 : 1;
-//	this->Drive(left, right);
-	SmartDashboard::PutNumber("RobotLeftPos", m_leftMotor1->GetPosition());
-	SmartDashboard::PutNumber("RobotRightPos", m_rightMotor1->GetPosition());
-	leftPos = leftVal*10;
-	rightPos= rightVal*10;
 
-	SmartDashboard::PutNumber("JoysLeftPos", leftPos);
-	SmartDashboard::PutNumber("JoysRightPos",rightPos);
-	m_leftMotor1->SetSetpoint(((m_leftMotor1->GetPosition()/m_revsPerInch) + -leftPos) * m_revsPerInch);
-	m_rightMotor1->SetSetpoint(((m_rightMotor1->GetPosition()/m_revsPerInch) + rightPos) * m_revsPerInch);
+	static int prevMode = DriveMode::TELEPOSITION;
 
+
+	// execute shift move.
+	static bool shiftMoveDirLeft = false;
+	if(m_leftStick->GetX() <= -0.8 && m_rightStick->GetX() <= -0.8){
+		shiftMoveDirLeft = true;
+		m_mode = DriveMode::SHIFT_MOVE;
+	} else if(m_leftStick->GetX() >= 0.8 && m_rightStick->GetX() >= 0.8){
+		shiftMoveDirLeft = false;
+		m_mode = DriveMode::SHIFT_MOVE;
+	}
+
+	switch(m_mode) {
+	case DriveMode::TELEPOSITION: // normal drive.
+		leftPos = leftVal*10;
+		rightPos= rightVal*10;
+
+		m_leftMotor1->SetSetpoint(((m_leftMotor1->GetPosition()/m_revsPerInch) + -leftPos) * m_revsPerInch);
+		m_rightMotor1->SetSetpoint(((m_rightMotor1->GetPosition()/m_revsPerInch) + rightPos) * m_revsPerInch);
+		break;
+	case DriveMode::VBUS: {
+
+		if(leftVal > 1) leftVal = 1;
+		else if(leftVal < -1) leftVal = -1;
+		if(rightVal > 1) rightVal = 1;
+		else if(rightVal < -1) rightVal = -1;
+
+		float average = (leftVal+rightVal)/2;
+		float split = (leftVal-rightVal)/2;
+		float multiplier = 1-average;
+		float leftScale = split*multiplier;
+		float rightScale = -1 * (split*multiplier);
+		leftVal+=leftScale;
+		rightVal+=rightScale;
+
+		float left = leftVal * leftVal; // square input.
+		float right = rightVal * rightVal;
+
+		left *= (leftVal < 0) ? -1 : 1;
+		right *= (rightVal < 0) ? -1 : 1;
+		this->Drive(left, right);
+		break;
+	}
+	case DriveMode::SHIFT_MOVE:
+		if( prevMode != DriveMode::SHIFT_MOVE) {
+			ShiftMove(true, shiftMoveDirLeft);
+			m_shiftMoveDone = false;
+		} else {
+			ShiftMove(false, shiftMoveDirLeft);
+		}
+
+		if(m_shiftMoveDone) {
+			SetMode(DriveMode::TELEPOSITION);
+			printf("shift move done\n");
+		}
+		break;
+	}
+	prevMode = m_mode;
 
 	if ( joystickButton_shiftLow->Get()){
 		TankDrive::LowGear();
 		SmartDashboard::PutString("Gear","Low");
-
 	}
 	else {
 		HighGear();
 	}
 	if ( joystickButton_vbus->Get()){
 		this->SetMode(DriveMode::VBUS);
-
 	}
 
-  Position();
+	// Display stuff to dashboard.
+	SmartDashboard::PutNumber("RobotLeftPos", m_leftMotor1->GetPosition());
+	SmartDashboard::PutNumber("RobotRightPos", m_rightMotor1->GetPosition());
+
+	SmartDashboard::PutNumber("JoysLeftPos", leftPos);
+	SmartDashboard::PutNumber("JoysRightPos",rightPos);
+	Position();
 }
 
 void TankDrive::Position() {
@@ -164,34 +199,44 @@ void TankDrive::Drive(const float leftVal, const float rightVal) {
 	m_leftMotor1->SetSetpoint(-left);
 	m_rightMotor1->SetSetpoint(right);
 }
-void TankDrive::ShiftMove(bool start) {
+void TankDrive::ShiftMove(bool start, bool dirLeft) {
 	static frc::Timer timer;
 	float leftPos = 0, rightPos = 0;
 
 	const float PI = 3.14159;
-	const float amplitude = 5;
+	// about 5in left/right dist.
+	const float amplitude = 12;
 	if(start) {
 		timer.Reset();
 		timer.Start();
+		printf("\n\n      Start Shift Move\n\n");
+		printf("dir: %s\n", dirLeft ? "Left" : "Right");
+		Zero();
 	}
 	float t = timer.Get();
-	float alpha = (t/5) * (5/2)*PI;
+	float alpha = (t/2) * (5.0/2.0)*PI;
 
 	if(alpha < 2*PI) {
-		leftPos = (-cos(alpha) + 1)/2 * amplitude;
+		leftPos = (-cos(alpha) + 1.0)/2.0 * amplitude;
 	} else {
 		leftPos = 0;
 	}
-	if((alpha > PI/2) && (alpha < 5/2 * PI)) {
-		//rightPos = (-cos(alpha + (3/2*PI)) + 1)/2 * amplitude;
-		rightPos = 0;
+	if((alpha > PI/2.0) && (alpha < 5.0/2.0 * PI)) {
+		rightPos = (-cos(alpha + (3.0/2.0*PI)) + 1.0)/2.0 * amplitude;
 	} else {
 		rightPos = 0;
+	}
+
+	if(alpha > 5.0/2.0 * PI) {
+		m_shiftMoveDone = true;
+	}
+	if(dirLeft) {
+		swap(leftPos, rightPos);
 	}
 
 	PositionDrive(leftPos, rightPos, false);
 	printf("left %f, right %f\n", leftPos, rightPos);
-	printf("alpha %f, time %f", alpha, t);
+	printf("alpha %f, time %f\n\n", alpha, t);
 }
 void TankDrive::LowGear() {
 	m_gearShift->Set(true);
@@ -232,10 +277,11 @@ void TankDrive::StraightPositionDrive(float leftPos, float rightPos, double angl
 
 void TankDrive::SetMode(DriveMode mode){
 	Zero();
+	m_mode = mode;
 	switch(mode){
 
+	case DriveMode::SHIFT_MOVE:
 	case DriveMode::TELEPOSITION:{
-
 		m_leftMotor1->SetControlMode(frc::CANSpeedController::kPosition);
 		m_rightMotor1->SetControlMode(frc::CANSpeedController::kPosition);
 		//const float P = SmartDashboard::GetNumber("drive_P", 0);
