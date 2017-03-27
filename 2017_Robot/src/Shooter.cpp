@@ -107,7 +107,7 @@ void Shooter::Shoot() {
 	static bool pickingUp = false;
 	if (fabs(paSpeed-acceleratorSpeed)<=150 && fabs(abSpeed-afterBurnerSpeed) <= 150) {
 		ballsPS = Preferences::GetInstance()->GetDouble("IndexBallsPS", 4);
-		SetIndexer(12*ballsPS);
+		SetIndexer(15*ballsPS);
 
 		//Pulse pickup.
 		if(firstTime) {
@@ -148,6 +148,11 @@ void Shooter::Init() {
 	m_particleAccelerator->SetFeedbackDevice(CANTalon::FeedbackDevice::QuadEncoder);
 	m_afterBurner->SetFeedbackDevice(CANTalon::FeedbackDevice::QuadEncoder);
 	m_indexMotor->SetFeedbackDevice(CANTalon::CtreMagEncoder_Relative);
+
+	m_particleAccelerator->SetVelocityMeasurementPeriod(CANTalon::VelocityMeasurementPeriod::Period_100Ms);
+	m_afterBurner->SetVelocityMeasurementPeriod(CANTalon::VelocityMeasurementPeriod::Period_100Ms);
+	m_particleAccelerator->SetVelocityMeasurementWindow(64);
+	m_afterBurner->SetVelocityMeasurementWindow(64);
 
 	m_particleAccelerator->ConfigEncoderCodesPerRev(20);
 	m_afterBurner->ConfigEncoderCodesPerRev(20);
