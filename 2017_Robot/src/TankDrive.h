@@ -60,7 +60,7 @@ public:
 	frc::ADXRS450_Gyro m_gyro;
 	virtual ~TankDrive();
 	void Init();
-	void TeleopPeriodic();
+	void TeleopPeriodic(double dt);
 
 	void Drive(const float leftVal, const float rightVal);
 	void PositionDrive(float leftPos, float rightPos, bool relative = true);
