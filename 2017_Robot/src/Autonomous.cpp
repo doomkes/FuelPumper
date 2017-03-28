@@ -240,7 +240,7 @@ void Autonomous::StraightGear() {
 
 void Autonomous::ShootFromHopper() {
 	switch(m_state) {
-		case 0: {// initiallize.
+		case 0: {// initialize.
 			m_move.SetAll(45,50, 60, 116);
 			m_startAngle = m_tank.GetAngle();
 			m_shooter.Stop();
@@ -523,5 +523,34 @@ void Autonomous::BaseLine() {
 }
 
 void Autonomous::ShootAndGear() {
+  // Shoot for a number of seconds, the do the gear
+	float t = m_timer.Get();
+	bool shootAndGear_Arc = Preferences::GetInstance()->GetBoolean("DoSideGear", false);
+	double shootAndGear_SecondsForShoot = Preferences::GetInstance()->GetDouble("SecondsForShoot", 7);
+
+	switch(m_state) {
+		case 0: {// initialize.
+			m_timer.Reset();
+			m_timer.Start();
+			m_state++;
+			break;
+		}
+		case 1: { // shoot for number of seconds
+			m_shooter.Shoot();
+			if(t >= shootAndGear_SecondsForShoot) {
+				m_shooter.Stop();
+				m_state++;
+			}
+			break;
+		}
+		case 2: { // do the gear
+			if (shootAndGear_Arc) {
+				this->ArcSideGear();
+			} else {
+				this->StraightGear();
+			}
+			break;
+		}
+	}
 
 }
