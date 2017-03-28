@@ -78,7 +78,7 @@ void TankDrive::Init() {
 
 
 }
-void TankDrive::TeleopPeriodic() {
+void TankDrive::TeleopPeriodic(double dt) {
 	if (direction == 1 && joystickButton_reverseDrive->Get()) {
 		direction = -1;
 	} else if (direction == -1 && !joystickButton_reverseDrive->Get()) {
@@ -98,10 +98,10 @@ void TankDrive::TeleopPeriodic() {
 	// execute shift move.
 	static bool shiftMoveDirLeft = false;
 	if(m_leftStick->GetX() <= -0.8 && m_rightStick->GetX() <= -0.8){
-		shiftMoveDirLeft = true;
+		shiftMoveDirLeft = false;
 		m_mode = DriveMode::SHIFT_MOVE;
 	} else if(m_leftStick->GetX() >= 0.8 && m_rightStick->GetX() >= 0.8){
-		shiftMoveDirLeft = false;
+		shiftMoveDirLeft = true;
 		m_mode = DriveMode::SHIFT_MOVE;
 	}
 
@@ -109,6 +109,12 @@ void TankDrive::TeleopPeriodic() {
 	case DriveMode::TELEPOSITION: // normal drive.
 		leftPos = leftVal*10;
 		rightPos= rightVal*10;
+		if(direction == -1) {
+			swap(leftPos, rightPos);
+		}
+
+		leftPos *= (dt/0.02);
+		rightPos *= (dt/0.02);
 
 		m_leftMotor1->SetSetpoint(((m_leftMotor1->GetPosition()/m_revsPerInch) + -leftPos) * m_revsPerInch);
 		m_rightMotor1->SetSetpoint(((m_rightMotor1->GetPosition()/m_revsPerInch) + rightPos) * m_revsPerInch);
@@ -214,7 +220,7 @@ void TankDrive::ShiftMove(bool start, bool dirLeft) {
 		Zero();
 	}
 	float t = timer.Get();
-	float alpha = (t/2) * (5.0/2.0)*PI;
+	float alpha = (t/2.0) * (5.0/2.0)*PI;
 
 	if(alpha < 2*PI) {
 		leftPos = (-cos(alpha) + 1.0)/2.0 * amplitude;
@@ -233,7 +239,6 @@ void TankDrive::ShiftMove(bool start, bool dirLeft) {
 	if(dirLeft) {
 		swap(leftPos, rightPos);
 	}
-
 	PositionDrive(leftPos, rightPos, false);
 	printf("left %f, right %f\n", leftPos, rightPos);
 	printf("alpha %f, time %f\n\n", alpha, t);

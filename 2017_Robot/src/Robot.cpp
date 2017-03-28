@@ -148,9 +148,17 @@ public:
 
 	void TeleopPeriodic() override {
 		//m_gearManipulator.Release(m_leftStick.GetRawButton(LStickMap::GEAR_RELEASE));
+		static double lastTime = 0;
+		const float time = Timer::GetFPGATimestamp();
+		double dt = time - lastTime;
+		if (dt > .2) {
+			dt = .2;
+		};
+		SmartDashboard::PutNumber("teleop latency", dt);
+		lastTime = time;
 
 		m_gearManipulator.TeleopPeriodic();
-		m_tank.TeleopPeriodic();
+		m_tank.TeleopPeriodic(dt);
 		m_pickup.TeleopPeriodic();
 		m_shooter.TeleopPeriodic();
 		m_climber.TeleopPeriodic();
