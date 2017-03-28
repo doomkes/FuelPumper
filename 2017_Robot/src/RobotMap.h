@@ -56,7 +56,7 @@ enum SolenoidMap {
 };
 
 enum ClimberMap {
-	CLIMBER_AUTOSTOP_CURRENT_THRESHOLD = 8
+	CLIMBER_AUTOSTOP_CURRENT_THRESHOLD = 55
 };
 
 enum CANTalonMap {

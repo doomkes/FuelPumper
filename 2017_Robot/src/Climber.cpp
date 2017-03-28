@@ -31,27 +31,32 @@ Climber::~Climber() {
 
 void Climber::TeleopInit() {
 	m_climbMotor->SetControlMode(CANTalon::ControlMode::kPercentVbus);
+	m_climbMotor->SetCurrentLimit(30);
+	m_climbMotor->EnableCurrentLimit(true);
 	this->reachedTop = false;
 }
 
 void Climber::TeleopPeriodic() {
-	if(!this->reachedTop && m_climbBtn->Get()) {
-		float power = m_manStick->GetY();
-		this->Climb(power);
+	static float floor = 0;
+	const float release = -.3;
+	float joyVal = -m_manStick->GetY();
+	float power;
+
+	if(joyVal >= 0.3) {
+		floor = .3;
 	}
-	else if (this->reachedTop || m_manStick->GetRawButton(BUTTOM_M_HOLD)) {
-		this->Hold();
+	if(joyVal <= release) {
+		floor = -1.0;
+	}
+
+	if(joyVal < floor) {
+		power = floor;
 	} else {
-		Climb(0);
+		power = joyVal;
 	}
+	Climb(-power);
 
-	this->usedCurrent = m_climbMotor->GetOutputCurrent();
-
-	if (this->usedCurrent > CLIMBER_AUTOSTOP_CURRENT_THRESHOLD) {
-		this->reachedTop = true;
-	}
-
-	SmartDashboard::PutNumber("ClimbCurrent", this->usedCurrent);
+	SmartDashboard::PutNumber("ClimbCurrent", m_climbMotor->GetOutputCurrent());
 }
 void Climber::Climb(float power) {
 	m_climbMotor->SetControlMode(CANTalon::ControlMode::kPercentVbus);
