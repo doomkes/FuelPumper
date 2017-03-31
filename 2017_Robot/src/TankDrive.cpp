@@ -97,14 +97,18 @@ void TankDrive::TeleopPeriodic(double dt) {
 
 	// execute shift move.
 	static bool shiftMoveDirLeft = false;
-	if(m_leftStick->GetX() <= -0.8 && m_rightStick->GetX() <= -0.8){
-		shiftMoveDirLeft = false;
-		m_mode = DriveMode::SHIFT_MOVE;
-	} else if(m_leftStick->GetX() >= 0.8 && m_rightStick->GetX() >= 0.8){
-		shiftMoveDirLeft = true;
-		m_mode = DriveMode::SHIFT_MOVE;
-	}
 
+	if(m_mode != DriveMode::SHIFT_MOVE) {
+		if(m_leftStick->GetX() <= -0.8 && m_rightStick->GetX() <= -0.8){
+			shiftMoveDirLeft = false;
+			m_mode = DriveMode::SHIFT_MOVE;
+		} else if(m_leftStick->GetX() >= 0.8 && m_rightStick->GetX() >= 0.8){
+			shiftMoveDirLeft = true;
+			//swap left/right when reverse button pressed.
+
+			m_mode = DriveMode::SHIFT_MOVE;
+		}
+	}
 	switch(m_mode) {
 	case DriveMode::TELEPOSITION: // normal drive.
 		leftPos = leftVal*10;
@@ -113,8 +117,8 @@ void TankDrive::TeleopPeriodic(double dt) {
 			swap(leftPos, rightPos);
 		}
 
-		leftPos *= (dt/0.02);
-		rightPos *= (dt/0.02);
+//		leftPos *= (dt/0.02);
+//		rightPos *= (dt/0.02);
 
 		m_leftMotor1->SetSetpoint(((m_leftMotor1->GetPosition()/m_revsPerInch) + -leftPos) * m_revsPerInch);
 		m_rightMotor1->SetSetpoint(((m_rightMotor1->GetPosition()/m_revsPerInch) + rightPos) * m_revsPerInch);
@@ -142,12 +146,20 @@ void TankDrive::TeleopPeriodic(double dt) {
 		this->Drive(left, right);
 		break;
 	}
-	case DriveMode::SHIFT_MOVE:
+	case DriveMode::SHIFT_MOVE: {
+		static bool gearMode = false;
 		if( prevMode != DriveMode::SHIFT_MOVE) {
-			ShiftMove(true, shiftMoveDirLeft);
+			if(joystickButton_reverseDrive->Get()) {
+				gearMode = true;
+
+			} else {
+				gearMode = false;
+				shiftMoveDirLeft = !shiftMoveDirLeft;
+			}
+			ShiftMove(true, shiftMoveDirLeft, gearMode);
 			m_shiftMoveDone = false;
 		} else {
-			ShiftMove(false, shiftMoveDirLeft);
+			ShiftMove(false, shiftMoveDirLeft, gearMode);
 		}
 
 		if(m_shiftMoveDone) {
@@ -155,6 +167,7 @@ void TankDrive::TeleopPeriodic(double dt) {
 			printf("shift move done\n");
 		}
 		break;
+	}
 	}
 	prevMode = m_mode;
 
@@ -205,7 +218,7 @@ void TankDrive::Drive(const float leftVal, const float rightVal) {
 	m_leftMotor1->SetSetpoint(-left);
 	m_rightMotor1->SetSetpoint(right);
 }
-void TankDrive::ShiftMove(bool start, bool dirLeft) {
+void TankDrive::ShiftMove(bool start, bool dirLeft, bool gearMode) {
 	static frc::Timer timer;
 	float leftPos = 0, rightPos = 0;
 
@@ -238,6 +251,10 @@ void TankDrive::ShiftMove(bool start, bool dirLeft) {
 	}
 	if(dirLeft) {
 		swap(leftPos, rightPos);
+	}
+	if(!gearMode) {
+		leftPos = -(leftPos);
+		rightPos = -(rightPos);
 	}
 	PositionDrive(leftPos, rightPos, false);
 	printf("left %f, right %f\n", leftPos, rightPos);
