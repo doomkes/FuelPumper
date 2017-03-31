@@ -173,7 +173,9 @@ public:
 		m_autonomous->AutonomousPeriodic();
 
 	}
-
+	void DisabledPeriodic() override {
+		m_autonomous->DisabledPeriodic();
+	}
 	void TestPeriodic() override {
 
 	}
