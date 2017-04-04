@@ -65,39 +65,47 @@ void Autonomous::AutonomousInit() {
 	int autoSelect = Preferences::GetInstance()->GetInt("AutoMode", 0);
 	m_mode = static_cast<AutoMode>(autoSelect);
 
-	string autoName = "";
+	ShowAutoName();
+}
+
+void Autonomous::ShowAutoName() {
+	int autoSelect = Preferences::GetInstance()->GetInt("AutoMode", 0);
+	m_mode = static_cast<AutoMode>(autoSelect);
 
 	switch(autoSelect) {
 	default:
-		autoName = "INVALID";
+		m_autoName = "INVALID";
 		break;
 	case AutoMode::DO_NOTHING:
-		autoName = "DO_NOTHING";
+		m_autoName = "DO_NOTHING";
 		break;
 	case AutoMode::DIAGONAL_HOPPER_SHOOT:
-		autoName = "DIAGONAL_HOPPER_SHOOT";
+		m_autoName = "DIAGONAL_HOPPER_SHOOT";
 		break;
 	case AutoMode::ARC_HOPPER_SHOOT:
-
+		m_autoName = "ARC_HOPPER_SHOOT";
 		break;
 	case AutoMode::CENTER_GEAR_BASELINE:
-		autoName = "CENTER_GEAR";
+		m_autoName = "CENTER_GEAR";
 		break;
 
 	case AutoMode::ARC_SIDE_GEAR:
-		autoName = "ARC_SIDE_GEAR";
+		m_autoName = "ARC_SIDE_GEAR";
 		break;
 	case AutoMode::STATIONARY_SHOOT:
-		autoName = "STATIONARY_SHOOT";
+		m_autoName = "STATIONARY_SHOOT";
 		break;
 	case AutoMode::BASE_LINE:
-	    autoName = "BASE_LINE";
+	    m_autoName = "BASE_LINE";
 	    break;
 	case AutoMode::SHOOT_AND_GEAR:
-		autoName = "SHOOT_AND_GEAR";
+		m_autoName = "SHOOT_AND_GEAR";
 		break;
 	}
-	SmartDashboard::PutString("AutoName", autoName);
+	SmartDashboard::PutString("AutoName", to_string(autoSelect) + ": " + m_autoName);
+}
+void Autonomous::DisabledPeriodic() {
+	ShowAutoName();
 }
 
 void Autonomous::AutonomousPeriodic() {
@@ -455,7 +463,7 @@ void Autonomous::ArcSideGear() {
 
 			if(t > m_move.GetTotalTime()) {
 				m_gear.Release(true);
-				m_move.SetAll(10,10,10, 10);
+				m_move.SetAll(10,10,10, 22);
 				m_tank.Zero();
 				m_timer.Reset();
 				m_timer.Start();

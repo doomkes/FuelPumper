@@ -26,6 +26,7 @@ public:
 	void Climb(float);
 	void Hold();
 private:
+	bool m_climbing= false;
 	bool reachedTop;
 	double usedCurrent;
 };

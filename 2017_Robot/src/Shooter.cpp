@@ -56,11 +56,15 @@ void Shooter::TeleopPeriodic() {
 	}
 
 	static bool pickingUp = false;
+
 	if (joystickButton_shoot->Get() || m_OI->joyStickButton_adjShoot->Get()) {
 		Shoot();
 	}
 	else if(m_OI->joystickButton_reverseIndex->Get()) {
 		ReverseIndex();
+	}
+	else if(m_OI->joystick_manipulator->GetRawButton(BUTTON_M_SPINUP)) {
+		Spinup();
 	}
 	else Stop();
 

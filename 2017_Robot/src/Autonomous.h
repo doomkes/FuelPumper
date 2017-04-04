@@ -41,6 +41,7 @@ class Autonomous {
 	RelativeMovement m_relMove;
 	AutoMode m_mode = DO_NOTHING;
 	int m_state = 0;
+	string m_autoName = "";
 	float m_startAngle = 0;
 	TrapezoidalMove m_move;
 	Timer m_timer;
@@ -54,9 +55,11 @@ public:
 		GearManipulator&
 	);
 	virtual ~Autonomous();
-
+	void DisabledPeriodic();
 	void AutonomousPeriodic();
 	void AutonomousInit();
+
+	void ShowAutoName();
 
 	void StraightGear();
 	void ArcSideGear();

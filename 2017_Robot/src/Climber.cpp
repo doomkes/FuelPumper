@@ -34,6 +34,7 @@ void Climber::TeleopInit() {
 	m_climbMotor->SetCurrentLimit(30);
 	m_climbMotor->EnableCurrentLimit(true);
 	this->reachedTop = false;
+	m_climbing = false;
 }
 
 void Climber::TeleopPeriodic() {
@@ -54,7 +55,16 @@ void Climber::TeleopPeriodic() {
 	} else {
 		power = joyVal;
 	}
-	Climb(-power);
+
+	if(m_manStick->GetRawButton(ManStickMap::BUTTON_M_CLIMB)) {
+		m_climbing = true;
+	}
+
+	if( m_climbing) {
+		Climb(-power);
+	} else {
+		Climb(0);
+	}
 
 	SmartDashboard::PutNumber("ClimbCurrent", m_climbMotor->GetOutputCurrent());
 }
