@@ -68,6 +68,7 @@ public:
 	m_pickup(
 			oi->joystickButton_pickup,
 			oi->joystickButton_reversePickup,
+			oi,
 			ci->canTalon_intake,
 			ci->canTalon_hopper
 	),

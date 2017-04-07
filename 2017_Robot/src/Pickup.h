@@ -11,6 +11,7 @@
 #include <WPILib.h>
 #include <CANTalon.h>
 #include "RobotMap.h"
+#include "OI.h"
 
 class Pickup {
 	frc::JoystickButton* joystickButton_pickup;
@@ -19,19 +20,22 @@ class Pickup {
 	frc::Talon* m_intakeMotor;
 	// Hopper Motor pushs into Hopper
 	frc::Talon* m_hopperMotor;
+
+	OI *m_oi;
 	PowerDistributionPanel m_pdp;
 	float m_lastSetpoint = 0;
 public:
 	Pickup(
 		frc::JoystickButton* joystickButton_pickup
 		,frc::JoystickButton* joystickButton_reversePickup
+		,OI *oi
 		,frc::Talon* m_intakeMotor
 		,frc::Talon* m_hopperMotor
 		);
 	void TeleopInit();
 	void TeleopPeriodic();
 	virtual ~Pickup();
-	//Chose between 2 speeds to intake the Fuel
+
 	void Intake();
 	void stop();
 	void Reverse();

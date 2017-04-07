@@ -107,27 +107,27 @@ void Shooter::Shoot() {
 	m_afterBurner->SetSetpoint(afterBurnerSpeed);
 	static bool firstTime = true;
 	static Timer pickupTimer;
-
+	m_CI->canTalon_hopper->Set(-.6);
+	m_CI->canTalon_intake->Set(-.6);
 	static bool pickingUp = false;
 	if (fabs(paSpeed-acceleratorSpeed)<=150 && fabs(abSpeed-afterBurnerSpeed) <= 150) {
 		ballsPS = Preferences::GetInstance()->GetDouble("IndexBallsPS", 4);
 		SetIndexer(15*ballsPS);
-
 		//Pulse pickup.
 		if(firstTime) {
 			pickupTimer.Start();
 		}
 
-		if(pickupTimer.Get() >= 1) {
-			m_CI->canTalon_hopper->Set(-1);
-			m_CI->canTalon_intake->Set(-1);
-			pickingUp = true;
-			pickupTimer.Reset();
-		}
-		if (pickingUp == true && pickupTimer.Get() >= 0.5) {
-			m_CI->canTalon_hopper->Set(0);
-			m_CI->canTalon_intake->Set(0);
-		}
+//		if(pickupTimer.Get() >= 1) {
+//			m_CI->canTalon_hopper->Set(-1);
+//			m_CI->canTalon_intake->Set(-1);
+//			pickingUp = true;
+//			pickupTimer.Reset();
+//		}
+//		if (pickingUp == true && pickupTimer.Get() >= 0.5) {
+//			m_CI->canTalon_hopper->Set(0);
+//			m_CI->canTalon_intake->Set(0);
+//		}
 	}
 }
 
@@ -183,7 +183,7 @@ void Shooter::Init() {
 }
 void Shooter::Spinup() {
 	const float acceleratorSpeed = -3150;
-	const float afterBurnerSpeed = -3550;
+	const float afterBurnerSpeed = -3800;
 
 	m_particleAccelerator->SetSetpoint(acceleratorSpeed);
 	m_afterBurner->SetSetpoint(afterBurnerSpeed);
