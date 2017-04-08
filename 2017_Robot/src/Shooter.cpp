@@ -64,7 +64,7 @@ void Shooter::TeleopPeriodic() {
 		ReverseIndex();
 	}
 	else if(m_OI->joystick_manipulator->GetRawButton(BUTTON_M_SPINUP)) {
-		Spinup();
+		Spinup(3150);
 	}
 	else Stop();
 
@@ -181,10 +181,14 @@ void Shooter::Init() {
 	m_particleAccelerator->SetSetpoint(0);
 	m_afterBurner->SetSetpoint(0);
 }
-void Shooter::Spinup() {
-	const float acceleratorSpeed = -3150;
-	const float afterBurnerSpeed = -3800;
-
+void Shooter::Spinup(float speed) {
+	//speed is the accelerator speed. Afterburner is calculated based on 380/315 ratio
+	const float acceleratorSpeed = -speed;
+	const float afterBurnerSpeed = -(380/315*(speed));
+	float paSpeed = m_particleAccelerator->GetSpeed();
+	float abSpeed = m_afterBurner->GetSpeed();
+	SmartDashboard::PutNumber("PASpeed", paSpeed);
+	SmartDashboard::PutNumber("ABSpeed", abSpeed);
 	m_particleAccelerator->SetSetpoint(acceleratorSpeed);
 	m_afterBurner->SetSetpoint(afterBurnerSpeed);
 }
