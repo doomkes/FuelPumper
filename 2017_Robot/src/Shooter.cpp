@@ -50,7 +50,7 @@ Shooter::~Shooter() {
 }
 
 void Shooter::TeleopInit() {
-
+	Spinup();
 }
 
 void Shooter::TeleopPeriodic() {
@@ -95,6 +95,8 @@ void Shooter::Shoot() {
 	float speedAdjust = 0;
 	float sliderPos =  m_OI->joystick_manipulator->GetRawAxis(3);
 	bool AdjBtn = m_OI->joyStickButton_adjShoot->Get();
+	static int ballsShot = 0;
+	static bool countingBalls = false;
 
 	if(AdjBtn) {
 		speedAdjust = 150 * (sliderPos);
@@ -122,7 +124,6 @@ void Shooter::Shoot() {
 		if(firstTime) {
 			pickupTimer.Start();
 		}
-
 //		if(pickupTimer.Get() >= 1) {
 //			m_CI->canTalon_hopper->Set(-1);
 //			m_CI->canTalon_intake->Set(-1);
@@ -133,6 +134,16 @@ void Shooter::Shoot() {
 //			m_CI->canTalon_hopper->Set(0);
 //			m_CI->canTalon_intake->Set(0);
 //		}
+		if (abSpeed <= -3600 && countingBalls) {
+			countingBalls = false;
+			ballsShot +=1;
+		}
+		else if (abSpeed >= -3700 && !countingBalls) {
+			countingBalls = true;
+		}
+		SmartDashboard::PutNumber("Balls Shot", ballsShot);
+		SmartDashboard::PutBoolean("Counting Balls?", countingBalls);
+
 	}
 }
 
