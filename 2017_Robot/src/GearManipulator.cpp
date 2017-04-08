@@ -9,13 +9,16 @@
 #include "RobotMap.h"
 GearManipulator::GearManipulator(
 		frc::JoystickButton* joystickButton_gearRelease
+		,OI *oi
 		,frc::Servo* m_leftServo
 		,frc::Servo* m_rightServo
 )
 :
 joystickButton_gearRelease(joystickButton_gearRelease)
+,m_oi (oi)
 , m_leftServo(m_leftServo)
 , m_rightServo(m_rightServo)
+, m_kicker(SolenoidMap::SOLENOID_GEAR_KICKER)
 //: m_leftServo(LEFT_GEAR_SERVO), m_rightServo(RIGHT_GEAR_SERVO)
 {
 }
@@ -42,9 +45,16 @@ void GearManipulator::Release(bool release) {
 	if(release == true) {
 		m_leftServo->SetAngle(leftOpenAngle);
 		m_rightServo->SetAngle(rightOpenAngle);
+
+		m_kicker.Set(true);
 	}
 	else {
+		if(m_oi->joystick_driverLeft->GetRawButton(BUTTON_L_ACCEPT_GEAR)) {
+			leftCloseAngle += 20;
+			rightCloseAngle -= 20;
+		}
 		m_leftServo->SetAngle(leftCloseAngle);
 		m_rightServo->SetAngle(rightCloseAngle);
+		m_kicker.Set(false);
 	}
 }
