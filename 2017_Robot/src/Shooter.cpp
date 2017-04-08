@@ -37,6 +37,11 @@ Shooter::Shooter(
 {
 	m_shootWheel1->SetControlMode(frc::CANSpeedController::kSpeed);
 	m_shootWheel2->SetControlMode(frc::CANSpeedController::kSpeed);
+	m_shootWheel1->SetCurrentLimit(30);
+	m_shootWheel2->SetCurrentLimit(30);
+	m_shootWheel1->EnableCurrentLimit(true);
+	m_shootWheel2->EnableCurrentLimit(true);
+
 	m_indexMotor->SetControlMode(frc::CANSpeedController::kSpeed);
 }
 
