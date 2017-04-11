@@ -28,6 +28,7 @@ enum LStickMap {
 	BUTTON_L_GEAR_RELEASE = 4,
 	BUTTON_L_AIM_LIGHT = 6,
 	BUTTON_L_ACCEPT_GEAR = 3,
+	BUTTON_L_AUTO_DRIVE_TO_LIFT = 7,
 };
 
 
@@ -88,6 +89,14 @@ enum Camera {
 	CAMERA_2 = 20002, //TODO:MJJ need real number
 	CAMERA_3 = 30003 //TODO:MJJ need real number
 };
-
+struct RobotDimensions {
+	static constexpr float bumperWidth = 3.35;
+	static constexpr float robotWidth = 33;
+	static constexpr float robotLength = 29;
+	static constexpr float betweenWheels = 29.5;
+	static constexpr float centerToWheel = betweenWheels/2;
+	static constexpr float width = robotWidth + (2 * bumperWidth);
+	static constexpr float length = robotLength + (2 * bumperWidth);
+};
 #endif /* SRC_ROBOTMAP_H_ */
 

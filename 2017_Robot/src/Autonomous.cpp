@@ -6,21 +6,13 @@
  */
 
 #include <Autonomous.h>
+#include "RobotMap.h"
 #include <vector>
 using namespace cs;
 using namespace grip;
 
-struct RobotDimensions {
-	static constexpr float bumperWidth = 3.35;
-	static constexpr float robotWidth = 33;
-	static constexpr float robotLength = 29;
-	static constexpr float betweenWheels = 29.5;
-	static constexpr float centerToWheel = betweenWheels/2;
-	static constexpr float width = robotWidth + (2 * bumperWidth);
-	static constexpr float length = robotLength + (2 * bumperWidth);
-};
 
-extern RobotDimensions robotDimensions;
+RobotDimensions robotDimensions;
 
 struct FieldDimensions {
 	//TODO put field dimensions in here

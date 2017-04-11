@@ -6,6 +6,7 @@
  */
 
 #include "TankDrive.h"
+#include "TrapezoidalMove.h"
 
 TankDrive::TankDrive(
 		frc::Joystick* m_leftStick
@@ -109,6 +110,10 @@ void TankDrive::TeleopPeriodic(double dt) {
 			m_mode = DriveMode::SHIFT_MOVE;
 		}
 	}
+	if (m_leftStick->GetRawButton(BUTTON_L_AUTO_DRIVE_TO_LIFT)) {
+		m_mode = AUTO_DRIVE_TO_LIFT_CUZ_JAKE_IS_LAZY;
+	}
+
 	switch(m_mode) {
 	case DriveMode::TELEPOSITION: // normal drive.
 		leftPos = leftVal*10;
@@ -168,6 +173,16 @@ void TankDrive::TeleopPeriodic(double dt) {
 		}
 		break;
 	}
+	case AUTO_DRIVE_TO_LIFT_CUZ_JAKE_IS_LAZY:
+		if(!m_liftMoveDone) {
+			AutoDriveToLift();
+		} else {
+			m_liftMoveDone = false;
+			SetMode(DriveMode::TELEPOSITION);
+			printf("liftMoveDone\n");
+		}
+
+		break;
 	}
 	prevMode = m_mode;
 
@@ -190,7 +205,87 @@ void TankDrive::TeleopPeriodic(double dt) {
 	SmartDashboard::PutNumber("JoysRightPos",rightPos);
 	Position();
 }
+void TankDrive::AutoDriveToLift() {
+	static TrapezoidalMove move;
+	static Timer timer;
+	static float arc1RightPos = 0;
+	static float arc1LeftPos= 0;
+	static int state = 0;
+	constexpr float arc1Radius = 167.36648445;
+	constexpr float arc1Angle = 0.60143459;
+	constexpr float arc2Radius = 338.80647094;
+	constexpr float arc2Angle = 0.09203642597;
 
+	constexpr float arc1Distance = arc1Radius*arc1Angle;
+	constexpr float innerarc1Radius = arc1Radius - RobotDimensions::centerToWheel;
+	constexpr float outerarc1Radius = arc1Radius + RobotDimensions::centerToWheel;
+	constexpr float innerarc1Dist = innerarc1Radius*arc1Angle;
+	constexpr float outerarc1Dist = outerarc1Radius*arc1Angle;
+	
+	constexpr float inner1Ratio = innerarc1Dist/arc1Distance;
+	constexpr float outer1Ratio =  outerarc1Dist/arc1Distance;
+
+	constexpr float arc2Distance = arc2Radius*arc2Angle;
+	constexpr float innerarc2Radius = arc2Radius - RobotDimensions::centerToWheel;
+	constexpr float outerarc2Radius = arc2Radius + RobotDimensions::centerToWheel;
+	constexpr float innerarc2Dist = innerarc2Radius*arc2Angle;
+	constexpr float outerarc2Dist = outerarc2Radius*arc2Angle;
+
+	constexpr float inner2Ratio = innerarc2Dist/arc2Distance;
+	constexpr float outer2Ratio =  outerarc2Dist/arc2Distance;
+
+	constexpr float totalDist = arc1Distance;
+
+	switch(state) {
+		case 0: {// initiallize.
+			move.SetAll(70, 90, 110, totalDist);
+			Zero();
+			timer.Reset();
+			timer.Start();
+			state++;
+			break;
+		}
+		case 1: {
+			float t = timer.Get();
+			float centerPos = move.Position(t);
+			float leftPos = centerPos;
+			float rightPos = centerPos;
+
+			if(centerPos < (arc1Distance)) {
+				leftPos = centerPos;
+				rightPos = centerPos;
+				leftPos *= inner1Ratio;
+				rightPos *= outer1Ratio;
+				arc1RightPos = rightPos;
+				arc1LeftPos = leftPos;
+			}
+			if(centerPos > (arc1Distance)) {
+//				centerPos -= arc1Distance;
+//				leftPos = centerPos;
+//				rightPos = centerPos;
+//				leftPos *= outer2Ratio;
+//				rightPos *= inner2Ratio;
+//				leftPos += arc1LeftPos;
+//				rightPos += arc1RightPos;
+			}
+
+			// swap left/drive if field is mirrored.
+			if(DriverStation::GetInstance().GetAlliance() == DriverStation::kBlue) {
+				std::swap(rightPos,leftPos);
+			}
+
+			PositionDrive(-leftPos, -rightPos, false);
+
+			if(t > move.GetTotalTime()) {
+				state = 0;
+				m_liftMoveDone = true;
+			}
+
+			printf("t: %f\nleftPos: %f \nrightPos %f\n", t, leftPos, rightPos);
+			break;
+		}
+	}
+}
 void TankDrive::Position() {
 	const float Pi = 3.141592;
 	//calculates position in inches from revolutions.
@@ -260,6 +355,8 @@ void TankDrive::ShiftMove(bool start, bool dirLeft, bool gearMode) {
 	printf("left %f, right %f\n", leftPos, rightPos);
 	printf("alpha %f, time %f\n\n", alpha, t);
 }
+
+
 void TankDrive::LowGear() {
 	m_gearShift->Set(true);
 	this->highGear = false;

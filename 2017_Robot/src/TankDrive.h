@@ -16,6 +16,7 @@ enum DriveMode{
 	TELEPOSITION,
 	VBUS,
 	SHIFT_MOVE,
+	AUTO_DRIVE_TO_LIFT_CUZ_JAKE_IS_LAZY,
 };
 
 using namespace std;
@@ -43,6 +44,7 @@ private:
 	float m_absX = 0, m_absY = 0;
 	const float m_revsPerInch = 1/(4*3.141592);
 	bool m_shiftMoveDone = false;
+	bool m_liftMoveDone = false;
 public:
 	TankDrive(
 			frc::Joystick* m_leftStick
@@ -67,7 +69,10 @@ public:
 	void SpeedDrive(const float leftSpeed, const float rightSpeed);
 
 	void StraightPositionDrive(float leftPos, float rightPos, double angleError);
+
 	void ShiftMove(bool start, bool dirLeft, bool gearMode);
+	void AutoDriveToLift();
+
 	void LowGear();
 	void HighGear();
 	void Position();
