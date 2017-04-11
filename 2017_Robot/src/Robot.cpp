@@ -78,6 +78,7 @@ public:
 	),
 	m_gearManipulator(
 			oi->joystickButton_gearRelease,
+			oi,
 			ci->servo_leftGear,
 			ci->servo_rightGear
 	),
