@@ -43,6 +43,8 @@ private:
 	float heading = 0;
 	float m_absX = 0, m_absY = 0;
 	const float m_revsPerInch = 1/(4*3.141592);
+
+	int m_state = 0;
 	bool m_shiftMoveDone = false;
 	bool m_liftMoveDone = false;
 public:

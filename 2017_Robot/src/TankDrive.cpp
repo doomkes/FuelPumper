@@ -113,7 +113,10 @@ void TankDrive::TeleopPeriodic(double dt) {
 	if (m_leftStick->GetRawButton(BUTTON_L_AUTO_DRIVE_TO_LIFT)) {
 		m_mode = AUTO_DRIVE_TO_LIFT_CUZ_JAKE_IS_LAZY;
 	}
-
+	if(m_leftStick->GetRawButton(BUTTON_L_CANCEL_AUTO_MOVE)) {
+		SetMode(DriveMode::TELEPOSITION);
+		m_state = 0;
+	}
 	switch(m_mode) {
 	case DriveMode::TELEPOSITION: // normal drive.
 		leftPos = leftVal*10;
@@ -210,7 +213,7 @@ void TankDrive::AutoDriveToLift() {
 	static Timer timer;
 	static float arc1RightPos = 0;
 	static float arc1LeftPos= 0;
-	static int state = 0;
+
 	constexpr float arc1Radius = 167.36648445;
 	constexpr float arc1Angle = 0.60143459;
 	constexpr float arc2Radius = 338.80647094;
@@ -236,13 +239,13 @@ void TankDrive::AutoDriveToLift() {
 
 	constexpr float totalDist = arc1Distance;
 
-	switch(state) {
+	switch(m_state) {
 		case 0: {// initiallize.
 			move.SetAll(70, 90, 110, totalDist);
 			Zero();
 			timer.Reset();
 			timer.Start();
-			state++;
+			m_state++;
 			break;
 		}
 		case 1: {
@@ -277,7 +280,7 @@ void TankDrive::AutoDriveToLift() {
 			PositionDrive(-leftPos, -rightPos, false);
 
 			if(t > move.GetTotalTime()) {
-				state = 0;
+				m_state = 0;
 				m_liftMoveDone = true;
 			}
 
