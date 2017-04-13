@@ -335,7 +335,6 @@ void Autonomous::ArcShootFromHopper() {
 			float leftPos = centerPos;
 			float rightPos = centerPos;
 			if(centerPos > straight1Dist && centerPos < (straight1Dist+arcDistance)) {
-				m_shooter.Shoot();
 				centerPos -= straight1Dist;
 				leftPos = centerPos;
 				rightPos = centerPos;
@@ -355,6 +354,10 @@ void Autonomous::ArcShootFromHopper() {
 			// swap left/drive if field is mirrored.
 			if(DriverStation::GetInstance().GetAlliance() == DriverStation::kBlue) {
 				std::swap(rightPos,leftPos);
+			}
+			if(t > (m_move.GetTotalTime()*.9)) {
+				m_shooter.Shoot();
+				m_state++;
 			}
 
 			m_tank.PositionDrive(leftPos, rightPos, false);
