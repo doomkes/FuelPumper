@@ -261,7 +261,7 @@ void Autonomous::ShootFromHopper() {
 			if(leftPos < 85) {
 				angleError = m_startAngle - m_tank.GetAngle();
 			} else { // freeze right side after 85 in.
-				m_shooter.Spinup(3150);
+				m_shooter.Spinup();
 				rightPos = 85;
 				angleError = 0;
 			}
@@ -296,24 +296,27 @@ void Autonomous::ShootFromHopper() {
 }
 
 void Autonomous::ArcShootFromHopper() {
-	static float arcRightPos = 0;
-	static float arcLeftPos= 0;
+	float straight1Dist = 27;//32
+	float arcRadius = 40;
+	float arcAngle = 1.9198621771937625346160598453375; // 110 Deg
+	float straight2Dist = 0;
 
-	constexpr float straight1Dist = 27;//32
-	constexpr float arcRadius = 40;
-	constexpr float arcAngle = 1.9198621771937625346160598453375;
-	constexpr float straight2Dist = 0;
+	if(Preferences::GetInstance()->GetBoolean("LongHopper", false)) {
+		straight1Dist = 41.96;//32
+		arcRadius = 86.46;
+		straight2Dist = 0;
+	}
 
-	constexpr float arcDistance = arcRadius*arcAngle;
-	constexpr float innerArcRadius = arcRadius - robotDimensions.centerToWheel;
-	constexpr float outerArcRadius = arcRadius + robotDimensions.centerToWheel;
-	constexpr float innerArcDist = innerArcRadius*arcAngle;
-	constexpr float outerArcDist = outerArcRadius*arcAngle;
+	float arcDistance = arcRadius*arcAngle;
+	float innerArcRadius = arcRadius - robotDimensions.centerToWheel;
+	float outerArcRadius = arcRadius + robotDimensions.centerToWheel;
+	float innerArcDist = innerArcRadius*arcAngle;
+	float outerArcDist = outerArcRadius*arcAngle;
 
-	constexpr float innerRatio = innerArcDist/arcDistance;
-	constexpr float outerRatio =  outerArcDist/arcDistance;
+	float innerRatio = innerArcDist/arcDistance;
+	float outerRatio =  outerArcDist/arcDistance;
 
-	constexpr float totalDist = straight1Dist + arcDistance + straight2Dist;
+	float totalDist = straight1Dist + arcDistance + straight2Dist;
 
 	switch(m_state) {
 		case 0: {// initiallize.
@@ -341,9 +344,6 @@ void Autonomous::ArcShootFromHopper() {
 				rightPos *= innerRatio;
 				leftPos += straight1Dist;
 				rightPos += straight1Dist;
-				arcRightPos = rightPos;
-				arcLeftPos = leftPos;
-
 			}
 //			if(centerPos > (straight1Dist+arcDistance)) {
 //				centerPos -= (straight1Dist+arcDistance);
