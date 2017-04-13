@@ -62,6 +62,7 @@ public:
 	void ReverseIndex();
 	void Init();
 	void AimLight(bool state);
+	bool shouldIndex;
 
 };
 

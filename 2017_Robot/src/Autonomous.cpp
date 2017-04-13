@@ -261,7 +261,7 @@ void Autonomous::ShootFromHopper() {
 			if(leftPos < 85) {
 				angleError = m_startAngle - m_tank.GetAngle();
 			} else { // freeze right side after 85 in.
-				m_shooter.Spinup();
+				m_shooter.Spinup(3150);
 				rightPos = 85;
 				angleError = 0;
 			}
@@ -322,7 +322,7 @@ void Autonomous::ArcShootFromHopper() {
 		case 0: {// initiallize.
 			m_move.SetAll(50, 80, 100, totalDist);
 			m_startAngle = m_tank.GetAngle();
-			m_shooter.Stop();
+			m_shooter.Spinup(3150);
 			m_tank.Zero();
 			m_timer.Reset();
 			m_timer.Start();
@@ -334,9 +334,8 @@ void Autonomous::ArcShootFromHopper() {
 			float centerPos = m_move.Position(t);
 			float leftPos = centerPos;
 			float rightPos = centerPos;
-			float spinupSpeed=((m_timer.Get()*.8)*(3150/(m_move.GetTotalTime()*.8)));
-			m_shooter.Spinup(spinupSpeed);
 			if(centerPos > straight1Dist && centerPos < (straight1Dist+arcDistance)) {
+				m_shooter.Shoot();
 				centerPos -= straight1Dist;
 				leftPos = centerPos;
 				rightPos = centerPos;
@@ -361,7 +360,7 @@ void Autonomous::ArcShootFromHopper() {
 			m_tank.PositionDrive(leftPos, rightPos, false);
 
 			if(t > m_move.GetTotalTime()) {
-
+				m_shooter.Shoot();
 				m_tank.SetMode(DriveMode::VBUS);
 				m_state++;
 			}

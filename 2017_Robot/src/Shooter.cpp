@@ -41,7 +41,6 @@ Shooter::Shooter(
 	m_shootWheel2->SetCurrentLimit(30);
 	m_shootWheel1->EnableCurrentLimit(true);
 	m_shootWheel2->EnableCurrentLimit(true);
-
 	m_indexMotor->SetControlMode(frc::CANSpeedController::kSpeed);
 }
 
@@ -50,7 +49,7 @@ Shooter::~Shooter() {
 }
 
 void Shooter::TeleopInit() {
-	Spinup();
+	Spinup(3150);
 }
 
 void Shooter::TeleopPeriodic() {
@@ -65,12 +64,13 @@ void Shooter::TeleopPeriodic() {
 	if (joystickButton_shoot->Get() || m_OI->joyStickButton_adjShoot->Get()) {
 		Shoot();
 	}
-	else if(m_OI->joystickButton_reverseIndex->Get()) {
-		ReverseIndex();
-	}
 	else if(m_OI->joystick_manipulator->GetRawButton(BUTTON_M_SPINUP)) {
 		Spinup(3150);
 	}
+	else if(m_OI->joystickButton_reverseIndex->Get()) {
+		ReverseIndex();
+	}
+
 	else Stop();
 
 	SmartDashboard::PutBoolean("Shooter_ShootBtn", joystickButton_shoot->Get());
@@ -117,7 +117,7 @@ void Shooter::Shoot() {
 	m_CI->canTalon_hopper->Set(-.6);
 	m_CI->canTalon_intake->Set(-.6);
 	static bool pickingUp = false;
-	if (fabs(paSpeed-acceleratorSpeed)<=150 && fabs(abSpeed-afterBurnerSpeed) <= 150) {
+	if (fabs(paSpeed-acceleratorSpeed)<=150 && fabs(abSpeed) >=(afterBurnerSpeed-350)) {
 		ballsPS = Preferences::GetInstance()->GetDouble("IndexBallsPS", 4);
 		SetIndexer(15*ballsPS);
 		//Pulse pickup.
@@ -143,13 +143,17 @@ void Shooter::Shoot() {
 		}
 		SmartDashboard::PutNumber("Balls Shot", ballsShot);
 		SmartDashboard::PutBoolean("Counting Balls?", countingBalls);
+		SmartDashboard::PutBoolean("Should Index", shouldIndex);
 
 	}
 }
 
 void Shooter::SetIndexer(float speed) {
+	shouldIndex = true;
 	m_indexMotor->SetSetpoint(speed);
 	m_shooterFeeder->Set(.5);
+	float indexSpeed = m_indexMotor->GetSpeed();
+	SmartDashboard::PutNumber("Indexer Speed", indexSpeed);
 }
 
 void Shooter::ReverseIndex() {
@@ -161,6 +165,7 @@ void Shooter::Stop() {
 	m_particleAccelerator->SetSetpoint(0);
 	m_afterBurner->SetSetpoint(0);
 	m_indexMotor->SetSetpoint(0);
+	shouldIndex = false;
 	m_shooterFeeder->Set(0);
 }
 
