@@ -106,9 +106,9 @@ public:
 
 		camera = cameraServer->StartAutomaticCapture(0);
 		m_outputStream = CameraServer::GetInstance()->PutVideo("thresh", 320, 240);
-		camera.SetResolution(320, 240);
-		camera.SetExposureManual(exposure);
-
+		camera.SetResolution(160, 120);
+		//camera.SetExposureManual(exposure);
+		camera.SetExposureAuto();
 		SmartDashboard::PutNumber("drive_P", 0);
 		SmartDashboard::PutNumber("drive_I", 0);
 		SmartDashboard::PutNumber("drive_D", 0);
