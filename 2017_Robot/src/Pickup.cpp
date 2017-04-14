@@ -90,5 +90,5 @@ void Pickup::stop() {
 
 void Pickup::Reverse(){
 	m_intakeMotor->Set(1);
-	m_hopperMotor->Set(-1);
+	m_hopperMotor->Set(1);
 }

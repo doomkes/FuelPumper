@@ -24,7 +24,7 @@ enum ManStickMap {
 
 enum LStickMap {
 	BUTTON_L_PICKUP = 1,
-	BUTTON_L_REVERSEPICKUP = 5, // TODO Figure out actual button value
+	BUTTON_L_REVERSEPICKUP = 13, // TODO Figure out actual button value
 	BUTTON_L_GEAR_RELEASE = 4,
 	BUTTON_L_AIM_LIGHT = 6,
 	BUTTON_L_ACCEPT_GEAR = 3,
