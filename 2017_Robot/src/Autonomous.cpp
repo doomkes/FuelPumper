@@ -261,7 +261,7 @@ void Autonomous::ShootFromHopper() {
 			if(leftPos < 85) {
 				angleError = m_startAngle - m_tank.GetAngle();
 			} else { // freeze right side after 85 in.
-				m_shooter.Spinup(3150);
+				m_shooter.Spinup(3150,false);
 				rightPos = 85;
 				angleError = 0;
 			}
@@ -300,11 +300,12 @@ void Autonomous::ArcShootFromHopper() {
 	float arcRadius = 40;
 	float arcAngle = 1.9198621771937625346160598453375; // 110 Deg
 	float straight2Dist = 0;
-
+	static float shooterSpeed = 3150;
 	if(Preferences::GetInstance()->GetBoolean("LongHopper", false)) {
 		straight1Dist = 41.96;//32
 		arcRadius = 86.46;
 		straight2Dist = 0;
+		shooterSpeed += 1500;
 	}
 
 	float arcDistance = arcRadius*arcAngle;
@@ -322,7 +323,7 @@ void Autonomous::ArcShootFromHopper() {
 		case 0: {// initiallize.
 			m_move.SetAll(50, 80, 100, totalDist);
 			m_startAngle = m_tank.GetAngle();
-			m_shooter.Spinup(3150);
+			m_shooter.Spinup(shooterSpeed, false);
 			m_tank.Zero();
 			m_timer.Reset();
 			m_timer.Start();
@@ -354,10 +355,6 @@ void Autonomous::ArcShootFromHopper() {
 			// swap left/drive if field is mirrored.
 			if(DriverStation::GetInstance().GetAlliance() == DriverStation::kBlue) {
 				std::swap(rightPos,leftPos);
-			}
-			if(t > (m_move.GetTotalTime()*.9)) {
-				m_shooter.Shoot();
-				m_state++;
 			}
 
 			m_tank.PositionDrive(leftPos, rightPos, false);

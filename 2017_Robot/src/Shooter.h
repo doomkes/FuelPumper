@@ -13,6 +13,7 @@
 #include "RobotMap.h"
 #include "OI.h"
 #include "CI.h"
+#include <string>
 class Shooter {
 	CANTalon* m_particleAccelerator;
 	CANTalon* m_afterBurner;
@@ -56,13 +57,14 @@ public:
 	//Want to allow it to activate shooter motors let
 	//then get up to speed then activate index motor
 	void Shoot();
-	void Spinup(float);
+	void Spinup(float, bool);
 	void SetIndexer(float speed);
 	void Stop();
 	void ReverseIndex();
 	void Init();
 	void AimLight(bool state);
 	bool shouldIndex;
+	float speedAdjust;
 
 };
 
