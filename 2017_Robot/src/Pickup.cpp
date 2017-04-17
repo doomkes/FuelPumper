@@ -11,12 +11,14 @@
 Pickup::Pickup(
 		frc::JoystickButton* joystickButton_pickup
 		,frc::JoystickButton* joystickButton_reversePickup
+		,OI *oi
 		,frc::Talon* m_intakeMotor
 		,frc::Talon* m_hopperMotor
 	)
 	:
 	joystickButton_pickup(joystickButton_pickup)
 	, joystickButton_reversePickup(joystickButton_reversePickup)
+	,m_oi( oi)
 	, m_intakeMotor(m_intakeMotor)
 	, m_hopperMotor(m_hopperMotor)
 {
@@ -28,17 +30,18 @@ void Pickup::TeleopInit() {
 }
 void Pickup::TeleopPeriodic() {
 	if(joystickButton_pickup->Get()) {
-
-			if(joystickButton_reversePickup->Get()){
-				Reverse();
-			}
-			else {
-				Intake();
-			}
+		if(joystickButton_reversePickup->Get()){
+			Reverse();
 		}
 		else {
+			Intake();
+		}
+	}
+	else {
+		if(!m_oi->joystickButton_shoot->Get() && !m_oi->joyStickButton_adjShoot->Get()) {
 			stop();
 		}
+	}
 
 }
 
@@ -87,5 +90,5 @@ void Pickup::stop() {
 
 void Pickup::Reverse(){
 	m_intakeMotor->Set(1);
-	m_hopperMotor->Set(-1);
+	m_hopperMotor->Set(1);
 }

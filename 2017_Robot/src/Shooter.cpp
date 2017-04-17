@@ -8,7 +8,7 @@
 
 #include "Shooter.h"
 #include "RobotMap.h"
-
+using namespace std;
 Shooter::Shooter(
 		CANTalon* m_shootWheel1
 		, CANTalon* m_shootWheel2
@@ -37,6 +37,10 @@ Shooter::Shooter(
 {
 	m_shootWheel1->SetControlMode(frc::CANSpeedController::kSpeed);
 	m_shootWheel2->SetControlMode(frc::CANSpeedController::kSpeed);
+	m_shootWheel1->SetCurrentLimit(30);
+	m_shootWheel2->SetCurrentLimit(30);
+	m_shootWheel1->EnableCurrentLimit(true);
+	m_shootWheel2->EnableCurrentLimit(true);
 	m_indexMotor->SetControlMode(frc::CANSpeedController::kSpeed);
 }
 
@@ -45,11 +49,19 @@ Shooter::~Shooter() {
 }
 
 void Shooter::TeleopInit() {
-
+	Spinup(3150, false);
 }
 
 void Shooter::TeleopPeriodic() {
+	enum ShootMode {
+		STOP,
+		SPINUP,
+		TRIM,
+
+	};
+	static string shooterStatus;
 	static bool firstTime = true;
+	static int state = 0;
 	static Timer pickupTimer;
 	if(firstTime) {
 		pickupTimer.Start();
@@ -57,17 +69,42 @@ void Shooter::TeleopPeriodic() {
 
 	static bool pickingUp = false;
 
-	if (joystickButton_shoot->Get() || m_OI->joyStickButton_adjShoot->Get()) {
+	if (m_OI->joystick_manipulator->GetRawButton(1)) {
 		Shoot();
+
 	}
-	else if(m_OI->joystickButton_reverseIndex->Get()) {
+	else {
+		SetIndexer(0);
+	}
+	if(m_OI->joystick_manipulator->GetRawButton(7)) {
+		state = 1;
+	}
+
+	else if(m_OI->joystick_manipulator->GetRawButton(11)) {
+		state = 0;
+	}
+	else if(m_OI->joystick_manipulator->GetRawButton(9)) {
+		state = 2;
+	}
+	if(m_OI->joystickButton_reverseIndex->Get()) {
 		ReverseIndex();
 	}
-	else if(m_OI->joystick_manipulator->GetRawButton(BUTTON_M_SPINUP)) {
-		Spinup();
-	}
-	else Stop();
 
+	switch(state){
+	case STOP:
+		Stop();
+		shooterStatus = "Stopped";
+		break;
+	case SPINUP:
+		Spinup(3150, false);
+		shooterStatus = "Running, no trim";
+		break;
+	case TRIM:
+		Spinup(3150, true);
+		shooterStatus = "Running, trim";
+		break;
+	}
+	SmartDashboard::PutString("Shooter Status",  shooterStatus);
 	SmartDashboard::PutBoolean("Shooter_ShootBtn", joystickButton_shoot->Get());
 }
 
@@ -88,63 +125,64 @@ void Shooter::Shoot() {
 //	}
 	float ballsPS;
 	float speedAdjust = 0;
-	float sliderPos =  m_OI->joystick_manipulator->GetRawAxis(3);
-	bool AdjBtn = m_OI->joyStickButton_adjShoot->Get();
-
-	if(AdjBtn) {
-		speedAdjust = 150 * (sliderPos);
-	}
-
-	const float acceleratorSpeed = -3150 + speedAdjust;
-	const float afterBurnerSpeed = -3800 + speedAdjust; //was 3550
+	static int ballsShot = 0;
+	static bool countingBalls = false;
 	float paSpeed = m_particleAccelerator->GetSpeed();
 	float abSpeed = m_afterBurner->GetSpeed();
 
 	SmartDashboard::PutNumber("PASpeed", paSpeed);
 	SmartDashboard::PutNumber("ABSpeed", abSpeed);
-
-	m_particleAccelerator->SetSetpoint(acceleratorSpeed);
-	m_afterBurner->SetSetpoint(afterBurnerSpeed);
 	static bool firstTime = true;
 	static Timer pickupTimer;
-
+	m_CI->canTalon_hopper->Set(-.6);
+	m_CI->canTalon_intake->Set(-.6);
 	static bool pickingUp = false;
-	if (fabs(paSpeed-acceleratorSpeed)<=150 && fabs(abSpeed-afterBurnerSpeed) <= 150) {
-		ballsPS = Preferences::GetInstance()->GetDouble("IndexBallsPS", 4);
-		SetIndexer(15*ballsPS);
-
-		//Pulse pickup.
-		if(firstTime) {
-			pickupTimer.Start();
-		}
-
-		if(pickupTimer.Get() >= 1) {
-			m_CI->canTalon_hopper->Set(-1);
-			m_CI->canTalon_intake->Set(-1);
-			pickingUp = true;
-			pickupTimer.Reset();
-		}
-		if (pickingUp == true && pickupTimer.Get() >= 0.5) {
-			m_CI->canTalon_hopper->Set(0);
-			m_CI->canTalon_intake->Set(0);
-		}
+	ballsPS = Preferences::GetInstance()->GetDouble("IndexBallsPS", 4);
+	SetIndexer(15*ballsPS);
+	//Pulse pickup.
+	if(firstTime) {
+		pickupTimer.Start();
 	}
+//		if(pickupTimer.Get() >= 1) {
+//			m_CI->canTalon_hopper->Set(-1);
+//			m_CI->canTalon_intake->Set(-1);
+//			pickingUp = true;
+//			pickupTimer.Reset();
+//		}
+//		if (pickingUp == true && pickupTimer.Get() >= 0.5) {
+//			m_CI->canTalon_hopper->Set(0);
+//			m_CI->canTalon_intake->Set(0);
+//		}
+		if (abSpeed <= -3600 && countingBalls) {
+			countingBalls = false;
+			ballsShot +=1;
+		}
+		else if (abSpeed >= -3700 && !countingBalls) {
+			countingBalls = true;
+		}
+		SmartDashboard::PutNumber("Balls Shot", ballsShot);
+		SmartDashboard::PutBoolean("Counting Balls?", countingBalls);
+		SmartDashboard::PutBoolean("Should Index", shouldIndex);
+
+
 }
 
 void Shooter::SetIndexer(float speed) {
+	shouldIndex = true;
 	m_indexMotor->SetSetpoint(speed);
 	m_shooterFeeder->Set(.5);
+	float indexSpeed = m_indexMotor->GetSpeed();
+	SmartDashboard::PutNumber("Indexer Speed", indexSpeed);
 }
 
 void Shooter::ReverseIndex() {
-	m_indexMotor->SetSetpoint(-20);
+	m_indexMotor->SetSetpoint(-60);
 }
 
 
 void Shooter::Stop() {
 	m_particleAccelerator->SetSetpoint(0);
 	m_afterBurner->SetSetpoint(0);
-	m_indexMotor->SetSetpoint(0);
 	m_shooterFeeder->Set(0);
 }
 
@@ -181,10 +219,19 @@ void Shooter::Init() {
 	m_particleAccelerator->SetSetpoint(0);
 	m_afterBurner->SetSetpoint(0);
 }
-void Shooter::Spinup() {
-	const float acceleratorSpeed = -3150;
-	const float afterBurnerSpeed = -3550;
-
+void Shooter::Spinup(float speed, bool trimable) {
+	//speed is the accelerator speed. Afterburner is calculated based on 380/315 ratio
+	float sliderPos =  -m_OI->joystick_manipulator->GetRawAxis(3);
+	if(trimable) {
+		speedAdjust = 150 * (sliderPos);
+	}
+	speed += speedAdjust;
+	const float acceleratorSpeed = -speed;
+	const float afterBurnerSpeed = -(380/315*(speed));
+	float paSpeed = m_particleAccelerator->GetSpeed();
+	float abSpeed = m_afterBurner->GetSpeed();
+	SmartDashboard::PutNumber("PASpeed", paSpeed);
+	SmartDashboard::PutNumber("ABSpeed", abSpeed);
 	m_particleAccelerator->SetSetpoint(acceleratorSpeed);
 	m_afterBurner->SetSetpoint(afterBurnerSpeed);
 }

@@ -6,21 +6,13 @@
  */
 
 #include <Autonomous.h>
+#include "RobotMap.h"
 #include <vector>
 using namespace cs;
 using namespace grip;
 
-struct RobotDimensions {
-	static constexpr float bumperWidth = 3.35;
-	static constexpr float robotWidth = 33;
-	static constexpr float robotLength = 29;
-	static constexpr float betweenWheels = 29.5;
-	static constexpr float centerToWheel = betweenWheels/2;
-	static constexpr float width = robotWidth + (2 * bumperWidth);
-	static constexpr float length = robotLength + (2 * bumperWidth);
-};
 
-extern RobotDimensions robotDimensions;
+RobotDimensions robotDimensions;
 
 struct FieldDimensions {
 	//TODO put field dimensions in here
@@ -269,7 +261,7 @@ void Autonomous::ShootFromHopper() {
 			if(leftPos < 85) {
 				angleError = m_startAngle - m_tank.GetAngle();
 			} else { // freeze right side after 85 in.
-				m_shooter.Spinup();
+				m_shooter.Spinup(3150,false);
 				rightPos = 85;
 				angleError = 0;
 			}
@@ -304,30 +296,34 @@ void Autonomous::ShootFromHopper() {
 }
 
 void Autonomous::ArcShootFromHopper() {
-	static float arcRightPos = 0;
-	static float arcLeftPos= 0;
+	float straight1Dist = 27;//32
+	float arcRadius = 40;
+	float arcAngle = 1.9198621771937625346160598453375; // 110 Deg
+	float straight2Dist = 0;
+	static float shooterSpeed = 3150;
+	if(Preferences::GetInstance()->GetBoolean("LongHopper", false)) {
+		straight1Dist = 41.96;//32
+		arcRadius = 86.46;
+		straight2Dist = 0;
+		shooterSpeed += 1500;
+	}
 
-	constexpr float straight1Dist = 27;//32
-	constexpr float arcRadius = 40;
-	constexpr float arcAngle = 1.9198621771937625346160598453375;
-	constexpr float straight2Dist = 0;
+	float arcDistance = arcRadius*arcAngle;
+	float innerArcRadius = arcRadius - robotDimensions.centerToWheel;
+	float outerArcRadius = arcRadius + robotDimensions.centerToWheel;
+	float innerArcDist = innerArcRadius*arcAngle;
+	float outerArcDist = outerArcRadius*arcAngle;
 
-	constexpr float arcDistance = arcRadius*arcAngle;
-	constexpr float innerArcRadius = arcRadius - robotDimensions.centerToWheel;
-	constexpr float outerArcRadius = arcRadius + robotDimensions.centerToWheel;
-	constexpr float innerArcDist = innerArcRadius*arcAngle;
-	constexpr float outerArcDist = outerArcRadius*arcAngle;
+	float innerRatio = innerArcDist/arcDistance;
+	float outerRatio =  outerArcDist/arcDistance;
 
-	constexpr float innerRatio = innerArcDist/arcDistance;
-	constexpr float outerRatio =  outerArcDist/arcDistance;
-
-	constexpr float totalDist = straight1Dist + arcDistance + straight2Dist;
+	float totalDist = straight1Dist + arcDistance + straight2Dist;
 
 	switch(m_state) {
 		case 0: {// initiallize.
 			m_move.SetAll(50, 80, 100, totalDist);
 			m_startAngle = m_tank.GetAngle();
-			m_shooter.Stop();
+			m_shooter.Spinup(shooterSpeed, false);
 			m_tank.Zero();
 			m_timer.Reset();
 			m_timer.Start();
@@ -339,7 +335,6 @@ void Autonomous::ArcShootFromHopper() {
 			float centerPos = m_move.Position(t);
 			float leftPos = centerPos;
 			float rightPos = centerPos;
-
 			if(centerPos > straight1Dist && centerPos < (straight1Dist+arcDistance)) {
 				centerPos -= straight1Dist;
 				leftPos = centerPos;
@@ -348,9 +343,6 @@ void Autonomous::ArcShootFromHopper() {
 				rightPos *= innerRatio;
 				leftPos += straight1Dist;
 				rightPos += straight1Dist;
-				arcRightPos = rightPos;
-				arcLeftPos = leftPos;
-				m_shooter.Spinup();
 			}
 //			if(centerPos > (straight1Dist+arcDistance)) {
 //				centerPos -= (straight1Dist+arcDistance);
@@ -368,7 +360,7 @@ void Autonomous::ArcShootFromHopper() {
 			m_tank.PositionDrive(leftPos, rightPos, false);
 
 			if(t > m_move.GetTotalTime()) {
-
+				m_shooter.Shoot();
 				m_tank.SetMode(DriveMode::VBUS);
 				m_state++;
 			}
