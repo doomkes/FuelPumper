@@ -89,18 +89,18 @@ void Shooter::TeleopPeriodic() {
 	if(m_OI->joystickButton_reverseIndex->Get()) {
 		ReverseIndex();
 	}
-
+	constexpr float shooterSpeed = 3007.5;
 	switch(state){
 	case STOP:
 		Stop();
 		shooterStatus = "Stopped";
 		break;
 	case SPINUP:
-		Spinup(3150, false);
+		Spinup(shooterSpeed, false);
 		shooterStatus = "Running, no trim";
 		break;
 	case TRIM:
-		Spinup(3150, true);
+		Spinup(shooterSpeed, true);
 		shooterStatus = "Running, trim";
 		break;
 	}

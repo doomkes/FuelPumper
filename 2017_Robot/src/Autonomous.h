@@ -65,6 +65,7 @@ public:
 	void ArcSideGear();
 	void ShootFromHopper();
 	void ArcShootFromHopper();
+
 	void PositionTest();
 	void VBusTest();
 	void StationaryShoot();

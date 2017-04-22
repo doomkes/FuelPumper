@@ -31,10 +31,14 @@ void GearManipulator::TeleopInit() {
 }
 
 void GearManipulator::TeleopPeriodic() {
-	Release(joystickButton_gearRelease->Get());
+	bool accept = false;
+	if(m_oi->joystick_driverLeft->GetRawButton(BUTTON_L_ACCEPT_GEAR)) {
+		accept = true;
+	}
+	Release(joystickButton_gearRelease->Get(), accept);
 }
 
-void GearManipulator::Release(bool release) {
+void GearManipulator::Release(bool release, bool Accept) {
 	// TODO find out if values passes to servos need to be flipped.
 	double leftCloseAngle = Preferences::GetInstance()->GetDouble("GearLeftClosedAngle", 0);
 	double rightCloseAngle = Preferences::GetInstance()->GetDouble("GearRightClosedAngle", 180);
@@ -49,7 +53,7 @@ void GearManipulator::Release(bool release) {
 		m_kicker.Set(true);
 	}
 	else {
-		if(m_oi->joystick_driverLeft->GetRawButton(BUTTON_L_ACCEPT_GEAR)) {
+		if(Accept) {
 			leftCloseAngle += 20;
 			rightCloseAngle -= 20;
 		}

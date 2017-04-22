@@ -16,8 +16,7 @@ class GearManipulator {
 	frc::Servo* m_rightServo;
 	frc::Solenoid m_kicker;
 public:
-	void Release(bool release);
-
+	void Release(bool release, bool Accept = false);
 	GearManipulator(
 		frc::JoystickButton* joystickButton_gearRelease
 		,OI *oi
