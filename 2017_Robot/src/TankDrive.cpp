@@ -59,6 +59,10 @@ TankDrive::TankDrive(
 	m_leftMotor2->Set(MOTOR_LEFT_DRIVE1);
 	m_rightMotor2->Set(MOTOR_RIGHT_DRIVE1);
 
+	m_leftMotor1->ConfigNeutralMode(CANTalon::NeutralMode::kNeutralMode_Brake);
+	m_leftMotor2->ConfigNeutralMode(CANTalon::NeutralMode::kNeutralMode_Brake);
+	m_rightMotor1->ConfigNeutralMode(CANTalon::NeutralMode::kNeutralMode_Brake);
+	m_rightMotor2->ConfigNeutralMode(CANTalon::NeutralMode::kNeutralMode_Brake);
 
 
 }

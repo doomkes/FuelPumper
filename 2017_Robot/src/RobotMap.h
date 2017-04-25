@@ -98,8 +98,8 @@ struct RobotDimensions {
 	static constexpr float robotLength = 29;
 	static constexpr float betweenWheels = 29.5;
 	static constexpr float centerToWheel = betweenWheels/2;
-	static constexpr float width = robotWidth + (2 * bumperWidth);
-	static constexpr float length = robotLength + (2 * bumperWidth);
+	static constexpr float width = robotWidth + (2 * bumperWidth); //39.7
+	static constexpr float length = robotLength + (2 * bumperWidth); //36.7
 };
 #endif /* SRC_ROBOTMAP_H_ */
 

@@ -53,7 +53,7 @@ void Autonomous::AutonomousInit() {
 	m_tank.SetMode(DriveMode::POSITION);
 	m_tank.Zero();
 	m_gear.Release(false);
-
+	m_shooter.Stop();
 	int autoSelect = Preferences::GetInstance()->GetInt("AutoMode", 0);
 	m_mode = static_cast<AutoMode>(autoSelect);
 
@@ -300,7 +300,7 @@ void Autonomous::ArcShootFromHopper() {
 	float arcRadius = 40;
 	float arcAngle = 1.9198621771937625346160598453375; // 110 Deg
 	float straight2Dist = 0;
-	static float shooterSpeed = 3150;
+	static float shooterSpeed = 2950;
 	if(Preferences::GetInstance()->GetBoolean("LongHopper", false)) {
 		straight1Dist = 41.96;//32
 		arcRadius = 86.46;
@@ -387,13 +387,14 @@ void Autonomous::ArcSideGear() {
 //	constexpr float arcRadius = 76.3;
 //	constexpr float arcAngle = 1.0471975511965977461542144610932;//0.52359;
 //	constexpr float straight2Dist = 56.69 - (RobotDimensions::length/2);
-	constexpr float straight1Dist = (RobotDimensions::length/2) - 2;
-	constexpr float arcRadius = 87.3;
+	constexpr float straight1Dist = (RobotDimensions::length/2) - 10 + 1;
+	constexpr float arcRadius = 87.3 - 3;
 	constexpr float arcAngle = 1.0471975511965977461542144610932;//0.52359;
-	float straight2Dist = 26.66 - (RobotDimensions::length/2) + 2;
+	float straight2Dist = 19.5 + 2.5;//26.66 - (RobotDimensions::length/2) + 12 + 2.5 + 3;
 	if (startBoiler){
 		straight2Dist += 2;
 	}
+
 	constexpr float arcDistance = (arcRadius*arcAngle);
 	constexpr float innerArcRadius = arcRadius - robotDimensions.centerToWheel;
 	constexpr float outerArcRadius = arcRadius + robotDimensions.centerToWheel;
@@ -407,13 +408,13 @@ void Autonomous::ArcSideGear() {
 
 	switch(m_state) {
 		case 0: {// initiallize.
-			m_move.SetAll(30, 30, 50, totalDist);
+			m_move.SetAll(55, 45, 55, totalDist);
 			m_startAngle = m_tank.GetAngle();
 			m_shooter.Stop();
 			m_tank.Zero();
 			m_timer.Reset();
 			m_timer.Start();
-			m_gear.Release(false);
+			m_gear.Release(false, true);
 			m_state++;
 			break;
 		}
@@ -453,8 +454,13 @@ void Autonomous::ArcSideGear() {
 
 			m_tank.PositionDrive(-leftPos, -rightPos, false);
 
-			if(t > m_move.GetTotalTime()) {
+			// Release gear 3in early.
+			if(t >=  (m_move.GetTotalTime())) {
 				m_gear.Release(true);
+			}
+			// 1/4 sec delay before backing up.
+			if(t >  (m_move.GetTotalTime() + 0.25)) {
+				m_gear.Release(false);
 				m_move.SetAll(10,10,10, 22);
 				m_tank.Zero();
 				m_timer.Reset();
@@ -465,13 +471,16 @@ void Autonomous::ArcSideGear() {
 			printf("t: %f\nleftPos: %f \nrightPos %f\n", t, leftPos, rightPos);
 			break;
 		}
-		case 2: { // Shoot.
+		case 2: { // release & backup.
 			m_gear.Release(true);
 			float t = m_timer.Get();
 			float leftPos = m_move.Position(t);
 			float rightPos = leftPos;
 			m_tank.PositionDrive(leftPos, rightPos, false);
 			printf("t: %f\nleftPos: %f \nrightPos %f\n", t, leftPos, rightPos);
+			if(t > m_move.GetTotalTime()) {
+				m_state++;
+			}
 			break;
 		}
 	}
@@ -523,5 +532,98 @@ void Autonomous::BaseLine() {
 }
 
 void Autonomous::ShootAndGear() {
+	// this function calls other autonomous routines, so m_state should not be used.
+	static int state = 0;
+	static float arcRightPos = 0;
+	static float arcLeftPos= 0;
+	constexpr float straight1Dist = 0;
+	constexpr float straight2Dist = 37; // was 33
+	constexpr float arcRadius = 102 - 8;
+	constexpr float arcAngle = 0.70685834705770347865409476123789; //
 
+	constexpr float arcDistance = arcRadius*arcAngle;
+	constexpr float innerArcRadius = arcRadius - robotDimensions.centerToWheel;
+	constexpr float outerArcRadius = arcRadius + robotDimensions.centerToWheel;
+	constexpr float innerArcDist = innerArcRadius*arcAngle;
+	constexpr float outerArcDist = outerArcRadius*arcAngle;
+
+	constexpr float innerRatio = innerArcDist/arcDistance;
+	constexpr float outerRatio =  outerArcDist/arcDistance;
+
+	constexpr float totalDist = straight1Dist + arcDistance+ straight2Dist;
+
+	switch(state) {
+		case 0: {// initialize.
+			m_timer.Reset();
+			m_timer.Start();
+			state = 1;
+			break;
+		}
+		case 1: { // place gear.
+			this->ArcSideGear();
+			// m_state and state are different people.
+			if(m_state == 2) {
+				m_gear.Release(false);
+				m_tank.Zero();
+				m_shooter.Spinup(2950, false);
+				m_move.SetAll(70, 90, 110, totalDist);
+				m_timer.Reset();
+				m_timer.Start();
+				state++;
+			}
+			break;
+		case 2: {
+			float t = m_timer.Get();
+			float centerPos = m_move.Position(t);
+			float leftPos = centerPos;
+			float rightPos = centerPos;
+			m_shooter.Spinup(2950, false);
+			if(centerPos > straight1Dist && centerPos < (straight1Dist+arcDistance)) {
+				centerPos -= straight1Dist;
+				leftPos = centerPos;
+				rightPos = centerPos;
+				leftPos *= innerRatio;
+				rightPos *= outerRatio;
+				leftPos += straight1Dist;
+				rightPos += straight1Dist;
+				arcRightPos = rightPos;
+				arcLeftPos = leftPos;
+			}
+			if(centerPos > (straight1Dist+arcDistance)) {
+				centerPos -= (straight1Dist+arcDistance);
+				leftPos = centerPos;
+				rightPos = centerPos;
+				leftPos +=arcLeftPos;
+				rightPos +=arcRightPos;
+			}
+
+			// swap left/drive if field is mirrored.
+			if(DriverStation::GetInstance().GetAlliance() == DriverStation::kBlue) {
+				std::swap(rightPos,leftPos);
+			}
+
+			m_tank.PositionDrive(leftPos, rightPos, false);
+
+			if(t > m_move.GetTotalTime()) {
+
+				m_tank.SetMode(DriveMode::VBUS);
+				state++;
+
+			printf("t: %f\nleftPos: %f \nrightPos %f\n", t, leftPos, rightPos);
+			break;
+
+			}
+
+			printf("t: %f\nleftPos: %f \nrightPos %f\n", t, leftPos, rightPos);
+			break;
+		}
+		case 3: { // shoot
+			m_shooter.Shoot();
+			// keep a small driving force against hopper.
+			m_tank.Drive(-.2, -.2);
+			break;
+		}
+
+		}
+	}
 }
