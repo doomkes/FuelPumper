@@ -9,9 +9,11 @@
 #define GEARMANIPULATOR_H_
 #include <WPILib.h>
 #include "OI.h"
+#include "CI.h"
 class GearManipulator {
 	frc::JoystickButton* joystickButton_gearRelease;
 	OI *m_oi;
+	CI *m_ci;
 	frc::Servo* m_leftServo;
 	frc::Servo* m_rightServo;
 	frc::Solenoid m_kicker;
@@ -20,6 +22,7 @@ public:
 	GearManipulator(
 		frc::JoystickButton* joystickButton_gearRelease
 		,OI *oi
+		,CI *ci
 		,frc::Servo* m_leftServo
 		,frc::Servo* m_rightServo
 	);

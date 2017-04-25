@@ -7,15 +7,18 @@
 
 #include "GearManipulator.h"
 #include "RobotMap.h"
+#include "TankDrive.h"
 GearManipulator::GearManipulator(
 		frc::JoystickButton* joystickButton_gearRelease
 		,OI *oi
+		,CI *ci
 		,frc::Servo* m_leftServo
 		,frc::Servo* m_rightServo
 )
 :
 joystickButton_gearRelease(joystickButton_gearRelease)
 ,m_oi (oi)
+,m_ci (ci)
 , m_leftServo(m_leftServo)
 , m_rightServo(m_rightServo)
 , m_kicker(SolenoidMap::SOLENOID_GEAR_KICKER)
@@ -32,7 +35,8 @@ void GearManipulator::TeleopInit() {
 
 void GearManipulator::TeleopPeriodic() {
 	bool accept = false;
-	if(m_oi->joystick_driverLeft->GetRawButton(BUTTON_L_ACCEPT_GEAR)) {
+	float tankSpeed = m_ci->tankDrive->GetSpeed();
+	if(m_oi->joystick_driverLeft->GetRawButton(BUTTON_L_ACCEPT_GEAR) || tankSpeed <= 36) {
 		accept = true;
 	}
 	Release(joystickButton_gearRelease->Get(), accept);

@@ -80,6 +80,7 @@ public:
 	m_gearManipulator(
 			oi->joystickButton_gearRelease,
 			oi,
+			ci,
 			ci->servo_leftGear,
 			ci->servo_rightGear
 	),
@@ -97,7 +98,7 @@ public:
 			, m_shooterSpeed
 	)
 {
-
+		ci->tankDrive = &m_tank;
 }
 
 	void RobotInit() override {
