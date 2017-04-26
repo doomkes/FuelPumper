@@ -13,9 +13,10 @@
 #include <WPILib.h>
 #include "RobotMap.h"
 #include <CANTalon.h>
-
+class TankDrive;
 class CI {
 public:
+	TankDrive *tankDrive;
 	// Motors
 	CANTalon* canTalon_leftMotor1 = new CANTalon(MOTOR_LEFT_DRIVE1);
 	CANTalon* canTalon_leftMotor2 = new CANTalon(MOTOR_LEFT_DRIVE2);
