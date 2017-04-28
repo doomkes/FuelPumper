@@ -462,7 +462,7 @@ double TankDrive::GetAngle() {
 }
 // Return speed of robot in inches/sec
 double TankDrive::GetSpeed() {
-	float rpm = (m_leftMotor1->GetSpeed() + m_rightMotor1->GetSpeed()) / 2;
+	float rpm = (fabs(m_leftMotor1->GetSpeed()) + fabs(m_rightMotor1->GetSpeed())) / 2;
 	float speed = rpm * m_inchPerRev; // in / min
-	return speed * (1/60);
+	return speed * (1.0/60.0);
 }

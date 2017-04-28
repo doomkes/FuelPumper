@@ -30,14 +30,18 @@ GearManipulator::~GearManipulator() {
 }
 
 void GearManipulator::TeleopInit() {
-
+	Release(false, false);
 }
 
 void GearManipulator::TeleopPeriodic() {
 	bool accept = false;
 	float tankSpeed = m_ci->tankDrive->GetSpeed();
-	if(m_oi->joystick_driverLeft->GetRawButton(BUTTON_L_ACCEPT_GEAR) || tankSpeed <= 36) {
+
+	if(tankSpeed <= 36) {
 		accept = true;
+	}
+	if(m_oi->joystick_driverLeft->GetRawButton(BUTTON_L_HUG_GEAR)) {
+		accept = false;
 	}
 	Release(joystickButton_gearRelease->Get(), accept);
 }
