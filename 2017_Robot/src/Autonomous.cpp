@@ -57,6 +57,12 @@ void Autonomous::AutonomousInit() {
 	int autoSelect = Preferences::GetInstance()->GetInt("AutoMode", 0);
 	m_mode = static_cast<AutoMode>(autoSelect);
 
+	bool startBoiler = Preferences::GetInstance()->GetBoolean("AutoMode", true);
+
+	if(startBoiler || m_mode == SHOOT_AND_GEAR) {
+		m_startBoiler = true;
+	}
+
 	ShowAutoName();
 }
 
@@ -261,7 +267,7 @@ void Autonomous::ShootFromHopper() {
 			if(leftPos < 85) {
 				angleError = m_startAngle - m_tank.GetAngle();
 			} else { // freeze right side after 85 in.
-				m_shooter.Spinup(3150,false);
+				m_shooter.Spinup(2990, false);
 				rightPos = 85;
 				angleError = 0;
 			}
@@ -300,7 +306,7 @@ void Autonomous::ArcShootFromHopper() {
 	float arcRadius = 40;
 	float arcAngle = 1.9198621771937625346160598453375; // 110 Deg
 	float straight2Dist = 0;
-	static float shooterSpeed = 2950;
+	static float shooterSpeed = 2990;
 	if(Preferences::GetInstance()->GetBoolean("LongHopper", false)) {
 		straight1Dist = 41.96;//32
 		arcRadius = 86.46;
@@ -381,7 +387,6 @@ void Autonomous::ArcShootFromHopper() {
 void Autonomous::ArcSideGear() {
 	static float arcRightPos = 0;
 	static float arcLeftPos= 0;
-	bool startBoiler = Preferences::GetInstance()->GetBoolean("StartBoiler", true);
 
 //	constexpr float straight1Dist = 51.14 - (RobotDimensions::length);
 //	constexpr float arcRadius = 76.3;
@@ -391,7 +396,7 @@ void Autonomous::ArcSideGear() {
 	constexpr float arcRadius = 87.3 - 3;
 	constexpr float arcAngle = 1.0471975511965977461542144610932;//0.52359;
 	float straight2Dist = 19.5 + 2.5;//26.66 - (RobotDimensions::length/2) + 12 + 2.5 + 3;
-	if (startBoiler){
+	if (m_startBoiler){
 		straight2Dist += 2;
 	}
 
@@ -448,7 +453,7 @@ void Autonomous::ArcSideGear() {
 				std::swap(rightPos,leftPos);
 			}
 
-			if(startBoiler == false) {
+			if(m_startBoiler == false) {
 				std::swap(rightPos,leftPos);
 			}
 
@@ -565,7 +570,7 @@ void Autonomous::ShootAndGear() {
 			if(m_state == 2) {
 				m_gear.Release(false);
 				m_tank.Zero();
-				m_shooter.Spinup(2950, false);
+				m_shooter.Spinup(2990, false);
 				m_move.SetAll(70, 90, 110, totalDist);
 				m_timer.Reset();
 				m_timer.Start();
@@ -609,8 +614,8 @@ void Autonomous::ShootAndGear() {
 				m_tank.SetMode(DriveMode::VBUS);
 				state++;
 
-			printf("t: %f\nleftPos: %f \nrightPos %f\n", t, leftPos, rightPos);
-			break;
+				printf("t: %f\nleftPos: %f \nrightPos %f\n", t, leftPos, rightPos);
+				break;
 
 			}
 

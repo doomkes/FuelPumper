@@ -41,7 +41,8 @@ class Autonomous {
 	RelativeMovement m_relMove;
 	AutoMode m_mode = DO_NOTHING;
 	int m_state = 0;
-	string m_autoName = "";
+	bool m_startBoiler = true;
+	string m_autoName = ""; 
 	float m_startAngle = 0;
 	TrapezoidalMove m_move;
 	Timer m_timer;
