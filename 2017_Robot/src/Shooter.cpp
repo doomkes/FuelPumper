@@ -49,7 +49,7 @@ Shooter::~Shooter() {
 }
 
 void Shooter::TeleopInit() {
-	Spinup(2950, false);
+	Spinup(3000, false);
 }
 
 void Shooter::TeleopPeriodic() {
@@ -89,7 +89,7 @@ void Shooter::TeleopPeriodic() {
 	if(m_OI->joystickButton_reverseIndex->Get()) {
 		ReverseIndex();
 	}
-	constexpr float shooterSpeed = 2950;
+	constexpr float shooterSpeed = 3000;
 	switch(state){
 	case STOP:
 		Stop();
@@ -106,6 +106,9 @@ void Shooter::TeleopPeriodic() {
 	}
 	SmartDashboard::PutString("Shooter Status",  shooterStatus);
 	SmartDashboard::PutBoolean("Shooter_ShootBtn", joystickButton_shoot->Get());
+	SmartDashboard::PutNumber("AB ClosedLoopError", m_afterBurner->GetClosedLoopError());
+	SmartDashboard::PutNumber("PA ClosedLoopError", m_particleAccelerator->GetClosedLoopError());
+
 }
 
 
@@ -205,8 +208,8 @@ void Shooter::Init() {
 
 	m_particleAccelerator->SetPID(4,.005,0,1.5);
 	m_afterBurner->SetPID(4,.005,0,1.5);
-	m_particleAccelerator->SetIzone(200);
-	m_afterBurner->SetIzone(200);
+	m_particleAccelerator->SetIzone(10);
+	m_afterBurner->SetIzone(20);
 
 	m_indexMotor->SetPID(1,0,0, 1);
 	m_indexMotor->ConfigPeakOutputVoltage(+12,-12);
@@ -223,11 +226,12 @@ void Shooter::Spinup(float speed, bool trimable) {
 	//speed is the accelerator speed. Afterburner is calculated based on 380/315 ratio
 	float sliderPos =  -m_OI->joystick_manipulator->GetRawAxis(3);
 	if(trimable) {
-		speedAdjust = 150 * (sliderPos);
+		float speedAdjust = 150 * (sliderPos);
+		speed += speedAdjust;
 	}
-	speed += speedAdjust;
+
 	const float acceleratorSpeed = -speed;
-	const float afterBurnerSpeed = -(380/315*(speed));
+	const float afterBurnerSpeed = -(380.0/315.0*(speed));
 	float paSpeed = m_particleAccelerator->GetSpeed();
 	float abSpeed = m_afterBurner->GetSpeed();
 	SmartDashboard::PutNumber("PASpeed", paSpeed);

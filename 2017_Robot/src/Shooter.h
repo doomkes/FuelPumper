@@ -64,7 +64,7 @@ public:
 	void Init();
 	void AimLight(bool state);
 	bool shouldIndex;
-	float speedAdjust;
+
 
 };
 
