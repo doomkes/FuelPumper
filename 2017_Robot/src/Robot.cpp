@@ -145,7 +145,7 @@ public:
 		m_shooter.TeleopInit();
 		m_tank.Init();
 		m_climber.TeleopInit();
-		m_vision->TeleopInit();
+//		m_vision->TeleopInit();
 		m_tank.SetMode(DriveMode::TELEPOSITION);
 	}
 
@@ -165,7 +165,7 @@ public:
 		m_pickup.TeleopPeriodic();
 		m_shooter.TeleopPeriodic();
 		m_climber.TeleopPeriodic();
-		m_vision->TeleopPeriodic();
+//		m_vision->TeleopPeriodic();
 	}
 
 	void AutonomousInit() override {
